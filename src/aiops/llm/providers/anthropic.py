@@ -10,6 +10,7 @@ from typing import Any
 import httpx
 
 from aiops.llm.base import ChatMessage, LLMError, LLMProvider, LLMResponse, Role, ToolCall, ToolSpec
+from aiops.llm.usage import normalize_usage
 
 API_URL = "https://api.anthropic.com/v1/messages"
 API_VERSION = "2023-06-01"
@@ -18,9 +19,16 @@ API_VERSION = "2023-06-01"
 class AnthropicProvider(LLMProvider):
     name = "anthropic"
 
-    def __init__(self, *, api_key: str, model: str, timeout: float = 60.0) -> None:
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        model: str,
+        timeout: float = 60.0,
+        http_client: httpx.AsyncClient | None = None,
+    ) -> None:
         self.model = model
-        self._client = httpx.AsyncClient(
+        self._client = http_client or httpx.AsyncClient(
             headers={
                 "x-api-key": api_key,
                 "anthropic-version": API_VERSION,
@@ -98,7 +106,7 @@ class AnthropicProvider(LLMProvider):
             tool_calls=calls,
             model=data.get("model", self.model),
             finish_reason=data.get("stop_reason"),
-            usage=data.get("usage") or {},
+            usage=normalize_usage(data.get("usage")),
         )
 
     async def aclose(self) -> None:

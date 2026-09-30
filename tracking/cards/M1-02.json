@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "프로바이더별 usage 정규화",
-      "done": false
+      "done": true
     },
     {
       "text": "에이전트별 집계",
-      "done": false
+      "done": true
     },
     {
       "text": "GET /api/v1/llm/usage",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,10 +30,10 @@
   ],
   "parent_id": "R-4.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "llm/usage.py(normalize_usage, UsageTracker, current_agent), LLMRouter 가 호출마다 기록(성공/실패·지연), GET /api/v1/llm/usage?group_by=provider|model|agent, /api/v1/llm/providers. Gemini usage 정규화는 M1-03 에서 provider 수정 시 반영 필요",
   "outputs": {},
   "log": [
     {
@@ -42,11 +42,60 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:35:19.249624Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:36:25.269683Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "에이전트 귀속은 LLM 인터페이스에 agent 인자를 추가하지 않고 contextvars 로 전달 — asyncio 태스크별로 값이 격리돼 병렬 에이전트에서도 섞이지 않음. 단가는 하드코딩하지 않고 설정 주입(미설정 시 cost=null)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:36:25.711901Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 프로바이더별 usage 정규화",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:36:25.716554Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 에이전트별 집계",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:36:25.722164Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ GET /api/v1/llm/usage",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:36:26.150472Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "llm/usage.py(normalize_usage, UsageTracker, current_agent), LLMRouter 가 호출마다 기록(성공/실패·지연), GET /api/v1/llm/usage?group_by=provider|model|agent, /api/v1/llm/providers. Gemini usage 정규화는 M1-03 에서 provider 수정 시 반영 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:36:26.150515Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 7,
   "created_at": "2026-09-30T10:30:02.877708Z",
-  "updated_at": "2026-09-30T10:30:02.877822Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:36:26.150772Z",
+  "started_at": "2026-09-30T10:35:19.249610Z",
+  "done_at": "2026-09-30T10:36:26.150503Z"
 }

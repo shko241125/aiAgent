@@ -6,12 +6,14 @@
 """
 
 import logging
+import time
 from typing import Any
 
 from aiops.core.config import Settings
 from aiops.core.resilience import CircuitBreaker, retry_async
 from aiops.llm.base import ChatMessage, LLMError, LLMProvider, LLMResponse, ToolSpec
 from aiops.llm.providers.fake import FakeLLMProvider
+from aiops.llm.usage import UsageRecord, UsageTracker, current_agent
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +22,11 @@ class LLMRouter(LLMProvider):
     name = "router"
 
     def __init__(
-        self, providers: dict[str, LLMProvider], default: str, fallbacks: list[str] | None = None
+        self,
+        providers: dict[str, LLMProvider],
+        default: str,
+        fallbacks: list[str] | None = None,
+        usage: UsageTracker | None = None,
     ) -> None:
         if default not in providers:
             raise ValueError(f"default provider '{default}' is not configured")
@@ -28,6 +34,7 @@ class LLMRouter(LLMProvider):
         self.default = default
         self.fallbacks = [f for f in (fallbacks or []) if f in providers and f != default]
         self._breakers = {name: CircuitBreaker() for name in providers}
+        self.usage = usage or UsageTracker()
 
     def get(self, name: str | None = None) -> LLMProvider:
         return self.providers[name or self.default]
@@ -56,14 +63,40 @@ class LLMRouter(LLMProvider):
                     response_format=response_format,
                 )
 
+            started = time.perf_counter()
+            model = getattr(p, "model", name)
             try:
-                return await self._breakers[name].call(
+                resp = await self._breakers[name].call(
                     lambda _call=_call: retry_async(_call, attempts=2)
                 )
             except Exception as exc:  # noqa: BLE001
                 logger.warning("LLM provider '%s' failed: %s", name, exc)
+                self._record(name, model, started, ok=False)
                 last_exc = exc
+                continue
+            self._record(name, resp.model or model, started, ok=True, usage=resp.usage)
+            return resp
         raise LLMError(f"all LLM providers failed: {last_exc}")
+
+    def _record(
+        self,
+        provider: str,
+        model: str,
+        started: float,
+        *,
+        ok: bool,
+        usage: dict[str, int] | None = None,
+    ) -> None:
+        self.usage.record(
+            UsageRecord(
+                provider=provider,
+                model=model,
+                agent=current_agent.get(),
+                ok=ok,
+                latency_ms=(time.perf_counter() - started) * 1000,
+                **(usage or {}),
+            )
+        )
 
     async def aclose(self) -> None:
         for p in self.providers.values():
@@ -111,4 +144,9 @@ def build_llm_router(settings: Settings) -> LLMRouter:
     if default not in providers:
         logger.warning("LLM provider '%s' not available, falling back to 'fake'", default)
         default = "fake"
-    return LLMRouter(providers, default=default, fallbacks=settings.fallback_providers)
+    return LLMRouter(
+        providers,
+        default=default,
+        fallbacks=settings.fallback_providers,
+        usage=UsageTracker(settings.price_table),
+    )

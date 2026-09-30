@@ -19,6 +19,7 @@ from aiops.agents.context import AgentContext
 from aiops.agents.memory.base import ConversationMemory
 from aiops.agents.tools.base import ToolRegistry, ToolResult, ToolRuntime
 from aiops.llm.base import ChatMessage, LLMProvider
+from aiops.llm.usage import current_agent
 from aiops.prompts.registry import PromptRegistry
 
 logger = logging.getLogger(__name__)
@@ -127,6 +128,13 @@ class LLMAgent(BaseAgent):
 
     # ---- 실행 루프 -----------------------------------------------------------
     async def run(self, task: AgentTask, ctx: AgentContext) -> AgentResult:
+        token = current_agent.set(self.name)  # LLM 사용량을 이 에이전트에 귀속 (M1-02)
+        try:
+            return await self._run(task, ctx)
+        finally:
+            current_agent.reset(token)
+
+    async def _run(self, task: AgentTask, ctx: AgentContext) -> AgentResult:
         variables = await self.build_input(task, ctx)
         prompt = self.prompts.render(self.prompt_name, **variables)
         user_prompt = prompt.user
@@ -149,7 +157,7 @@ class LLMAgent(BaseAgent):
         for step in range(1, self.max_steps + 1):
             result.steps = step
             resp = await self.llm.chat(memory.messages(), tools=specs, temperature=self.temperature)
-            ctx.log(self.name, "llm_call", step=step, tool_calls=len(resp.tool_calls))
+            ctx.log(self.name, "llm_call", step=step, tool_calls=len(resp.tool_calls), **resp.usage)
             memory.add(ChatMessage.assistant(resp.content, resp.tool_calls))
 
             if not resp.tool_calls:

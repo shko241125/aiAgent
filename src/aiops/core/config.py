@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     llm_default_provider: str = "fake"
     llm_fallback_providers: str = ""  # 쉼표 구분, 예: "anthropic,local"
     llm_timeout_s: float = 60.0
+    # 비용 추정용 단가(JSON): {"<model>": [USD/1M 입력토큰, USD/1M 출력토큰]} — 계약 단가로 설정
+    llm_prices: str = "{}"
 
     openai_api_key: str | None = None
     openai_base_url: str = "https://api.openai.com/v1"
@@ -47,6 +49,12 @@ class Settings(BaseSettings):
 
     # --- 운영 자동화 안전장치 (2.3) ---
     auto_approve_actions: bool = False
+
+    @property
+    def price_table(self) -> dict[str, tuple[float, float]]:
+        import json
+
+        return {k: (float(v[0]), float(v[1])) for k, v in json.loads(self.llm_prices).items()}
 
     @property
     def fallback_providers(self) -> list[str]:

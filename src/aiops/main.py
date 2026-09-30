@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from aiops import __version__
 from aiops.api.middleware import RequestContextMiddleware
 from aiops.api.routers import agents, analytics, boards, health, incidents, rag
+from aiops.api.routers import llm as llm_api
 from aiops.core.config import Settings, get_settings
 from aiops.core.container import build_platform
 from aiops.core.logging import setup_logging
@@ -35,6 +36,7 @@ def create_app(settings: Settings | None = None, llm: LLMProvider | None = None)
         analytics.router,
         rag.router,
         incidents.router,
+        llm_api.router,
     ):
         app.include_router(r)
     return app

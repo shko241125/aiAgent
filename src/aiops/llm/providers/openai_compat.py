@@ -10,6 +10,7 @@ from typing import Any
 import httpx
 
 from aiops.llm.base import ChatMessage, LLMError, LLMProvider, LLMResponse, Role, ToolCall, ToolSpec
+from aiops.llm.usage import normalize_usage
 
 
 class OpenAICompatProvider(LLMProvider):
@@ -21,11 +22,14 @@ class OpenAICompatProvider(LLMProvider):
         model: str,
         api_key: str | None = None,
         timeout: float = 60.0,
+        http_client: httpx.AsyncClient | None = None,
     ) -> None:
         self.name = name
         self.model = model
         headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
-        self._client = httpx.AsyncClient(base_url=base_url, headers=headers, timeout=timeout)
+        self._client = http_client or httpx.AsyncClient(
+            base_url=base_url, headers=headers, timeout=timeout
+        )
 
     @staticmethod
     def _to_wire(msg: ChatMessage) -> dict[str, Any]:
@@ -92,7 +96,7 @@ class OpenAICompatProvider(LLMProvider):
             tool_calls=tool_calls,
             model=data.get("model", self.model),
             finish_reason=choice.get("finish_reason"),
-            usage=data.get("usage") or {},
+            usage=normalize_usage(data.get("usage")),
         )
 
     async def aclose(self) -> None:
