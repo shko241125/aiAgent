@@ -39,6 +39,18 @@ class LLMRouter(LLMProvider):
     def get(self, name: str | None = None) -> LLMProvider:
         return self.providers[name or self.default]
 
+    def bind(self, provider: str | None) -> LLMProvider:
+        """특정 프로바이더를 기본으로 쓰는 뷰 (에이전트별 모델, M1-03).
+
+        fallback 체인·서킷 브레이커·사용량 집계는 원래 라우터와 공유한다.
+        """
+        if provider is None:
+            return self
+        if provider not in self.providers:
+            logger.warning("provider '%s' 미설정 — 기본(%s) 사용", provider, self.default)
+            return self
+        return BoundLLM(self, provider)
+
     async def chat(
         self,
         messages: list[ChatMessage],
@@ -103,6 +115,17 @@ class LLMRouter(LLMProvider):
             await p.aclose()
 
 
+class BoundLLM(LLMProvider):
+    def __init__(self, router: LLMRouter, provider: str) -> None:
+        self.router = router
+        self.provider = provider
+        self.name = f"router:{provider}"
+
+    async def chat(self, messages, **kwargs) -> LLMResponse:
+        kwargs.setdefault("provider", self.provider)
+        return await self.router.chat(messages, **kwargs)
+
+
 def build_llm_router(settings: Settings) -> LLMRouter:
     """설정에 키가 있는 프로바이더만 등록한다. fake 는 항상 등록."""
     providers: dict[str, LLMProvider] = {"fake": FakeLLMProvider()}
@@ -130,7 +153,12 @@ def build_llm_router(settings: Settings) -> LLMRouter:
         providers["gemini"] = GeminiProvider(
             api_key=settings.gemini_api_key, model=settings.gemini_model, timeout=t
         )
-    if settings.llm_default_provider == "local" or "local" in settings.fallback_providers:
+    wanted = {
+        settings.llm_default_provider,
+        *settings.fallback_providers,
+        *settings.agent_provider_map.values(),
+    }
+    if "local" in wanted:
         from aiops.llm.providers.openai_compat import OpenAICompatProvider
 
         providers["local"] = OpenAICompatProvider(

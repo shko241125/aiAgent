@@ -22,6 +22,9 @@ class ToolCall(BaseModel):
     id: str
     name: str
     arguments: dict[str, Any] = Field(default_factory=dict)
+    extra: dict[str, Any] = Field(
+        default_factory=dict
+    )  # 벤더 고유 메타 (예: Gemini thoughtSignature)
 
 
 class ChatMessage(BaseModel):

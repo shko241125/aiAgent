@@ -27,7 +27,7 @@ from aiops.kanban.board import KanbanBoard
 from aiops.kanban.stores import BoardStore, SqlBoardStore
 from aiops.kanban.tools import build_kanban_tools
 from aiops.llm.base import LLMProvider
-from aiops.llm.router import build_llm_router
+from aiops.llm.router import LLMRouter, build_llm_router
 from aiops.prompts.registry import PromptRegistry
 from aiops.rag.hybrid import HybridRetriever
 from aiops.rag.service import RAGService, build_embedder, build_vector_store
@@ -70,14 +70,19 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
     tools.register(*build_ops_tools(source, rag), *build_kanban_tools())
 
     common = dict(max_steps=settings.agent_max_steps, memory_window=settings.memory_window)
+    agent_map = settings.agent_provider_map
+
+    def llm_for(agent: str) -> LLMProvider:  # 에이전트별 모델 (M1-03)
+        return llm.bind(agent_map.get(agent)) if isinstance(llm, LLMRouter) else llm
+
     agents = AgentRegistry()
     agents.register(
-        DetectionAgent(llm, tools, prompts, source=source, **common),
-        RCAAgent(llm, tools, prompts, **common),
-        RemediationAgent(llm, tools, prompts, **common),
-        IncidentAgent(llm, tools, prompts, **common),
-        ReportAgent(llm, tools, prompts, **common),
-        KnowledgeAgent(llm, tools, prompts, **common),
+        DetectionAgent(llm_for("detection"), tools, prompts, source=source, **common),
+        RCAAgent(llm_for("rca"), tools, prompts, **common),
+        RemediationAgent(llm_for("remediation"), tools, prompts, **common),
+        IncidentAgent(llm_for("incident"), tools, prompts, **common),
+        ReportAgent(llm_for("report"), tools, prompts, **common),
+        KnowledgeAgent(llm_for("knowledge"), tools, prompts, **common),
     )
 
     engine = create_engine(settings.database_url)

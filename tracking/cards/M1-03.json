@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "AIOPS_AGENT_LLM_PROVIDERS 로 에이전트별 모델",
-      "done": false
+      "done": true
     },
     {
       "text": "Gemini functionCall 왕복",
-      "done": false
+      "done": true
     },
     {
       "text": "3사 요청/응답을 MockTransport 로 검증",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,10 +30,10 @@
   ],
   "parent_id": "R-4.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "gemini.py function calling, LLMRouter.bind()/BoundLLM + AIOPS_AGENT_LLM_PROVIDERS, 프로바이더 http_client 주입. 계약 테스트 tests/unit/test_provider_contracts.py. 주의: 실 API 검증은 M1-10 에서(키 필요)",
   "outputs": {},
   "log": [
     {
@@ -42,11 +42,60 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:36:27.610628Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:37:47.835169Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "Gemini 스키마는 OpenAPI 부분집합으로 정리(title/default/additionalProperties 제거, anyOf[X,null]→nullable). thoughtSignature 는 ToolCall.extra 로 보존해 다음 턴에 반환. 실제 Gemini API 로는 검증 못함 — 계약 테스트는 문서 기준 형식",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:37:48.297905Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ AIOPS_AGENT_LLM_PROVIDERS 로 에이전트별 모델",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:37:48.302663Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ Gemini functionCall 왕복",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:37:48.307776Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 3사 요청/응답을 MockTransport 로 검증",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:37:48.724317Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "gemini.py function calling, LLMRouter.bind()/BoundLLM + AIOPS_AGENT_LLM_PROVIDERS, 프로바이더 http_client 주입. 계약 테스트 tests/unit/test_provider_contracts.py. 주의: 실 API 검증은 M1-10 에서(키 필요)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:37:48.724357Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 7,
   "created_at": "2026-09-30T10:30:02.878352Z",
-  "updated_at": "2026-09-30T10:30:02.878445Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:37:48.724579Z",
+  "started_at": "2026-09-30T10:36:27.610612Z",
+  "done_at": "2026-09-30T10:37:48.724346Z"
 }

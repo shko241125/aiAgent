@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     llm_default_provider: str = "fake"
     llm_fallback_providers: str = ""  # 쉼표 구분, 예: "anthropic,local"
     llm_timeout_s: float = 60.0
+    # 에이전트별 프로바이더: "rca=anthropic,detection=local" (미지정 에이전트는 기본값)
+    agent_llm_providers: str = ""
     # 비용 추정용 단가(JSON): {"<model>": [USD/1M 입력토큰, USD/1M 출력토큰]} — 계약 단가로 설정
     llm_prices: str = "{}"
 
@@ -55,6 +57,11 @@ class Settings(BaseSettings):
         import json
 
         return {k: (float(v[0]), float(v[1])) for k, v in json.loads(self.llm_prices).items()}
+
+    @property
+    def agent_provider_map(self) -> dict[str, str]:
+        pairs = (p.split("=", 1) for p in self.agent_llm_providers.split(",") if "=" in p)
+        return {a.strip(): v.strip() for a, v in pairs}
 
     @property
     def fallback_providers(self) -> list[str]:

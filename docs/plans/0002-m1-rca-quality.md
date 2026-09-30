@@ -25,7 +25,7 @@ M0 는 "끝까지 돈다"를 증명했다. M1 은 **"맞는 답을 낸다"를 �
 |---|---|---|---|---|
 | M1-01 | 구조화 출력 스키마 검증 + 1회 재시도 | ✅ done | claude-code | agents/schemas.py(Detection/RCA/Remediation Output), LLMAgent.output_model/output_retries, AgentResult.schema_errors. R… |
 | M1-02 | LLM 사용량(토큰·지연·비용) 집계 + API | ✅ done | claude-code | llm/usage.py(normalize_usage, UsageTracker, current_agent), LLMRouter 가 호출마다 기록(성공/실패·지연), GET /api/v1/llm/usage?group_… |
-| M1-03 | 에이전트별 모델 라우팅 + Gemini tool calling + 프로바이더 계약 테스트 | 🟦 ready | - |  |
+| M1-03 | 에이전트별 모델 라우팅 + Gemini tool calling + 프로바이더 계약 테스트 | ✅ done | claude-code | gemini.py function calling, LLMRouter.bind()/BoundLLM + AIOPS_AGENT_LLM_PROVIDERS, 프로바이더 http_client 주입. 계약 테스트 tests/u… |
 | M1-04 | Reranker (HTTP cross-encoder · LLM listwise) | 🟦 ready | - |  |
 | M1-05 | 증분 인제스트 (content hash · 문서 교체/삭제) | 🟦 ready | - |  |
 | M1-06 | 검색 평가 하네스 + 평가셋 + 운영 지식 확충 | 🟦 ready | - |  |
@@ -34,7 +34,7 @@ M0 는 "끝까지 돈다"를 증명했다. M1 은 **"맞는 답을 낸다"를 �
 | M1-09 | 인용 검증 + 해결 인시던트 지식 자동 축적 | 🟦 ready | - |  |
 | M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | 🟦 ready | - |  |
 
-진행: 2/10
+진행: 3/10
 <!-- /AUTO -->
 
 ## 4. 완료 판정
