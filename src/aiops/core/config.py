@@ -44,6 +44,11 @@ class Settings(BaseSettings):
     vector_backend: Literal["memory", "qdrant"] = "memory"
     qdrant_url: str = "http://localhost:6333"
     knowledge_dir: Path = Path("data/knowledge")
+    # none | http(TEI·Jina 호환 cross-encoder) | llm
+    reranker: Literal["none", "http", "llm"] = "none"
+    reranker_url: str = "http://localhost:8080"
+    reranker_model: str = "BAAI/bge-reranker-v2-m3"
+    reranker_api_style: Literal["tei", "jina"] = "tei"
 
     # --- Agent (1.x) ---
     agent_max_steps: int = 8

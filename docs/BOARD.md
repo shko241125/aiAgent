@@ -3,21 +3,19 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 7 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 0 · ✅ done 8**
+**📥 backlog 0 · 🟦 ready 5 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 0 · ✅ done 10**
 
-## 🟦 ready (7)
+## 🟦 ready (5)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
-| M1-04 | Reranker (HTTP cross-encoder · LLM listwise) | p1 | - | R-4.2 |  |
-| M1-05 | 증분 인제스트 (content hash · 문서 교체/삭제) | p1 | - | R-4.2 |  |
 | M1-06 | 검색 평가 하네스 + 평가셋 + 운영 지식 확충 | p1 | - | R-4.2 |  |
 | M1-07 | 프롬프트 eval 러너 + 시나리오 + RCA few-shot(v2) | p1 | - | R-4.3 |  |
 | M1-08 | RCA 원인 후보 랭킹 엔진 + 장애 시나리오 평가 | p1 | - | R-2.2 |  |
 | M1-09 | 인용 검증 + 해결 인시던트 지식 자동 축적 | p1 | - | R-2.6 |  |
 | M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | p2 | - | R-4.1 |  |
 
-## ✅ done (8)
+## ✅ done (10)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
@@ -29,3 +27,5 @@
 | M1-01 | 구조화 출력 스키마 검증 + 1회 재시도 | p1 | claude-code | R-4.1 | agents/schemas.py(Detection/RCA/Remediation Output), LLMAgent.output_model/output_retries, AgentResult.schema_errors. R… |
 | M1-02 | LLM 사용량(토큰·지연·비용) 집계 + API | p1 | claude-code | R-4.1 | llm/usage.py(normalize_usage, UsageTracker, current_agent), LLMRouter 가 호출마다 기록(성공/실패·지연), GET /api/v1/llm/usage?group_… |
 | M1-03 | 에이전트별 모델 라우팅 + Gemini tool calling + 프로바이더 계약 테스트 | p1 | claude-code | R-4.1 | gemini.py function calling, LLMRouter.bind()/BoundLLM + AIOPS_AGENT_LLM_PROVIDERS, 프로바이더 http_client 주입. 계약 테스트 tests/u… |
+| M1-04 | Reranker (HTTP cross-encoder · LLM listwise) | p1 | claude-code | R-4.2 | rag/rerankers.py: HTTPReranker(tei:/rerank, jina:/v1/rerank), LLMReranker(listwise JSON 점수). AIOPS_RERANKER=none\|http\… |
+| M1-05 | 증분 인제스트 (content hash · 문서 교체/삭제) | p1 | claude-code | R-4.2 | RAGService.ingest → IngestReport(added/updated/skipped). sha256(text+metadata) 비교, 변경 시 delete_doc(BM25.remove_doc + Ve… |

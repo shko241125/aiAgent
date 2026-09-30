@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "TEI/Jina 호환 /rerank 클라이언트",
-      "done": false
+      "done": true
     },
     {
       "text": "LLM 기반 재정렬",
-      "done": false
+      "done": true
     },
     {
       "text": "설정으로 선택",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,10 +30,10 @@
   ],
   "parent_id": "R-4.2",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "rag/rerankers.py: HTTPReranker(tei:/rerank, jina:/v1/rerank), LLMReranker(listwise JSON 점수). AIOPS_RERANKER=none|http|llm. 효과 측정은 M1-06 eval 스크립트의 --rerank 로(실 서빙 필요)",
   "outputs": {},
   "log": [
     {
@@ -42,11 +42,60 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:38:32.908157Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:16.723661Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ TEI/Jina 호환 /rerank 클라이언트",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:16.727705Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ LLM 기반 재정렬",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:16.732403Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 설정으로 선택",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:17.165282Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "재정렬 실패(HTTP 오류·파싱 실패)는 예외 대신 1차 순서 유지 — 품질 개선 수단이 가용성 위험이 되지 않게",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:17.618457Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "rag/rerankers.py: HTTPReranker(tei:/rerank, jina:/v1/rerank), LLMReranker(listwise JSON 점수). AIOPS_RERANKER=none|http|llm. 효과 측정은 M1-06 eval 스크립트의 --rerank 로(실 서빙 필요)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:17.618495Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 7,
   "created_at": "2026-09-30T10:30:02.878942Z",
-  "updated_at": "2026-09-30T10:30:02.879023Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:39:17.618716Z",
+  "started_at": "2026-09-30T10:38:32.908144Z",
+  "done_at": "2026-09-30T10:39:17.618485Z"
 }

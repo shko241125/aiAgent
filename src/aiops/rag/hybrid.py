@@ -55,6 +55,10 @@ class HybridRetriever:
         await self.vector_store.upsert(chunks, vectors)
         self.bm25.add(chunks)
 
+    async def delete_doc(self, doc_id: str) -> None:
+        await self.vector_store.delete_doc(doc_id)
+        self.bm25.remove_doc(doc_id)
+
     async def retrieve(
         self, query: str, k: int = 5, candidates: int = 20, filters: dict[str, Any] | None = None
     ) -> list[ScoredChunk]:

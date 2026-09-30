@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "변경 없는 문서 skip",
-      "done": false
+      "done": true
     },
     {
       "text": "변경 문서 청크 교체(BM25+Vector)",
-      "done": false
+      "done": true
     },
     {
       "text": "삭제 지원",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,10 +30,10 @@
   ],
   "parent_id": "R-4.2",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "RAGService.ingest → IngestReport(added/updated/skipped). sha256(text+metadata) 비교, 변경 시 delete_doc(BM25.remove_doc + VectorStore.delete_doc) 후 재색인. API: POST /rag/ingest, GET /rag/documents, DELETE /rag/documents/{id}. 주의: 해시는 메모리 보관 → 재시작 시 전체 재색인(M1-09 에서 DB 지식 영속화와 함께 검토)",
   "outputs": {},
   "log": [
     {
@@ -42,11 +42,53 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:38:33.339964Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:18.064789Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 변경 없는 문서 skip",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:18.071739Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 변경 문서 청크 교체(BM25+Vector)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:18.076923Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 삭제 지원",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:18.507883Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "RAGService.ingest → IngestReport(added/updated/skipped). sha256(text+metadata) 비교, 변경 시 delete_doc(BM25.remove_doc + VectorStore.delete_doc) 후 재색인. API: POST /rag/ingest, GET /rag/documents, DELETE /rag/documents/{id}. 주의: 해시는 메모리 보관 → 재시작 시 전체 재색인(M1-09 에서 DB 지식 영속화와 함께 검토)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:39:18.507921Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 6,
   "created_at": "2026-09-30T10:30:02.879489Z",
-  "updated_at": "2026-09-30T10:30:02.879566Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:39:18.508177Z",
+  "started_at": "2026-09-30T10:38:33.339943Z",
+  "done_at": "2026-09-30T10:39:18.507910Z"
 }

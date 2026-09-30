@@ -30,7 +30,7 @@ from aiops.llm.base import LLMProvider
 from aiops.llm.router import LLMRouter, build_llm_router
 from aiops.prompts.registry import PromptRegistry
 from aiops.rag.hybrid import HybridRetriever
-from aiops.rag.service import RAGService, build_embedder, build_vector_store
+from aiops.rag.service import RAGService, build_embedder, build_reranker, build_vector_store
 
 
 @dataclass
@@ -62,7 +62,11 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
     prompts = PromptRegistry()
     source = SimulatedOpsSource()  # TODO: settings 에 따라 Prometheus/Loki 어댑터로 교체
 
-    retriever = HybridRetriever(build_embedder(settings), build_vector_store(settings))
+    retriever = HybridRetriever(
+        build_embedder(settings),
+        build_vector_store(settings),
+        reranker=build_reranker(settings, llm),
+    )
     rag = RAGService(retriever, llm, prompts)
     await rag.ingest_directory(settings.knowledge_dir)
 

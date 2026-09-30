@@ -46,6 +46,19 @@ class QdrantVectorStore(VectorStore):
         ]
         await self._client.upsert(self.collection, points=points)
 
+    async def delete_doc(self, doc_id: str) -> None:
+        from qdrant_client.models import FieldCondition, Filter, FilterSelector, MatchValue
+
+        await self._ensure_collection()
+        await self._client.delete(
+            self.collection,
+            points_selector=FilterSelector(
+                filter=Filter(
+                    must=[FieldCondition(key="chunk.doc_id", match=MatchValue(value=doc_id))]
+                )
+            ),
+        )
+
     async def search(
         self, vector: list[float], k: int = 10, filters: dict[str, Any] | None = None
     ) -> list[ScoredChunk]:

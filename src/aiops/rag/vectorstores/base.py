@@ -17,6 +17,9 @@ class VectorStore(ABC):
         self, vector: list[float], k: int = 10, filters: dict[str, Any] | None = None
     ) -> list[ScoredChunk]: ...
 
+    @abstractmethod
+    async def delete_doc(self, doc_id: str) -> None: ...
+
 
 class InMemoryVectorStore(VectorStore):
     """numpy 코사인 유사도 전수 탐색 (brute force). 수만 건 이하 개발용."""
@@ -38,6 +41,11 @@ class InMemoryVectorStore(VectorStore):
                 self._chunks.append(c)
                 rows.append(vec)
         self._matrix = np.vstack(rows) if rows else None
+
+    async def delete_doc(self, doc_id: str) -> None:
+        keep = [i for i, c in enumerate(self._chunks) if c.doc_id != doc_id]
+        self._chunks = [self._chunks[i] for i in keep]
+        self._matrix = self._matrix[keep] if self._matrix is not None and keep else None
 
     async def search(
         self, vector: list[float], k: int = 10, filters: dict[str, Any] | None = None

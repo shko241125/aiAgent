@@ -32,6 +32,20 @@ class BM25Index:
             self._lens.append(len(tokens))
             self._df.update(tf.keys())
 
+    def remove_doc(self, doc_id: str) -> int:
+        """문서의 모든 청크 제거 (M1-05 증분 인제스트). 제거한 청크 수 반환."""
+        keep = [i for i, c in enumerate(self._chunks) if c.doc_id != doc_id]
+        removed = len(self._chunks) - len(keep)
+        if removed:
+            for i, c in enumerate(self._chunks):
+                if c.doc_id == doc_id:
+                    self._df.subtract(self._tfs[i].keys())
+            self._df = +self._df  # 0 이하 항목 제거
+            self._chunks = [self._chunks[i] for i in keep]
+            self._tfs = [self._tfs[i] for i in keep]
+            self._lens = [self._lens[i] for i in keep]
+        return removed
+
     def _idf(self, term: str) -> float:
         n, df = len(self._chunks), self._df.get(term, 0)
         return math.log(1 + (n - df + 0.5) / (df + 0.5))

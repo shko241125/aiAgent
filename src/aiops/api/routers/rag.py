@@ -2,11 +2,12 @@
 
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from aiops.api.deps import PlatformDep
 from aiops.rag.models import Document
+from aiops.rag.service import IngestReport
 
 router = APIRouter(prefix="/api/v1/rag", tags=["rag"])
 
@@ -21,9 +22,21 @@ class SearchRequest(BaseModel):
     filters: dict[str, Any] | None = None
 
 
-@router.post("/ingest")
-async def ingest(req: IngestRequest, p: PlatformDep) -> dict:
-    return {"chunks": await p.rag.ingest(req.documents)}
+@router.post("/ingest", response_model=IngestReport)
+async def ingest(req: IngestRequest, p: PlatformDep) -> IngestReport:
+    """증분 인제스트: 같은 id·같은 내용은 skip, 내용이 바뀌면 교체."""
+    return await p.rag.ingest(req.documents)
+
+
+@router.get("/documents")
+async def documents(p: PlatformDep) -> list[str]:
+    return p.rag.documents()
+
+
+@router.delete("/documents/{doc_id}", status_code=204)
+async def delete_document(doc_id: str, p: PlatformDep) -> None:
+    if not await p.rag.delete(doc_id):
+        raise HTTPException(404, f"document not found: {doc_id}")
 
 
 @router.post("/search")
