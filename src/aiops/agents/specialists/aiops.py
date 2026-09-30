@@ -11,6 +11,7 @@ from typing import Any
 from aiops.agents.base import AgentResult, AgentTask, LLMAgent
 from aiops.agents.context import AgentContext
 from aiops.agents.memory.base import MemoryItem
+from aiops.agents.schemas import DetectionOutput, RCAOutput, RemediationOutput
 from aiops.analytics.anomaly.ensemble import default_detector
 from aiops.analytics.insights import summarize_series
 from aiops.analytics.situation import SignalSet, assess
@@ -30,6 +31,7 @@ class DetectionAgent(LLMAgent):
     name = "detection"
     description = "알람과 메트릭을 분석해 실제 장애 여부·심각도·영향 범위를 판단한다"
     prompt_name = "detection"
+    output_model = DetectionOutput
     tool_names = ["query_metrics", "search_logs", "get_service_dependencies"]
 
     def __init__(self, *args: Any, source: SimulatedOpsSource, **kwargs: Any) -> None:
@@ -74,6 +76,7 @@ class RCAAgent(LLMAgent):
     name = "rca"
     description = "탐지 결과·로그·변경이력·의존성·지식베이스로 근본 원인을 추론한다"
     prompt_name = "rca"
+    output_model = RCAOutput
     tool_names = [
         "query_metrics",
         "search_logs",
@@ -103,6 +106,7 @@ class RemediationAgent(LLMAgent):
     name = "remediation"
     description = "RCA 결과로 복구 조치를 계획하고, 승인 정책에 따라 자동 실행한다"
     prompt_name = "remediation"
+    output_model = RemediationOutput
     tool_names = [
         "restart_service",
         "scale_service",

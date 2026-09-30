@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "LLMAgent.output_model 로 pydantic 검증",
-      "done": false
+      "done": true
     },
     {
       "text": "위반 시 오류를 알려주고 재요청",
-      "done": false
+      "done": true
     },
     {
       "text": "특화 Agent 3종 스키마 적용",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,10 +30,10 @@
   ],
   "parent_id": "R-4.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "agents/schemas.py(Detection/RCA/Remediation Output), LLMAgent.output_model/output_retries, AgentResult.schema_errors. RCAOutput 에 service 필드 추가(원인 서비스≠증상 서비스). 테스트: tests/unit/test_structured_output.py",
   "outputs": {},
   "log": [
     {
@@ -42,11 +42,60 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:34:32.699998Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:35:16.979127Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "스키마 위반 시 오류 목록+JSON Schema 를 user 메시지로 돌려주고 1회만 재요청. 재시도 후에도 실패하면 success 는 유지하되 schema_errors 로 노출(다음 단계가 판단)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:35:17.433597Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ LLMAgent.output_model 로 pydantic 검증",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:35:17.437487Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 위반 시 오류를 알려주고 재요청",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:35:17.442510Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 특화 Agent 3종 스키마 적용",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:35:17.868670Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "agents/schemas.py(Detection/RCA/Remediation Output), LLMAgent.output_model/output_retries, AgentResult.schema_errors. RCAOutput 에 service 필드 추가(원인 서비스≠증상 서비스). 테스트: tests/unit/test_structured_output.py",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:35:17.868719Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 7,
   "created_at": "2026-09-30T10:30:02.877091Z",
-  "updated_at": "2026-09-30T10:30:02.877194Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:35:17.869053Z",
+  "started_at": "2026-09-30T10:34:32.699982Z",
+  "done_at": "2026-09-30T10:35:17.868706Z"
 }
