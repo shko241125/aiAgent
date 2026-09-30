@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "시나리오 JSON → 체크(JSON/스키마/키워드/인용)",
-      "done": false
+      "done": true
     },
     {
       "text": "CI 는 scripted LLM 으로 회귀",
-      "done": false
+      "done": true
     },
     {
       "text": "실 LLM 실행 스크립트",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,10 +30,10 @@
   ],
   "parent_id": "R-4.3",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "evals/prompts.py(PromptScenario·Check 7종·RecordingLLM·run_suite, 결과에 prompt 이름/버전), data/eval/prompt_scenarios.json(6: detection 2·rca 3·knowledge 1), scripts/run_evals.py [--live --out], CI 에 scripted eval 3종 추가, make eval. rca.md v2 few-shot 은 M1-08 에서 반영. 실 모델 결과는 M1-10",
   "outputs": {},
   "log": [
     {
@@ -42,11 +42,60 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:10.111431Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:48:22.519604Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "scripted 모드는 모델 품질이 아니라 '배관'(프롬프트 렌더링·컨텍스트 주입·파싱·스키마)을 검사한다고 명시. prompt_contains 체크로 RCA 후보·runbook id 가 실제 프롬프트에 들어갔는지 확인 — 컨텍스트 주입 회귀를 잡는 핵심 체크",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:48:22.940330Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 시나리오 JSON → 체크(JSON/스키마/키워드/인용)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:48:22.945728Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ CI 는 scripted LLM 으로 회귀",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:48:22.950221Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 실 LLM 실행 스크립트",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:48:23.395281Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "evals/prompts.py(PromptScenario·Check 7종·RecordingLLM·run_suite, 결과에 prompt 이름/버전), data/eval/prompt_scenarios.json(6: detection 2·rca 3·knowledge 1), scripts/run_evals.py [--live --out], CI 에 scripted eval 3종 추가, make eval. rca.md v2 few-shot 은 M1-08 에서 반영. 실 모델 결과는 M1-10",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:48:23.395398Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 7,
   "created_at": "2026-09-30T10:30:02.880729Z",
-  "updated_at": "2026-09-30T10:30:02.880821Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:48:23.395725Z",
+  "started_at": "2026-09-30T10:46:10.111416Z",
+  "done_at": "2026-09-30T10:48:23.395321Z"
 }

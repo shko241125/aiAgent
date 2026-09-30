@@ -1,0 +1,42 @@
+[
+  {"id": "detection-deploy-pool", "agent": "detection", "fault_scenario": "deploy-pool",
+   "inputs": {"alert": {"service": "order-service", "title": "p95 latency > 2s", "severity": "major"}},
+   "scripted": ["latency·error_rate 동반 급증, 배포 직후. {\"is_incident\": true, \"severity\": \"major\", \"affected_services\": [\"order-service\"], \"summary\": \"주문 API 지연·에러 급증\"}"],
+   "checks": [{"type": "schema_valid"},
+              {"type": "field_equals", "field": "is_incident", "value": true},
+              {"type": "field_in", "field": "severity", "values": ["major", "critical"]},
+              {"type": "prompt_contains", "values": ["latency_p95_ms", "상황 인식 결과"]}]},
+
+  {"id": "detection-calm", "agent": "detection",
+   "inputs": {"alert": {"service": "user-service", "title": "cpu blip", "severity": "warning"}},
+   "scripted": ["지표 정상 범위. {\"is_incident\": false, \"severity\": \"info\", \"affected_services\": [], \"summary\": \"일시적 변동\"}"],
+   "checks": [{"type": "schema_valid"}, {"type": "field_equals", "field": "is_incident", "value": false}]},
+
+  {"id": "rca-deploy-pool", "agent": "rca", "fault_scenario": "deploy-pool",
+   "blackboard": {"service": "order-service"},
+   "scripted": ["배포 20분 후 HikariPool 에러 시작 → 배포 변경분의 커넥션 누수. [runbook-db-connection-pool]\n{\"root_cause\": \"v2.3.1 배포 이후 DB 커넥션 풀 고갈\", \"service\": \"order-service\", \"confidence\": 0.8, \"evidence\": [\"HikariPool timeout\"], \"hypotheses\": []}"],
+   "checks": [{"type": "schema_valid"},
+              {"type": "field_equals", "field": "service", "value": "order-service"},
+              {"type": "contains", "values": ["커넥션"]},
+              {"type": "prompt_contains", "values": ["order-service/change", "runbook-db-connection-pool"]}]},
+
+  {"id": "rca-payment-cert", "agent": "rca", "fault_scenario": "payment-cert",
+   "blackboard": {"service": "order-service"},
+   "scripted": ["증상은 order-service, 원인은 먼저 실패한 payment-service 의 인증서 만료. [runbook-tls-certificate-expiry]\n{\"root_cause\": \"결제 mTLS 인증서 만료\", \"service\": \"payment-service\", \"confidence\": 0.85, \"evidence\": [\"x509 로그\"], \"hypotheses\": []}"],
+   "checks": [{"type": "schema_valid"},
+              {"type": "field_equals", "field": "service", "value": "payment-service"},
+              {"type": "contains", "values": ["인증서"]},
+              {"type": "prompt_contains", "values": ["payment-service/error_signature"]}]},
+
+  {"id": "rca-db-lock", "agent": "rca", "fault_scenario": "db-lock-downstream",
+   "blackboard": {"service": "order-service"},
+   "scripted": ["order-db 지연이 먼저 시작, 앱 로그에 Lock wait timeout. [runbook-db-slow-query-lock]\n{\"root_cause\": \"order-db 락 경합\", \"service\": \"order-db\", \"confidence\": 0.7, \"evidence\": [\"Lock wait timeout\"], \"hypotheses\": []}"],
+   "checks": [{"type": "schema_valid"},
+              {"type": "field_in", "field": "service", "values": ["order-db", "order-service"]},
+              {"type": "contains", "values": ["락"]}]},
+
+  {"id": "knowledge-cert", "agent": "knowledge", "instruction": "TLS 인증서 만료 장애는 어떻게 대응하나?",
+   "scripted": [{"tool_calls": [{"id": "k1", "name": "search_knowledge", "arguments": {"query": "인증서 만료 대응"}}]},
+                "인증서를 갱신하고 게이트웨이를 재로드합니다 [runbook-tls-certificate-expiry]. 수동 발급 인증서도 만료 모니터링에 포함해야 합니다 [postmortem-2026-06-payment-cert]."],
+   "checks": [{"type": "cites", "value": 1}, {"type": "contains", "values": ["갱신"]}]}
+]

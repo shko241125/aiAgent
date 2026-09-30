@@ -1,4 +1,4 @@
-.PHONY: install dev test lint format run demo docker-up docker-down docs docs-check board hooks check
+.PHONY: install dev test lint format run demo docker-up docker-down docs docs-check board hooks check eval
 
 install:
 	uv venv .venv -p 3.11 && uv pip install -p .venv -e ".[dev]"
@@ -42,3 +42,9 @@ hooks:
 	git config core.hooksPath .githooks
 
 check: lint test docs-check
+
+# ---- 평가 (M1) ----
+eval:
+	.venv/bin/python scripts/eval_retrieval.py
+	.venv/bin/python scripts/eval_rca.py --seeds 10
+	.venv/bin/python scripts/run_evals.py
