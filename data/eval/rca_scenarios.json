@@ -1,0 +1,51 @@
+[
+  {"id": "deploy-pool", "description": "배포 직후 커넥션 누수로 풀 고갈", "alert_service": "order-service",
+   "changes": [{"service": "order-service", "minutes_ago": 20, "message": "v2.3.1 배포"}],
+   "faults": [{"service": "order-service", "metric": "latency_p95_ms", "magnitude": 4, "onset_min_ago": 15},
+              {"service": "order-service", "metric": "error_rate", "magnitude": 10, "onset_min_ago": 14}],
+   "logs": {"order-service": ["HikariPool-1 - Connection is not available, request timed out after 30000ms"]},
+   "accept": [{"service": "order-service", "kinds": ["change", "error_signature"]}]},
+
+  {"id": "db-lock-downstream", "description": "order-db 락 경합이 order-service 지연으로 전파", "alert_service": "order-service",
+   "faults": [{"service": "order-db", "metric": "latency_p95_ms", "magnitude": 5, "onset_min_ago": 20},
+              {"service": "order-service", "metric": "latency_p95_ms", "magnitude": 3, "onset_min_ago": 17}],
+   "logs": {"order-service": ["SQLException: Lock wait timeout exceeded; try restarting transaction"]},
+   "accept": [{"service": "order-db", "kinds": ["dependency"]}, {"service": "order-service", "kinds": ["error_signature"]}]},
+
+  {"id": "user-oom", "description": "캐시 무제한 증가로 OOM (무관한 배포가 섞여 있음)", "alert_service": "user-service",
+   "changes": [{"service": "order-service", "minutes_ago": 30, "message": "v2.4.0 배포"}],
+   "faults": [{"service": "user-service", "metric": "memory_usage", "magnitude": 1.7, "onset_min_ago": 40},
+              {"service": "user-service", "metric": "latency_p95_ms", "magnitude": 2.5, "onset_min_ago": 10}],
+   "logs": {"user-service": ["Last state: Terminated, Reason: OOMKilled, Exit Code: 137"]},
+   "accept": [{"service": "user-service", "kinds": ["error_signature", "resource"]}]},
+
+  {"id": "payment-cert", "description": "결제 mTLS 인증서 만료가 주문 실패로 전파", "alert_service": "order-service",
+   "changes": [{"service": "user-service", "minutes_ago": 10, "message": "v1.9.2 배포"}],
+   "faults": [{"service": "payment-service", "metric": "error_rate", "magnitude": 50, "onset_min_ago": 12},
+              {"service": "order-service", "metric": "error_rate", "magnitude": 8, "onset_min_ago": 11}],
+   "logs": {"payment-service": ["x509: certificate has expired or is not yet valid"]},
+   "accept": [{"service": "payment-service", "kinds": ["error_signature", "dependency"]}]},
+
+  {"id": "db-disk-full", "description": "order-db 디스크 가득 참", "alert_service": "order-service",
+   "faults": [{"service": "order-db", "metric": "error_rate", "magnitude": 20, "onset_min_ago": 8},
+              {"service": "order-service", "metric": "error_rate", "magnitude": 5, "onset_min_ago": 7}],
+   "logs": {"order-db": ["could not write to file: No space left on device"]},
+   "accept": [{"service": "order-db", "kinds": ["error_signature", "dependency"]}]},
+
+  {"id": "gateway-config", "description": "게이트웨이 rate-limit 설정 변경으로 429/5xx", "alert_service": "api-gateway",
+   "changes": [{"service": "api-gateway", "minutes_ago": 12, "type": "config", "message": "rate-limit 정책 변경"}],
+   "faults": [{"service": "api-gateway", "metric": "error_rate", "magnitude": 15, "onset_min_ago": 10}],
+   "accept": [{"service": "api-gateway", "kinds": ["change"]}]},
+
+  {"id": "gateway-traffic-cpu", "description": "트래픽 급증으로 게이트웨이 CPU 포화", "alert_service": "api-gateway",
+   "faults": [{"service": "api-gateway", "metric": "cpu_usage", "magnitude": 2.5, "onset_min_ago": 25},
+              {"service": "api-gateway", "metric": "latency_p95_ms", "magnitude": 2, "onset_min_ago": 20}],
+   "accept": [{"service": "api-gateway", "kinds": ["resource"]}]},
+
+  {"id": "payment-redis", "description": "결제 서비스의 Redis 지연 (범위 밖 서비스 배포는 방해 요소)", "alert_service": "order-service",
+   "changes": [{"service": "user-service", "minutes_ago": 15, "message": "v1.9.3 배포"}],
+   "faults": [{"service": "payment-service", "metric": "latency_p95_ms", "magnitude": 4, "onset_min_ago": 18},
+              {"service": "order-service", "metric": "latency_p95_ms", "magnitude": 3, "onset_min_ago": 16}],
+   "logs": {"payment-service": ["io.lettuce.core.RedisCommandTimeoutException: Command timed out after 1 second(s)"]},
+   "accept": [{"service": "payment-service", "kinds": ["dependency", "error_signature"]}]}
+]

@@ -30,11 +30,11 @@ M0 는 "끝까지 돈다"를 증명했다. M1 은 **"맞는 답을 낸다"를 �
 | M1-05 | 증분 인제스트 (content hash · 문서 교체/삭제) | ✅ done | claude-code | RAGService.ingest → IngestReport(added/updated/skipped). sha256(text+metadata) 비교, 변경 시 delete_doc(BM25.remove_doc + Ve… |
 | M1-06 | 검색 평가 하네스 + 평가셋 + 운영 지식 확충 | ✅ done | claude-code | rag/evaluation.py(Recall@k·MRR·nDCG·유형별), data/eval/retrieval.jsonl(30), scripts/eval_retrieval.py(bm25/vector/hybrid/+… |
 | M1-07 | 프롬프트 eval 러너 + 시나리오 + RCA few-shot(v2) | 🟦 ready | - |  |
-| M1-08 | RCA 원인 후보 랭킹 엔진 + 장애 시나리오 평가 | 🟦 ready | - |  |
+| M1-08 | RCA 원인 후보 랭킹 엔진 + 장애 시나리오 평가 | ✅ done | claude-code | analytics/rca.py(RCAAnalyzer: downstream depth3 근거 수집, rank_candidates: change/error_signature/dependency/resource, 시그니… |
 | M1-09 | 인용 검증 + 해결 인시던트 지식 자동 축적 | 🟦 ready | - |  |
 | M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | 🟦 ready | - |  |
 
-진행: 6/10
+진행: 7/10
 <!-- /AUTO -->
 
 ## 4. 완료 판정

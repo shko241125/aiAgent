@@ -14,6 +14,7 @@ from aiops.agents.memory.base import MemoryItem
 from aiops.agents.schemas import DetectionOutput, RCAOutput, RemediationOutput
 from aiops.analytics.anomaly.ensemble import default_detector
 from aiops.analytics.insights import summarize_series
+from aiops.analytics.rca import RCAAnalyzer
 from aiops.analytics.situation import SignalSet, assess
 from aiops.domain.models import utcnow
 from aiops.integrations.simulated import SimulatedOpsSource
@@ -78,12 +79,17 @@ class RCAAgent(LLMAgent):
     prompt_name = "rca"
     output_model = RCAOutput
     tool_names = [
+        "rank_root_causes",
         "query_metrics",
         "search_logs",
         "get_recent_changes",
         "get_service_dependencies",
         "search_knowledge",
     ]
+
+    def __init__(self, *args: Any, source: SimulatedOpsSource | None = None, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self.analyzer = RCAAnalyzer(source) if source is not None else None
 
     async def build_input(self, task: AgentTask, ctx: AgentContext) -> dict[str, Any]:
         detection = {
@@ -97,7 +103,26 @@ class RCAAgent(LLMAgent):
             items = await ctx.long_term.search(f"service:{service}", task.instruction, k=3)
             similar = [i.content for i in items]
         detection["similar_past_incidents"] = similar
-        return {"detection": _dump(detection), "service": service, "input": task.instruction}
+        candidates = "(분석 엔진 미연결)"
+        if self.analyzer is not None:  # M1-08: 코드가 먼저 근거 있는 후보를 뽑는다
+            ranked = await self.analyzer.analyze(service)
+            ctx.blackboard.write(
+                "rca.candidates", [c.model_dump() for c in ranked], author=self.name
+            )
+            candidates = (
+                "\n".join(
+                    f'{i}) {c.service}/{c.kind} {c.score:.2f} "{c.cause}" 근거={c.evidence}'
+                    + (f" runbook=[{c.runbook}]" if c.runbook else "")
+                    for i, c in enumerate(ranked, 1)
+                )
+                or "(후보 없음 — 도구로 근거를 직접 수집하십시오)"
+            )
+        return {
+            "detection": _dump(detection),
+            "service": service,
+            "candidates": candidates,
+            "input": task.instruction,
+        }
 
 
 class RemediationAgent(LLMAgent):

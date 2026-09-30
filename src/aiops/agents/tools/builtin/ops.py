@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from aiops.agents.tools.base import Tool, ToolRisk, tool
 from aiops.analytics.anomaly.ensemble import default_detector
 from aiops.analytics.insights import summarize_series
+from aiops.analytics.rca import RCAAnalyzer
 from aiops.domain.models import utcnow
 from aiops.integrations.simulated import SimulatedOpsSource
 
@@ -41,6 +42,11 @@ def build_ops_tools(source: SimulatedOpsSource, rag: "RAGService | None" = None)
         end = utcnow()
         events = await source.list_events(end - timedelta(minutes=minutes), end, service)
         return [e.model_dump(mode="json") for e in events]
+
+    @tool(tags={"rca"})
+    async def rank_root_causes(service: str, top_k: int = 5) -> list[dict]:
+        """서비스 장애의 원인 후보를 근거와 함께 점수순으로 반환한다 (변경·로그·의존성·자원)."""
+        return [c.model_dump() for c in await RCAAnalyzer(source).analyze(service, top_k)]
 
     @tool(tags={"topology"})
     async def get_service_dependencies(service: str) -> dict:
@@ -80,6 +86,7 @@ def build_ops_tools(source: SimulatedOpsSource, rag: "RAGService | None" = None)
 
     tools = [
         query_metrics,
+        rank_root_causes,
         search_logs,
         get_recent_changes,
         get_service_dependencies,

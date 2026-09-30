@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "변경·온셋 순서·토폴로지·로그 시그니처 점수화",
-      "done": false
+      "done": true
     },
     {
       "text": "RCA 프롬프트/도구에 후보 주입",
-      "done": false
+      "done": true
     },
     {
       "text": "시나리오 Top-1/Top-3 적중률 측정",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,11 +30,13 @@
   ],
   "parent_id": "R-2.2",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "analytics/rca.py(RCAAnalyzer: downstream depth3 근거 수집, rank_candidates: change/error_signature/dependency/resource, 시그니처 8종↔runbook), evals/rca.py + data/eval/rca_scenarios.json(8), scripts/eval_rca.py --seeds N. RCAAgent 가 후보를 프롬프트()에 주입, 도구 rank_root_causes, rca.md v2(few-shot, service 필드). 시뮬레이터에 FaultScenario 추가(시드 재현)",
+  "outputs": {
+    "baseline": "결정적 랭킹, 시나리오 8개 × 노이즈 시드 50: Top-1 1.000 / Top-3 1.000 (최저값도 동일)"
+  },
   "log": [
     {
       "ts": "2026-09-30T10:30:02.881423Z",
@@ -42,11 +44,74 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:41:56.875174Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:04.640984Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.baseline 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:05.071504Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "시드별 검증에서 창 앞부분 계절성 노이즈가 건강한 서비스의 '가짜 이상'을 만들어 Top-1 이 0.25 까지 떨어짐 → '현재 진행 중인 이상'만 인정(연속 3점 시작 + 끝까지 밀도 0.6 + 마지막 3점 내 이상)으로 해결. 원칙: 알람 시점의 장애는 ongoing",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:05.485131Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "한계: 시나리오를 휴리스틱과 같은 사람이 작성 → 과적합 위험. 1.0 은 '실제 정확도'가 아니라 회귀 기준선으로만 해석할 것. 실 장애 이력으로 재검증 필요(M2 실데이터 연동)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:05.917138Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 변경·온셋 순서·토폴로지·로그 시그니처 점수화",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:05.922304Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ RCA 프롬프트/도구에 후보 주입",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:05.926402Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 시나리오 Top-1/Top-3 적중률 측정",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:06.349797Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "analytics/rca.py(RCAAnalyzer: downstream depth3 근거 수집, rank_candidates: change/error_signature/dependency/resource, 시그니처 8종↔runbook), evals/rca.py + data/eval/rca_scenarios.json(8), scripts/eval_rca.py --seeds N. RCAAgent 가 후보를 프롬프트()에 주입, 도구 rank_root_causes, rca.md v2(few-shot, service 필드). 시뮬레이터에 FaultScenario 추가(시드 재현)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:46:06.349837Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 9,
   "created_at": "2026-09-30T10:30:02.881403Z",
-  "updated_at": "2026-09-30T10:30:02.881509Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:46:06.350121Z",
+  "started_at": "2026-09-30T10:41:56.875155Z",
+  "done_at": "2026-09-30T10:46:06.349826Z"
 }

@@ -82,7 +82,7 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
     agents = AgentRegistry()
     agents.register(
         DetectionAgent(llm_for("detection"), tools, prompts, source=source, **common),
-        RCAAgent(llm_for("rca"), tools, prompts, **common),
+        RCAAgent(llm_for("rca"), tools, prompts, source=source, **common),
         RemediationAgent(llm_for("remediation"), tools, prompts, **common),
         IncidentAgent(llm_for("incident"), tools, prompts, **common),
         ReportAgent(llm_for("report"), tools, prompts, **common),
