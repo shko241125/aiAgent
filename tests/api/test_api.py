@@ -77,3 +77,40 @@ def test_supervisor_routes_then_finishes(client, llm):
     )
     body = client.post("/api/v1/orchestrations/supervised", json={"goal": "커넥션 풀 대응"}).json()
     assert [r["agent"] for r in body["results"]] == ["knowledge"]
+
+
+def test_resolve_incident_accumulates_knowledge_and_survives_restart(settings, llm):
+    """M1-09: 해결된 인시던트가 지식이 되고, 재시작 후에도 검색된다."""
+    with TestClient(create_app(settings, llm=llm)) as c:
+        inc = c.post(
+            "/api/v1/incidents",
+            json={
+                "title": "정산 배치 지연",
+                "service": "settlement-batch",
+                "severity": "major",
+                "summary": "정산 배치가 3시간 지연",
+            },
+        ).json()
+        res = c.post(
+            f"/api/v1/incidents/{inc['id']}/resolve",
+            json={
+                "resolution": "파티션 프루닝 누락 쿼리를 수정하고 재실행",
+                "root_cause": "월말 파티션 프루닝 누락으로 전체 테이블 스캔",
+                "actions": ["쿼리 수정", "배치 재실행"],
+            },
+        ).json()
+        assert res["incident"]["status"] == "resolved"
+        assert res["ingest"]["added"] == [res["knowledge_doc_id"]]
+        hits = c.post("/api/v1/rag/search", json={"query": "파티션 프루닝 누락", "k": 1}).json()
+        assert hits[0]["doc_id"] == f"incident-{inc['id']}"
+
+    with TestClient(create_app(settings, llm=llm)) as c:  # 같은 DB 로 재시작
+        hits = c.post("/api/v1/rag/search", json={"query": "파티션 프루닝 누락", "k": 1}).json()
+        assert hits[0]["doc_id"] == f"incident-{inc['id']}"
+
+
+def test_rag_answer_reports_citations(client, llm):
+    llm.push(LLMResponse(content="커넥션 풀을 확인하세요 [1]. 배포 이력도 보세요."))
+    body = client.post("/api/v1/rag/answer", json={"query": "HikariPool 커넥션 고갈"}).json()
+    report = body["citation_report"]
+    assert report["valid"] and report["citation_rate"] == 0.5

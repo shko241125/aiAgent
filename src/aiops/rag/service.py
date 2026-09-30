@@ -12,6 +12,7 @@ from aiops.core.config import Settings
 from aiops.llm.base import ChatMessage, LLMProvider
 from aiops.prompts.registry import PromptRegistry
 from aiops.rag.chunking import chunk_document
+from aiops.rag.citations import validate_citations
 from aiops.rag.embeddings.base import Embedder, HashingEmbedder, OpenAICompatEmbedder
 from aiops.rag.hybrid import HybridRetriever, Reranker
 from aiops.rag.models import Document, ScoredChunk
@@ -105,9 +106,12 @@ class RAGService:
         resp = await self.llm.chat(
             [ChatMessage.system(prompt.system), ChatMessage.user(prompt.user)]
         )
+        numbered = [h.chunk.doc_id for h in hits]
+        report = validate_citations(resp.content or "", set(numbered), numbered)
         return {
             "answer": resp.content,
             "citations": [{"doc_id": h.chunk.doc_id, "chunk_id": h.chunk.id} for h in hits],
+            "citation_report": report.model_dump(),
         }
 
 

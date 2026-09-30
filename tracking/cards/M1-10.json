@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p2",
-  "column": "ready",
+  "column": "blocked",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -26,10 +26,10 @@
   ],
   "parent_id": "R-4.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
-  "blocked_reason": null,
-  "handoff": "",
+  "blocked_reason": "실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요",
+  "handoff": "해제 절차: 1) .env 에 키 또는 AIOPS_LOCAL_LLM_BASE_URL 설정 2) AIOPS_LLM_DEFAULT_PROVIDER 를 모델별로 바꿔 'python scripts/run_evals.py --live --out reports/<model>.json' 3) AIOPS_EMBEDDING_PROVIDER=local(bge-m3) 로 'python scripts/eval_retrieval.py' 재측정(의역형 Recall 개선 여부) 4) 결과표를 PLAN-0002 §5 에 기록, outputs 에 수치 저장 후 DONE",
   "outputs": {},
   "log": [
     {
@@ -38,11 +38,46 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:55.387460Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:55.858698Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "이 개발 환경에는 LLM API 키·GPU 모델 서버가 없어 실측 불가. 실행 경로는 준비 완료: scripts/run_evals.py --live, scripts/eval_retrieval.py(실 임베딩), AIOPS_AGENT_LLM_PROVIDERS 로 에이전트별 모델 비교, /api/v1/llm/usage 로 비용·지연",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:56.333303Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "해제 절차: 1) .env 에 키 또는 AIOPS_LOCAL_LLM_BASE_URL 설정 2) AIOPS_LLM_DEFAULT_PROVIDER 를 모델별로 바꿔 'python scripts/run_evals.py --live --out reports/<model>.json' 3) AIOPS_EMBEDDING_PROVIDER=local(bge-m3) 로 'python scripts/eval_retrieval.py' 재측정(의역형 Recall 개선 여부) 4) 결과표를 PLAN-0002 §5 에 기록, outputs 에 수치 저장 후 DONE",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:56.333356Z",
+      "actor": "claude-code",
+      "kind": "block",
+      "message": "실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:56.333369Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → blocked",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-09-30T10:30:02.882639Z",
-  "updated_at": "2026-09-30T10:30:02.882745Z",
-  "started_at": null,
+  "updated_at": "2026-09-30T10:49:56.333651Z",
+  "started_at": "2026-09-30T10:49:55.387443Z",
   "done_at": null
 }

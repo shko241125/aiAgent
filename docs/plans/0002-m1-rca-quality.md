@@ -31,10 +31,10 @@ M0 는 "끝까지 돈다"를 증명했다. M1 은 **"맞는 답을 낸다"를 �
 | M1-06 | 검색 평가 하네스 + 평가셋 + 운영 지식 확충 | ✅ done | claude-code | rag/evaluation.py(Recall@k·MRR·nDCG·유형별), data/eval/retrieval.jsonl(30), scripts/eval_retrieval.py(bm25/vector/hybrid/+… |
 | M1-07 | 프롬프트 eval 러너 + 시나리오 + RCA few-shot(v2) | ✅ done | claude-code | evals/prompts.py(PromptScenario·Check 7종·RecordingLLM·run_suite, 결과에 prompt 이름/버전), data/eval/prompt_scenarios.json(6: … |
 | M1-08 | RCA 원인 후보 랭킹 엔진 + 장애 시나리오 평가 | ✅ done | claude-code | analytics/rca.py(RCAAnalyzer: downstream depth3 근거 수집, rank_candidates: change/error_signature/dependency/resource, 시그니… |
-| M1-09 | 인용 검증 + 해결 인시던트 지식 자동 축적 | 🟦 ready | - |  |
-| M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | 🟦 ready | - |  |
+| M1-09 | 인용 검증 + 해결 인시던트 지식 자동 축적 | ✅ done | claude-code | rag/citations.py(문서id·번호 인용, invalid, citation_rate), RAG answer 에 citation_report, KnowledgeAgent 가 검색 결과 기준으로 검증(data… |
+| M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | ⛔ blocked | claude-code | 실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요 |
 
-진행: 8/10
+진행: 9/10
 <!-- /AUTO -->
 
 ## 4. 완료 판정

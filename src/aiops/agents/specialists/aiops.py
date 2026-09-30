@@ -18,6 +18,7 @@ from aiops.analytics.rca import RCAAnalyzer
 from aiops.analytics.situation import SignalSet, assess
 from aiops.domain.models import utcnow
 from aiops.integrations.simulated import SimulatedOpsSource
+from aiops.rag.citations import validate_citations
 
 DEFAULT_METRICS = ["cpu_usage", "memory_usage", "latency_p95_ms", "error_rate"]
 
@@ -201,3 +202,16 @@ class KnowledgeAgent(LLMAgent):
     description = "runbook·과거 장애 기록을 검색해 근거 기반으로 답한다"
     prompt_name = "knowledge"
     tool_names = ["search_knowledge"]
+
+    async def post_process(self, result: AgentResult, ctx: AgentContext) -> AgentResult:
+        """실제로 검색해 본 문서만 유효 인용으로 인정 (M1-09) — 환각 인용을 드러낸다."""
+        seen = {
+            item["doc_id"]
+            for tr in result.tool_results
+            if tr.ok and tr.name == "search_knowledge"
+            for item in (tr.output or [])
+        }
+        report = validate_citations(result.output, seen)
+        result.data = {**result.data, "citations": report.model_dump()}
+        ctx.log(self.name, "citations", rate=report.citation_rate, invalid=report.invalid)
+        return await super().post_process(result, ctx)

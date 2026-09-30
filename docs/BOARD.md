@@ -3,16 +3,15 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 2 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 0 · ✅ done 13**
+**📥 backlog 0 · 🟦 ready 0 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 1 · ✅ done 14**
 
-## 🟦 ready (2)
+## ⛔ blocked (1)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
-| M1-09 | 인용 검증 + 해결 인시던트 지식 자동 축적 | p1 | - | R-2.6 |  |
-| M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | p2 | - | R-4.1 |  |
+| M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | p2 | claude-code | R-4.1 | 실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요 |
 
-## ✅ done (13)
+## ✅ done (14)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
@@ -29,3 +28,4 @@
 | M1-06 | 검색 평가 하네스 + 평가셋 + 운영 지식 확충 | p1 | claude-code | R-4.2 | rag/evaluation.py(Recall@k·MRR·nDCG·유형별), data/eval/retrieval.jsonl(30), scripts/eval_retrieval.py(bm25/vector/hybrid/+… |
 | M1-07 | 프롬프트 eval 러너 + 시나리오 + RCA few-shot(v2) | p1 | claude-code | R-4.3 | evals/prompts.py(PromptScenario·Check 7종·RecordingLLM·run_suite, 결과에 prompt 이름/버전), data/eval/prompt_scenarios.json(6: … |
 | M1-08 | RCA 원인 후보 랭킹 엔진 + 장애 시나리오 평가 | p1 | claude-code | R-2.2 | analytics/rca.py(RCAAnalyzer: downstream depth3 근거 수집, rank_candidates: change/error_signature/dependency/resource, 시그니… |
+| M1-09 | 인용 검증 + 해결 인시던트 지식 자동 축적 | p1 | claude-code | R-2.6 | rag/citations.py(문서id·번호 인용, invalid, citation_rate), RAG answer 에 citation_report, KnowledgeAgent 가 검색 결과 기준으로 검증(data… |

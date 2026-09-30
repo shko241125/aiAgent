@@ -30,6 +30,7 @@ from aiops.llm.base import LLMProvider
 from aiops.llm.router import LLMRouter, build_llm_router
 from aiops.prompts.registry import PromptRegistry
 from aiops.rag.hybrid import HybridRetriever
+from aiops.rag.knowledge import KnowledgeRepository
 from aiops.rag.service import RAGService, build_embedder, build_reranker, build_vector_store
 
 
@@ -47,6 +48,7 @@ class Platform:
     db_engine: AsyncEngine
     sessionmaker: async_sessionmaker
     board_store: BoardStore
+    knowledge: KnowledgeRepository
 
     def board(self, board_id: str) -> KanbanBoard:
         """보드 = 작업 공간 단위 (인시던트 1건, 목표 1개 등). 저장소는 DB 로 영속."""
@@ -92,6 +94,8 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
     engine = create_engine(settings.database_url)
     await init_db(engine)
     sessionmaker = create_sessionmaker(engine)
+    knowledge = KnowledgeRepository(sessionmaker)
+    await rag.ingest(await knowledge.all())  # 운영 중 축적된 지식 재적재 (M1-09)
 
     return Platform(
         settings=settings,
@@ -106,4 +110,5 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
         db_engine=engine,
         sessionmaker=sessionmaker,
         board_store=SqlBoardStore(sessionmaker),
+        knowledge=knowledge,
     )

@@ -72,3 +72,16 @@ class KanbanCardRow(Base):
     column: Mapped[str] = mapped_column(String(16), index=True)
     version: Mapped[int] = mapped_column(default=0)
     data: Mapped[dict[str, Any]] = mapped_column(default=dict)
+
+
+class KnowledgeDocRow(Base):
+    """운영 중 축적된 지식 문서 (해결된 인시던트 포스트모템 등). 시작 시 RAG 로 재적재된다."""
+
+    __tablename__ = "knowledge_docs"
+
+    id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    text: Mapped[str] = mapped_column(Text)
+    meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )

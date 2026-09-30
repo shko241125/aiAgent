@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "답변 인용 유효성·인용률 계산",
-      "done": false
+      "done": true
     },
     {
       "text": "인시던트 resolve 시 포스트모템 지식화",
-      "done": false
+      "done": true
     },
     {
       "text": "재시작 후에도 지식 유지(DB)",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,10 +30,10 @@
   ],
   "parent_id": "R-2.6",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "rag/citations.py(문서id·번호 인용, invalid, citation_rate), RAG answer 에 citation_report, KnowledgeAgent 가 검색 결과 기준으로 검증(data.citations). POST /api/v1/incidents/{id}/resolve → 포스트모템 Document 생성·RAG 반영·DB(knowledge_docs) 영속, 시작 시 재적재. 테스트: 재시작 후 검색 확인",
   "outputs": {},
   "log": [
     {
@@ -42,11 +42,60 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:48:24.851240Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:53.981543Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "유효 인용 = 에이전트가 '실제로 검색해 본' 문서만 인정. 검색하지 않은 문서 id 를 인용하면 invalid(환각 인용)로 분리 — 인용률보다 invalid 0 이 더 중요한 안전 지표",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:54.433670Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 답변 인용 유효성·인용률 계산",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:54.439125Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 인시던트 resolve 시 포스트모템 지식화",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:54.442676Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 재시작 후에도 지식 유지(DB)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:54.932514Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "rag/citations.py(문서id·번호 인용, invalid, citation_rate), RAG answer 에 citation_report, KnowledgeAgent 가 검색 결과 기준으로 검증(data.citations). POST /api/v1/incidents/{id}/resolve → 포스트모템 Document 생성·RAG 반영·DB(knowledge_docs) 영속, 시작 시 재적재. 테스트: 재시작 후 검색 확인",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:49:54.932554Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 7,
   "created_at": "2026-09-30T10:30:02.882016Z",
-  "updated_at": "2026-09-30T10:30:02.882131Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:49:54.932798Z",
+  "started_at": "2026-09-30T10:48:24.851222Z",
+  "done_at": "2026-09-30T10:49:54.932544Z"
 }
