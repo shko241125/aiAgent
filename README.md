@@ -16,7 +16,10 @@ make demo             # 서버 없이 인시던트 대응 파이프라인 1회 �
 make run              # http://localhost:8000/docs (Swagger UI)
 make board            # 칸반 보드 브리핑 (진행 중·막힘·다음 후보)
 make check            # lint + test + 문서↔보드 동기화 검증 (커밋 전 필수)
+make eval             # 검색(Recall·MRR·nDCG) · RCA 랭킹(Top-k) · 프롬프트 eval (scripted)
 ```
+
+실제 모델로 평가: `.env` 설정 후 `python scripts/run_evals.py --live` (에이전트별 모델: `AIOPS_AGENT_LLM_PROVIDERS`)
 
 실제 LLM 사용: `cp .env.example .env` 후 `AIOPS_LLM_DEFAULT_PROVIDER` 와 API 키 설정.
 구축형 LLM(vLLM/Ollama의 Gemma·Qwen 등)은 `AIOPS_LLM_DEFAULT_PROVIDER=local`.
@@ -69,6 +72,9 @@ docs/                아키텍처 · 로드맵(생성) · 보드(생성) · 계�
 | POST | `/api/v1/analytics/{anomalies,situation,events,forecast}` | 이상탐지 · 상황인식 · 이벤트 분석 · 예측 |
 | POST | `/api/v1/rag/{ingest,search,answer}` | 지식 인제스트 · 하이브리드 검색 · 근거 기반 답변 |
 | GET/POST | `/api/v1/incidents` | 인시던트 관리 |
+| POST | `/api/v1/incidents/{id}/resolve` | 인시던트 종료 + 포스트모템 지식 자동 축적 (RAG·DB) |
+| GET | `/api/v1/llm/usage?group_by=agent` | LLM 토큰·지연·비용 집계 (provider/model/agent 별) |
+| GET/DELETE | `/api/v1/rag/documents` | 지식 문서 목록·삭제 (인제스트는 증분: 같은 내용 skip, 변경 시 교체) |
 
 ## 개발 규칙
 

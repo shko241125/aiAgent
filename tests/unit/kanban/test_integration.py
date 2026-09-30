@@ -116,3 +116,13 @@ async def test_kanban_pull_loop_with_planner(setup):
     assert b.column == Column.DONE
     # B 의 프롬프트에는 선행 카드 A 의 인계 메모가 들어 있어야 한다
     assert "A 완료" in llm.calls[2][1].content
+
+
+async def test_planner_without_cards_blocks_epic(setup):
+    orch, board, llm = setup
+    orch.prompts.register(PromptTemplate(name="kanban_planner", system="$agents", user="$goal"))
+    llm.push(LLMResponse(content="계획을 세울 수 없습니다"))
+    out = await orch.run_kanban(AgentContext(board=board), goal="모호한 목표")
+    assert out.results == []
+    [epic] = await board.cards()
+    assert epic.column == Column.BLOCKED and "카드를 추출하지 못함" in epic.blocked_reason

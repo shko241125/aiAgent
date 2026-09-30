@@ -2,7 +2,7 @@
   "id": "R-2.2",
   "board_id": "dev",
   "title": "RCA Agent",
-  "description": "토폴로지 기반 원인 후보 랭킹, 변경-장애 상관 점수, 과거 유사 인시던트 검색 강화",
+  "description": "실 장애 이력으로 랭킹 재검증(합성 시나리오 과적합 해소), 다중 에이전트 교차 검증(1.2), 트레이스 기반 신호 추가",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -33,11 +33,18 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:50:19.320551Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 2,
   "created_at": "2026-09-30T10:30:02.863985Z",
-  "updated_at": "2026-09-30T10:30:02.864109Z",
+  "updated_at": "2026-09-30T10:50:19.320717Z",
   "started_at": null,
   "done_at": null
 }

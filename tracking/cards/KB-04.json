@@ -73,11 +73,18 @@
       "kind": "move",
       "message": "in_progress → done",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:51:41.854365Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "후속 수정: Planner 가 카드를 못 만들면 목표 에픽을 BLOCKED(사유 포함)로 — 스모크 테스트에서 fake LLM 으로 발견. 테스트 test_planner_without_cards_blocks_epic",
+      "data": {}
     }
   ],
-  "version": 5,
+  "version": 6,
   "created_at": "2026-09-30T10:30:02.875943Z",
-  "updated_at": "2026-09-30T10:30:22.050935Z",
+  "updated_at": "2026-09-30T10:51:41.854623Z",
   "started_at": "2026-09-30T10:30:21.014897Z",
   "done_at": "2026-09-30T10:30:22.050718Z"
 }

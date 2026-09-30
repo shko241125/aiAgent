@@ -218,6 +218,14 @@ class Orchestrator:
             )
             key_to_id[str(item.get("key", card.id))] = card.id
             created.append(card.id)
+        if not created:  # 조용히 멈추지 않는다 — 막힌 이유를 보드에 드러낸다
+            await board.move(
+                epic.id,
+                Column.BLOCKED,
+                "planner",
+                reason="Planner 응답에서 카드를 추출하지 못함 — 목표를 구체화하거나 직접 추가",
+            )
+            return created
         await board.note(epic.id, "planner", f"{len(created)}개 카드로 분해: {created}")
         return created
 

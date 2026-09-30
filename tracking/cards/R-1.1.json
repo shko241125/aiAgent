@@ -2,7 +2,7 @@
   "id": "R-1.1",
   "board_id": "dev",
   "title": "AI Agent 설계·개발",
-  "description": "스트리밍 응답, 구조화 출력(JSON Schema 강제), 에이전트별 모델 지정",
+  "description": "스트리밍 응답, 나머지 에이전트(incident/report/knowledge) 출력 스키마",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -33,11 +33,18 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:50:17.590424Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 2,
   "created_at": "2026-09-30T10:30:02.857120Z",
-  "updated_at": "2026-09-30T10:30:02.857281Z",
+  "updated_at": "2026-09-30T10:50:17.590580Z",
   "started_at": null,
   "done_at": null
 }

@@ -2,7 +2,7 @@
   "id": "R-4.3",
   "board_id": "dev",
   "title": "Prompt Engineering / KB",
-  "description": "프롬프트 버전별 eval 자동화, few-shot 예시 관리, 지식 수집 파이프라인",
+  "description": "few-shot 예시 관리 체계, 실모델 eval 결과의 프롬프트 버전별 추적, 지식 수집 파이프라인",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -16,7 +16,7 @@
   "acceptance": [
     {
       "text": "프롬프트 변경 시 회귀 eval CI",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -34,11 +34,32 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:50:18.888232Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:50:21.036967Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 프롬프트 변경 시 회귀 eval CI",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:50:21.461866Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족: CI 에 scripted eval(run_evals·eval_rca·eval_retrieval) 추가 — 프롬프트 변경 시 회귀 검출 (M1-07)",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-09-30T10:30:02.871559Z",
-  "updated_at": "2026-09-30T10:30:02.871666Z",
+  "updated_at": "2026-09-30T10:50:21.462103Z",
   "started_at": null,
   "done_at": null
 }

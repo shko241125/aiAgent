@@ -2,7 +2,7 @@
   "id": "R-4.2",
   "board_id": "dev",
   "title": "RAG 시스템",
-  "description": "실 임베딩(bge-m3 등), Reranker, 한국어 형태소 분석기 비교, 검색 평가셋",
+  "description": "실 임베딩(bge-m3)으로 재측정해 의역형 Recall 개선 확인, 한국어 형태소 분석기(kiwi) 비교, Reranker 효과 측정",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -15,7 +15,7 @@
   "acceptance": [
     {
       "text": "평가셋 기준 하이브리드 > 단일 검색 입증",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -33,11 +33,32 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:50:18.452024Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:50:20.191143Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 평가셋 기준 하이브리드 > 단일 검색 입증",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:50:20.604892Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족: 평가셋 30(어휘25+의역5)에서 hybrid 가 bm25·vector 보다 Recall@5/MRR/nDCG 모두 높음 (M1-06 outputs). 단 hash 임베딩 기준 — 실 임베딩 재측정은 다음 과제",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-09-30T10:30:02.870751Z",
-  "updated_at": "2026-09-30T10:30:02.870856Z",
+  "updated_at": "2026-09-30T10:50:20.605113Z",
   "started_at": null,
   "done_at": null
 }
