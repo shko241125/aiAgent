@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aiops-platform"
+version = "0.1.0"
+description = "Multi-Agent 기반 Autonomous Operations(AIOps) 플랫폼"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "httpx>=0.27",
+    "sqlalchemy[asyncio]>=2.0",
+    "aiosqlite>=0.20",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+# Agent Framework 어댑터 (1.x) — 자체 오케스트레이터가 기본, LangGraph는 선택
+agents = ["langgraph>=0.2"]
+# ML 기반 이상 탐지/예측 (3.x)
+ml = ["scikit-learn>=1.4"]
+# 외부 Vector DB (4.2)
+vector = ["qdrant-client>=1.9"]
+# 운영 DB
+postgres = ["asyncpg>=0.29"]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "ruff>=0.5"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aiops"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ASYNC"]

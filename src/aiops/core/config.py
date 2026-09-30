@@ -1,0 +1,58 @@
+"""애플리케이션 설정. 모든 값은 `AIOPS_` 접두사 환경변수 또는 .env 로 주입한다."""
+
+from functools import lru_cache
+from pathlib import Path
+from typing import Literal
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="AIOPS_", extra="ignore")
+
+    app_name: str = "AIOps Autonomous Operations Platform"
+    env: Literal["local", "dev", "prod"] = "local"
+    log_level: str = "INFO"
+    database_url: str = "sqlite+aiosqlite:///./aiops.db"
+
+    # --- LLM (4.1) ---
+    llm_default_provider: str = "fake"
+    llm_fallback_providers: str = ""  # 쉼표 구분, 예: "anthropic,local"
+    llm_timeout_s: float = 60.0
+
+    openai_api_key: str | None = None
+    openai_base_url: str = "https://api.openai.com/v1"
+    openai_model: str = "gpt-5-mini"
+
+    anthropic_api_key: str | None = None
+    anthropic_model: str = "claude-sonnet-5-5"
+
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-2.5-flash"
+
+    local_llm_base_url: str = "http://localhost:11434/v1"
+    local_llm_model: str = "qwen3"
+
+    # --- RAG (4.2) ---
+    embedding_provider: Literal["hash", "openai", "local"] = "hash"
+    embedding_model: str = "bge-m3"
+    embedding_dim: int = 384
+    vector_backend: Literal["memory", "qdrant"] = "memory"
+    qdrant_url: str = "http://localhost:6333"
+    knowledge_dir: Path = Path("data/knowledge")
+
+    # --- Agent (1.x) ---
+    agent_max_steps: int = 8
+    memory_window: int = 20
+
+    # --- 운영 자동화 안전장치 (2.3) ---
+    auto_approve_actions: bool = False
+
+    @property
+    def fallback_providers(self) -> list[str]:
+        return [p.strip() for p in self.llm_fallback_providers.split(",") if p.strip()]
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()

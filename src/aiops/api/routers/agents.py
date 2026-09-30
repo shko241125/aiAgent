@@ -1,0 +1,105 @@
+"""Agent / Orchestration API (1.x, 2.x)."""
+
+from typing import Any
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
+
+from aiops.agents.base import AgentResult, AgentTask
+from aiops.agents.context import AgentContext
+from aiops.agents.orchestration.orchestrator import OrchestrationResult
+from aiops.agents.orchestration.workflows import incident_response_workflow
+from aiops.api.deps import PlatformDep, SessionDep
+from aiops.db.repositories import AgentRunRepository, IncidentRepository
+from aiops.domain.models import Alert, Incident
+
+router = APIRouter(prefix="/api/v1", tags=["agents"])
+
+
+class AgentRunRequest(BaseModel):
+    instruction: str
+    inputs: dict[str, Any] = Field(default_factory=dict)
+    approved_tools: list[str] = Field(default_factory=list)
+
+
+class IncidentResponseRequest(BaseModel):
+    alert: Alert
+    with_remediation: bool = True
+    approved_tools: list[str] = Field(default_factory=list)
+
+
+class SupervisedRequest(BaseModel):
+    goal: str
+    max_rounds: int = 6
+
+
+@router.get("/agents")
+async def list_agents(p: PlatformDep) -> list[dict[str, str]]:
+    return p.agents.describe()
+
+
+@router.post("/agents/{name}/run", response_model=AgentResult)
+async def run_agent(
+    name: str,
+    req: AgentRunRequest,
+    p: PlatformDep,
+    session: SessionDep,
+) -> AgentResult:
+    if name not in p.agents:
+        raise HTTPException(404, f"unknown agent: {name}")
+    ctx = AgentContext(long_term=p.memory, approved_tools=set(req.approved_tools))
+    result = await p.orchestrator.run_agent(
+        name, AgentTask(instruction=req.instruction, inputs=req.inputs), ctx
+    )
+    await AgentRunRepository(session).save(
+        ctx, "agent", "ok" if result.success else "failed", result.model_dump(mode="json")
+    )
+    return result
+
+
+@router.post("/orchestrations/incident-response")
+async def incident_response(
+    req: IncidentResponseRequest,
+    p: PlatformDep,
+    session: SessionDep,
+) -> dict:
+    """알람 1건에 대해 전체 인시던트 대응 워크플로우를 실행한다."""
+    alert = req.alert
+    incident = await IncidentRepository(session).create(
+        Incident(
+            title=alert.title, service=alert.service, severity=alert.severity, alert_ids=[alert.id]
+        )
+    )
+    ctx = AgentContext(
+        incident_id=incident.id, long_term=p.memory, approved_tools=set(req.approved_tools)
+    )
+    wf = incident_response_workflow(p.orchestrator, ctx, with_remediation=req.with_remediation)
+    result = await p.orchestrator.run_workflow(
+        wf, ctx, state={"alert": alert.model_dump(mode="json")}
+    )
+
+    run = result.workflow_run
+    rca = ctx.blackboard.read("rca.data") or {}
+    await IncidentRepository(session).update(
+        incident.id,
+        status="investigating",
+        summary=(ctx.blackboard.read("incident.output") or "")[:4000],
+        root_cause=rca.get("root_cause"),
+    )
+    await AgentRunRepository(session).save(
+        ctx, "workflow", run.status.value, {"steps": {k: v.status for k, v in run.steps.items()}}
+    )
+    return {
+        "incident_id": incident.id,
+        "run_id": ctx.run_id,
+        "workflow_status": run.status,
+        "steps": {k: {"status": v.status, "error": v.error} for k, v in run.steps.items()},
+        "pending_approvals": sorted({t for r in result.results for t in r.pending_approvals}),
+        "report": ctx.blackboard.read("report.output"),
+    }
+
+
+@router.post("/orchestrations/supervised", response_model=OrchestrationResult)
+async def supervised(req: SupervisedRequest, p: PlatformDep):
+    ctx = AgentContext(long_term=p.memory)
+    return await p.orchestrator.run_supervised(req.goal, ctx, max_rounds=req.max_rounds)
