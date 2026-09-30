@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M1",
     "plan:0002"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "Recall@k·MRR·nDCG",
-      "done": false
+      "done": true
     },
     {
       "text": "질의 20+ 평가셋",
-      "done": false
+      "done": true
     },
     {
       "text": "bm25/vector/hybrid 비교 스크립트",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,11 +30,13 @@
   ],
   "parent_id": "R-4.2",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "rag/evaluation.py(Recall@k·MRR·nDCG·유형별), data/eval/retrieval.jsonl(30), scripts/eval_retrieval.py(bm25/vector/hybrid/+rerank). 지식 문서 3→13. 회귀 방지선 테스트(어휘형 recall≥0.95, MRR≥0.8). 다음: 실 임베딩으로 재측정 → M1-10",
+  "outputs": {
+    "baseline_hash_embedder": "질의30(어휘25+의역5)/청크47, k=5 — bm25 R=0.883 MRR=0.856 nDCG=0.852 | vector(hash) R=0.850 MRR=0.807 | hybrid R=0.917 MRR=0.877 nDCG=0.873. 의역형 Recall: bm25 0.4, vector(hash) 0.4, hybrid 0.6"
+  },
   "log": [
     {
       "ts": "2026-09-30T10:30:02.880059Z",
@@ -42,11 +44,67 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:40:13.697630Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:41:54.041215Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.baseline_hash_embedder 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:41:54.491295Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "평가셋을 어휘일치/의역 두 유형으로 분리 — 어휘형만 있으면 BM25 가 과대평가되고 벡터 검색의 가치가 안 보임. hash 임베딩은 사실상 BoW 라 의역형 개선은 실 임베딩(bge-m3)으로 재측정해야 함",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:41:54.934048Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ Recall@k·MRR·nDCG",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:41:54.939873Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 질의 20+ 평가셋",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:41:54.944322Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ bm25/vector/hybrid 비교 스크립트",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:41:55.393218Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "rag/evaluation.py(Recall@k·MRR·nDCG·유형별), data/eval/retrieval.jsonl(30), scripts/eval_retrieval.py(bm25/vector/hybrid/+rerank). 지식 문서 3→13. 회귀 방지선 테스트(어휘형 recall≥0.95, MRR≥0.8). 다음: 실 임베딩으로 재측정 → M1-10",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:41:55.393258Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 8,
   "created_at": "2026-09-30T10:30:02.880009Z",
-  "updated_at": "2026-09-30T10:30:02.880156Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-09-30T10:41:55.393499Z",
+  "started_at": "2026-09-30T10:40:13.697614Z",
+  "done_at": "2026-09-30T10:41:55.393247Z"
 }

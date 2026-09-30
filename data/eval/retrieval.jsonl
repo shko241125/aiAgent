@@ -1,0 +1,30 @@
+{"query": "HikariPool Connection is not available 에러가 난다", "relevant": ["runbook-db-connection-pool", "postmortem-2026-08-order-service"]}
+{"query": "배포 후 주문 API가 느려지고 DB 커넥션이 부족하다", "relevant": ["postmortem-2026-08-order-service", "runbook-db-connection-pool"]}
+{"query": "No space left on device", "relevant": ["runbook-disk-full"]}
+{"query": "용량은 남았는데 새 파일을 만들 수 없다", "relevant": ["runbook-disk-full"]}
+{"query": "파드가 OOMKilled 로 계속 재시작된다", "relevant": ["runbook-memory-leak-oom", "postmortem-2026-07-user-service-oom"]}
+{"query": "Java heap space 에러", "relevant": ["runbook-memory-leak-oom"]}
+{"query": "x509 certificate has expired", "relevant": ["runbook-tls-certificate-expiry", "postmortem-2026-06-payment-cert"]}
+{"query": "결제 게이트웨이 호출이 전부 실패한다", "relevant": ["postmortem-2026-06-payment-cert"]}
+{"query": "UnknownHostException 서비스 이름을 찾지 못한다", "relevant": ["runbook-dns-resolution-failure"]}
+{"query": "CoreDNS 과부하", "relevant": ["runbook-dns-resolution-failure"]}
+{"query": "컨슈머 lag 이 계속 쌓인다", "relevant": ["runbook-kafka-consumer-lag"]}
+{"query": "리밸런싱이 반복된다", "relevant": ["runbook-kafka-consumer-lag"]}
+{"query": "Redis Command timed out", "relevant": ["runbook-redis-latency"]}
+{"query": "캐시 적중률이 떨어지고 DB 부하가 늘었다", "relevant": ["runbook-redis-latency"]}
+{"query": "배포 직후 에러율이 급증하면 어떻게 하나", "relevant": ["runbook-5xx-after-deploy"]}
+{"query": "카나리 배포에서 신규 버전만 에러가 난다", "relevant": ["runbook-5xx-after-deploy"]}
+{"query": "Lock wait timeout exceeded", "relevant": ["runbook-db-slow-query-lock"]}
+{"query": "데드락이 발생한다", "relevant": ["runbook-db-slow-query-lock"]}
+{"query": "CPU 사용률이 평소의 두 배로 뛰었다", "relevant": ["runbook-high-cpu"]}
+{"query": "GC 시간이 늘면서 CPU 가 오른다", "relevant": ["runbook-high-cpu", "runbook-memory-leak-oom"]}
+{"query": "메모리가 톱니 모양으로 증가한다", "relevant": ["runbook-memory-leak-oom"]}
+{"query": "자동 갱신 대상에서 빠진 인증서", "relevant": ["postmortem-2026-06-payment-cert"]}
+{"query": "로그 로테이션 설정", "relevant": ["runbook-disk-full"]}
+{"query": "SSL 핸드셰이크 실패", "relevant": ["runbook-tls-certificate-expiry"]}
+{"query": "주문 서비스 지연 장애 때 어떻게 복구했나", "relevant": ["postmortem-2026-08-order-service"]}
+{"query": "서버 저장 공간이 바닥났다", "relevant": ["runbook-disk-full"], "kind": "paraphrase"}
+{"query": "도메인 주소를 IP 로 바꾸지 못해 호출이 실패한다", "relevant": ["runbook-dns-resolution-failure"], "kind": "paraphrase"}
+{"query": "메시지 소비가 생산 속도를 못 따라간다", "relevant": ["runbook-kafka-consumer-lag"], "kind": "paraphrase"}
+{"query": "새 버전을 올리자마자 오류가 쏟아진다", "relevant": ["runbook-5xx-after-deploy"], "kind": "paraphrase"}
+{"query": "보안 연결 수립 단계에서 거절된다", "relevant": ["runbook-tls-certificate-expiry"], "kind": "paraphrase"}
