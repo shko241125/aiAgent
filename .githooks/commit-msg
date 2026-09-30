@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# 커밋 메시지에 카드 ID([M1-03] 등)가 없으면 경고 (CLAUDE.md R10). 차단하지는 않는다.
+if ! grep -qE '\[[A-Z][A-Z0-9.]*-[0-9.]+\]' "$1"; then
+  echo "[commit-msg] ⚠ 카드 ID([ID])가 없습니다 — 브리핑의 '관련 커밋'에 연결되지 않습니다 (CLAUDE.md R10)" >&2
+fi
+exit 0

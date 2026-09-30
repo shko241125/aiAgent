@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 
 from aiops.agents.context import AgentContext
 from aiops.agents.memory.base import ConversationMemory
-from aiops.agents.tools.base import ToolRegistry, ToolResult
+from aiops.agents.tools.base import ToolRegistry, ToolResult, ToolRuntime
 from aiops.llm.base import ChatMessage, LLMProvider
 from aiops.prompts.registry import PromptRegistry
 
@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 class AgentTask(BaseModel):
     instruction: str
     inputs: dict[str, Any] = Field(default_factory=dict)
+    card_id: str | None = None  # 칸반 카드 — 있으면 브리핑이 프롬프트에 주입되고 보드 도구가 열린다
 
 
 class AgentResult(BaseModel):
@@ -103,10 +104,20 @@ class LLMAgent(BaseAgent):
     async def run(self, task: AgentTask, ctx: AgentContext) -> AgentResult:
         variables = await self.build_input(task, ctx)
         prompt = self.prompts.render(self.prompt_name, **variables)
+        user_prompt = prompt.user
+        tool_names = list(self.tool_names)
+        if ctx.board is not None and task.card_id:
+            # 에이전트는 기억이 없다 — 카드 브리핑이 곧 작업 기억이다 (PLAN-0001)
+            briefing = await ctx.board.briefing(task.card_id)
+            user_prompt += f"\n\n---\n[작업 카드 브리핑 — 당신의 작업 기억]\n{briefing}"
+            from aiops.kanban.tools import KANBAN_TOOL_NAMES
+
+            tool_names += KANBAN_TOOL_NAMES
         memory = ConversationMemory(window=self.memory_window)
-        memory.add(ChatMessage.system(prompt.system), ChatMessage.user(prompt.user))
-        available = [n for n in self.tool_names if n in self.tools.names()]
+        memory.add(ChatMessage.system(prompt.system), ChatMessage.user(user_prompt))
+        available = [n for n in tool_names if n in self.tools.names()]
         specs = self.tools.specs(available) if available else None
+        runtime = ToolRuntime(agent=self.name, ctx=ctx, card_id=task.card_id)
 
         result = AgentResult(agent=self.name)
         for step in range(1, self.max_steps + 1):
@@ -129,7 +140,7 @@ class LLMAgent(BaseAgent):
                         error="tool not allowed for this agent",
                     )
                 else:
-                    tr = await self.tools.invoke(call, approved=ctx.approved_tools)
+                    tr = await self.tools.invoke(call, approved=ctx.approved_tools, runtime=runtime)
                 ctx.log(
                     self.name,
                     "tool_call",

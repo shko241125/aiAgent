@@ -8,7 +8,10 @@ from pydantic import BaseModel, Field
 from aiops.agents.base import AgentResult, AgentTask
 from aiops.agents.context import AgentContext
 from aiops.agents.orchestration.orchestrator import OrchestrationResult
-from aiops.agents.orchestration.workflows import incident_response_workflow
+from aiops.agents.orchestration.workflows import (
+    build_incident_response,
+    finalize_incident_board,
+)
 from aiops.api.deps import PlatformDep, SessionDep
 from aiops.db.repositories import AgentRunRepository, IncidentRepository
 from aiops.domain.models import Alert, Incident
@@ -31,6 +34,13 @@ class IncidentResponseRequest(BaseModel):
 class SupervisedRequest(BaseModel):
     goal: str
     max_rounds: int = 6
+
+
+class KanbanRunRequest(BaseModel):
+    board_id: str
+    goal: str | None = None  # 주면 Planner 가 카드로 분해 후 실행, 없으면 남은 READY 카드만 처리
+    max_rounds: int = 20
+    approved_tools: list[str] = Field(default_factory=list)
 
 
 @router.get("/agents")
@@ -71,12 +81,21 @@ async def incident_response(
         )
     )
     ctx = AgentContext(
-        incident_id=incident.id, long_term=p.memory, approved_tools=set(req.approved_tools)
+        incident_id=incident.id,
+        long_term=p.memory,
+        approved_tools=set(req.approved_tools),
+        board=p.board(incident.id),
     )
-    wf = incident_response_workflow(p.orchestrator, ctx, with_remediation=req.with_remediation)
+    wf, cards = await build_incident_response(
+        p.orchestrator,
+        ctx,
+        title=f"[{alert.service}] {alert.title}",
+        with_remediation=req.with_remediation,
+    )
     result = await p.orchestrator.run_workflow(
         wf, ctx, state={"alert": alert.model_dump(mode="json")}
     )
+    await finalize_incident_board(ctx, result.workflow_run, cards)
 
     run = result.workflow_run
     rca = ctx.blackboard.read("rca.data") or {}
@@ -91,6 +110,8 @@ async def incident_response(
     )
     return {
         "incident_id": incident.id,
+        "board_id": incident.id,
+        "cards": cards,
         "run_id": ctx.run_id,
         "workflow_status": run.status,
         "steps": {k: {"status": v.status, "error": v.error} for k, v in run.steps.items()},
@@ -103,3 +124,15 @@ async def incident_response(
 async def supervised(req: SupervisedRequest, p: PlatformDep):
     ctx = AgentContext(long_term=p.memory)
     return await p.orchestrator.run_supervised(req.goal, ctx, max_rounds=req.max_rounds)
+
+
+@router.post("/orchestrations/kanban", response_model=OrchestrationResult)
+async def kanban(req: KanbanRunRequest, p: PlatformDep):
+    """Pull 방식: 에이전트들이 보드의 READY 카드를 능력에 맞게 당겨가 처리한다.
+
+    이전 실행이 중단됐어도 같은 board_id 로 다시 호출하면 남은 카드부터 이어서 처리한다.
+    """
+    ctx = AgentContext(
+        long_term=p.memory, board=p.board(req.board_id), approved_tools=set(req.approved_tools)
+    )
+    return await p.orchestrator.run_kanban(ctx, goal=req.goal, max_rounds=req.max_rounds)

@@ -1,0 +1,43 @@
+{
+  "id": "R-2.3",
+  "board_id": "dev",
+  "title": "운영 자동화 Agent",
+  "description": "K8s/Ansible 실제 실행기, 승인 요청 채널(Slack) + 콜백, 조치 후 효과 검증 루프",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:skeleton"
+  ],
+  "refs": [
+    "src/aiops/agents/tools/builtin/ops.py"
+  ],
+  "acceptance": [
+    {
+      "text": "dry-run → 승인 → 실행 → 지표 회복 확인 자동화",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.864560Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.864540Z",
+  "updated_at": "2026-09-30T10:30:02.864635Z",
+  "started_at": null,
+  "done_at": null
+}

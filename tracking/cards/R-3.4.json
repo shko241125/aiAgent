@@ -1,0 +1,43 @@
+{
+  "id": "R-3.4",
+  "board_id": "dev",
+  "title": "장애 예측·위험도 분석",
+  "description": "장애 확률 분류 모델, 용량 예측, 예측 기반 선제 알람",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:minimal"
+  ],
+  "refs": [
+    "src/aiops/analytics/prediction.py"
+  ],
+  "acceptance": [
+    {
+      "text": "N분 전 예측 적중률 측정",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.868869Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.868845Z",
+  "updated_at": "2026-09-30T10:30:02.868956Z",
+  "started_at": null,
+  "done_at": null
+}

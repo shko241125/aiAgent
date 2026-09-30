@@ -1,0 +1,48 @@
+{
+  "id": "M1-10",
+  "board_id": "dev",
+  "title": "실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen)",
+  "description": "",
+  "type": "task",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "milestone:M1",
+    "plan:0002"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "eval·RCA 시나리오를 실 모델로 실행",
+      "done": false
+    },
+    {
+      "text": "모델별 품질/지연/비용 비교표",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "llm"
+  ],
+  "parent_id": "R-4.1",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.882660Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.882639Z",
+  "updated_at": "2026-09-30T10:30:02.882745Z",
+  "started_at": null,
+  "done_at": null
+}

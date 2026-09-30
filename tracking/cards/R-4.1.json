@@ -1,0 +1,43 @@
+{
+  "id": "R-4.1",
+  "board_id": "dev",
+  "title": "LLM 기반 AI 서비스",
+  "description": "Gemini tool calling, 스트리밍, 토큰·비용 집계, 구축형 모델(Gemma/Qwen) 벤치마크",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:minimal"
+  ],
+  "refs": [
+    "src/aiops/llm/"
+  ],
+  "acceptance": [
+    {
+      "text": "동일 시나리오 모델별 품질/지연/비용 비교표",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.870080Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.870066Z",
+  "updated_at": "2026-09-30T10:30:02.870141Z",
+  "started_at": null,
+  "done_at": null
+}

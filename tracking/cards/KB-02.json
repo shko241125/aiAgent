@@ -1,0 +1,89 @@
+{
+  "id": "KB-02",
+  "board_id": "dev",
+  "title": "칸반 저장소 3종 (memory/file/SQL) + 낙관적 동시성",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "done",
+  "labels": [
+    "plan:0001"
+  ],
+  "refs": [
+    "src/aiops/kanban/stores.py"
+  ],
+  "acceptance": [
+    {
+      "text": "버전 충돌 시 ConflictError",
+      "done": true
+    },
+    {
+      "text": "파일 저장소 카드 1장=JSON 1개",
+      "done": true
+    }
+  ],
+  "capabilities": [],
+  "parent_id": "R-1.2",
+  "depends_on": [],
+  "assignee": "claude-code",
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "stores.py: InMemory/File/Sql. 개발 보드는 FileBoardStore(tracking/cards). 파일 저장소는 단일 프로세스 가정 — 동시 다중 쓰기는 git merge 로 해소",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.874780Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:17.342156Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:17.774989Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 버전 충돌 시 ConflictError",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:17.779240Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 파일 저장소 카드 1장=JSON 1개",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:18.201090Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "SQL 은 UPDATE ... WHERE version=expected 로 CAS, 파일은 읽고-비교-원자적 교체(tmp→replace)",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:18.655854Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "stores.py: InMemory/File/Sql. 개발 보드는 FileBoardStore(tracking/cards). 파일 저장소는 단일 프로세스 가정 — 동시 다중 쓰기는 git merge 로 해소",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:18.655892Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
+    }
+  ],
+  "version": 6,
+  "created_at": "2026-09-30T10:30:02.874753Z",
+  "updated_at": "2026-09-30T10:30:18.656146Z",
+  "started_at": "2026-09-30T10:30:17.342141Z",
+  "done_at": "2026-09-30T10:30:18.655883Z"
+}

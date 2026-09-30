@@ -1,0 +1,43 @@
+{
+  "id": "R-4.2",
+  "board_id": "dev",
+  "title": "RAG 시스템",
+  "description": "실 임베딩(bge-m3 등), Reranker, 한국어 형태소 분석기 비교, 검색 평가셋",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:minimal"
+  ],
+  "refs": [
+    "src/aiops/rag/"
+  ],
+  "acceptance": [
+    {
+      "text": "평가셋 기준 하이브리드 > 단일 검색 입증",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.870774Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.870751Z",
+  "updated_at": "2026-09-30T10:30:02.870856Z",
+  "started_at": null,
+  "done_at": null
+}

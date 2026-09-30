@@ -1,0 +1,43 @@
+{
+  "id": "R-2.1",
+  "board_id": "dev",
+  "title": "장애 탐지·분석 Agent",
+  "description": "실제 Prometheus/Loki 어댑터, 알람 노이즈 필터(3.3 연동)",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:minimal"
+  ],
+  "refs": [
+    "src/aiops/agents/specialists/aiops.py"
+  ],
+  "acceptance": [
+    {
+      "text": "실데이터 알람 → 장애 여부 판정 정확도 측정",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.863435Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.863413Z",
+  "updated_at": "2026-09-30T10:30:02.863518Z",
+  "started_at": null,
+  "done_at": null
+}

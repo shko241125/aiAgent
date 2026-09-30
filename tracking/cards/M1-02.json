@@ -1,0 +1,52 @@
+{
+  "id": "M1-02",
+  "board_id": "dev",
+  "title": "LLM 사용량(토큰·지연·비용) 집계 + API",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M1",
+    "plan:0002"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "프로바이더별 usage 정규화",
+      "done": false
+    },
+    {
+      "text": "에이전트별 집계",
+      "done": false
+    },
+    {
+      "text": "GET /api/v1/llm/usage",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "llm"
+  ],
+  "parent_id": "R-4.1",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.877732Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.877708Z",
+  "updated_at": "2026-09-30T10:30:02.877822Z",
+  "started_at": null,
+  "done_at": null
+}

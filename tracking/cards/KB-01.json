@@ -1,0 +1,79 @@
+{
+  "id": "KB-01",
+  "board_id": "dev",
+  "title": "칸반 도메인 모델·정책 (컬럼·전이·WIP·lease·DoD)",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "done",
+  "labels": [
+    "plan:0001"
+  ],
+  "refs": [
+    "src/aiops/kanban/models.py",
+    "src/aiops/kanban/policy.py"
+  ],
+  "acceptance": [
+    {
+      "text": "전이 규칙·WIP·handoff·DoD 정책 테스트 통과",
+      "done": true
+    }
+  ],
+  "capabilities": [],
+  "parent_id": "R-1.2",
+  "depends_on": [],
+  "assignee": "claude-code",
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "models.py/policy.py 완료. 전이표 ALLOWED_TRANSITIONS, WIP(컬럼/담당자), lease, DoD. 테스트: tests/unit/kanban/test_board.py",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.874020Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:15.515302Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:15.951520Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 전이 규칙·WIP·handoff·DoD 정책 테스트 통과",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:16.428434Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "IN_PROGRESS 이탈 시 handoff 필수, BLOCKED 는 reason 필수, DONE 은 DoD+하위카드 완료를 정책으로 강제",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:16.881639Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "models.py/policy.py 완료. 전이표 ALLOWED_TRANSITIONS, WIP(컬럼/담당자), lease, DoD. 테스트: tests/unit/kanban/test_board.py",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:16.881680Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
+    }
+  ],
+  "version": 5,
+  "created_at": "2026-09-30T10:30:02.873999Z",
+  "updated_at": "2026-09-30T10:30:16.881945Z",
+  "started_at": "2026-09-30T10:30:15.515286Z",
+  "done_at": "2026-09-30T10:30:16.881670Z"
+}

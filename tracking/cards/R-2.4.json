@@ -1,0 +1,43 @@
+{
+  "id": "R-2.4",
+  "board_id": "dev",
+  "title": "Incident Management Agent",
+  "description": "ITSM(Jira/ServiceNow) 연동, 상태 머신, 온콜 에스컬레이션, 타임라인 자동 기록",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:skeleton"
+  ],
+  "refs": [
+    "src/aiops/api/routers/incidents.py"
+  ],
+  "acceptance": [
+    {
+      "text": "인시던트 생성~종료 전 과정 자동 기록",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.865237Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.865212Z",
+  "updated_at": "2026-09-30T10:30:02.865338Z",
+  "started_at": null,
+  "done_at": null
+}

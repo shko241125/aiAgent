@@ -1,0 +1,52 @@
+{
+  "id": "M1-03",
+  "board_id": "dev",
+  "title": "에이전트별 모델 라우팅 + Gemini tool calling + 프로바이더 계약 테스트",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M1",
+    "plan:0002"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "AIOPS_AGENT_LLM_PROVIDERS 로 에이전트별 모델",
+      "done": false
+    },
+    {
+      "text": "Gemini functionCall 왕복",
+      "done": false
+    },
+    {
+      "text": "3사 요청/응답을 MockTransport 로 검증",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "llm"
+  ],
+  "parent_id": "R-4.1",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.878370Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.878352Z",
+  "updated_at": "2026-09-30T10:30:02.878445Z",
+  "started_at": null,
+  "done_at": null
+}

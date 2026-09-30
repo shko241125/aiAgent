@@ -1,0 +1,43 @@
+{
+  "id": "R-3.5",
+  "board_id": "dev",
+  "title": "Agent 의사결정용 데이터 분석",
+  "description": "메트릭 간 상관 분석, 변화점 탐지, fact sheet 표준 스키마",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:minimal"
+  ],
+  "refs": [
+    "src/aiops/analytics/insights.py"
+  ],
+  "acceptance": [
+    {
+      "text": "fact sheet 로 LLM 입력 토큰 절감률 측정",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.869488Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.869468Z",
+  "updated_at": "2026-09-30T10:30:02.869561Z",
+  "started_at": null,
+  "done_at": null
+}

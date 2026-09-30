@@ -58,8 +58,12 @@ build_input(task, ctx)          # 서브클래스: blackboard / 분석 결과를
 | Pipeline | 단계가 고정된 절차 | `Orchestrator.run_sequential` |
 | Workflow(DAG) | 병렬·조건 분기·재시도가 필요한 절차 | `WorkflowEngine` + `Orchestrator.agent_step` |
 | Supervisor | 목표만 주고 경로는 LLM 이 결정 | `Orchestrator.run_supervised` + `prompts/templates/supervisor.md` |
+| Kanban (Pull) | 작업을 카드로 쪼개 에이전트가 능력에 맞게 당겨감, 중단 후 재개 | `Orchestrator.run_kanban` + `kanban/` ([PLAN-0001](plans/0001-kanban-blackboard.md)) |
 
-에이전트 간 데이터 교환은 **Blackboard**(키 규약 `<agent>.<field>`)로만 한다. 에이전트끼리 직접 호출하지 않는다.
+에이전트 간 데이터 교환은 공유칠판으로만 한다. 에이전트끼리 직접 호출하지 않는다.
+- **Blackboard** (실행 단위, 휘발): 키 규약 `<agent>.<field>`
+- **Kanban 카드** (작업 단위, 영속): `card.outputs`(결과) + `card.handoff`(인계 메모) + `card.log`(이력).
+  `task.card_id` 가 있으면 카드 브리핑이 프롬프트에 주입되어 **기억 없는 에이전트도 이어받는다**.
 
 ## 5. 메모리 계층 (1.6)
 
@@ -67,6 +71,7 @@ build_input(task, ctx)          # 서브클래스: blackboard / 분석 결과를
 |---|---|---|
 | 대화(작업) 메모리 | 에이전트 1회 실행 | `ConversationMemory` (window, tool 쌍 보존) |
 | 공유 상태 | 오케스트레이션 1회 | `Blackboard` |
+| 작업 기억 | 카드 수명 (영속) | `Card` — 브리핑으로 재구성, lease 만료 시 다른 에이전트가 인계 |
 | 장기 메모리 | 영구 | `MemoryStore` (현재 in-memory, → Vector DB) — 과거 인시던트를 RCA 에 재사용 |
 
 ## 6. RAG (4.2)

@@ -1,0 +1,43 @@
+{
+  "id": "R-3.1",
+  "board_id": "dev",
+  "title": "이상 탐지",
+  "description": "스트리밍 탐지, 다변량 모델, 계절성 분해(STL), 모델 학습/버전 관리",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:minimal"
+  ],
+  "refs": [
+    "src/aiops/analytics/anomaly/"
+  ],
+  "acceptance": [
+    {
+      "text": "라벨된 데이터셋에서 Precision/Recall 리포트",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.867122Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.867105Z",
+  "updated_at": "2026-09-30T10:30:02.867192Z",
+  "started_at": null,
+  "done_at": null
+}

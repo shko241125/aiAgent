@@ -3,8 +3,9 @@
 Multi-Agent AI가 운영 데이터를 실시간 분석하고, ML 기반 상황 인식(Situation Awareness)으로 이상 징후를
 조기에 탐지하며, 장애 원인 분석(RCA)과 자동 대응까지 수행하는 **자율 운영(Autonomous Operations) 플랫폼**.
 
-> 현재 단계: **v0.1 — 골격(scaffold)**. 모든 기능 영역의 인터페이스와 최소 동작 구현이 들어가 있고,
-> API 키 없이(Fake LLM) 전체 흐름이 끝까지 돈다. 기능별 진행 현황은 [docs/ROADMAP.md](docs/ROADMAP.md).
+> **작업 전 필독: [CLAUDE.md](CLAUDE.md)** — 이 저장소의 최상위 규칙. 계획·진행은 칸반 보드(`tracking/`)가
+> 단일 진실 공급원이고, [ROADMAP](docs/ROADMAP.md) · [BOARD](docs/BOARD.md) 는 보드에서 자동 생성된다.
+> 기억 없는 새 작업자(사람·AI)도 `make board` 한 번으로 이어받을 수 있다.
 
 ## 빠른 시작
 
@@ -13,6 +14,8 @@ make install          # uv 로 .venv 생성 + 개발 의존성 설치
 make test             # 단위/API 테스트
 make demo             # 서버 없이 인시던트 대응 파이프라인 1회 실행
 make run              # http://localhost:8000/docs (Swagger UI)
+make board            # 칸반 보드 브리핑 (진행 중·막힘·다음 후보)
+make check            # lint + test + 문서↔보드 동기화 검증 (커밋 전 필수)
 ```
 
 실제 LLM 사용: `cp .env.example .env` 후 `AIOPS_LLM_DEFAULT_PROVIDER` 와 API 키 설정.
@@ -31,6 +34,7 @@ docker compose --profile local-llm up -d   # Ollama 포함
 src/aiops/
 ├── core/            설정 · 로깅 · 안정성(재시도/서킷브레이커) · 의존성 조립(container)   [4.4, 4.6]
 ├── llm/             LLM 추상화 · OpenAI/Claude/Gemini/구축형 프로바이더 · 라우터(fallback) [4.1]
+├── kanban/          칸반 공유칠판: 카드·정책·저장소·브리핑·에이전트 도구·CLI·문서 연동  [1.2, 1.6]
 ├── agents/
 │   ├── base.py          BaseAgent / LLMAgent (도구 호출 루프)                              [1.1]
 │   ├── tools/           Tool Calling Framework (@tool, 스키마 자동생성, 승인 정책)          [1.5]
@@ -45,7 +49,8 @@ src/aiops/
 ├── db/              SQLAlchemy 모델 · 리포지토리                                          [4.4]
 └── api/             FastAPI 라우터                                                        [4.4]
 data/knowledge/      RAG 시드 지식 (runbook, 포스트모템)
-docs/                아키텍처 · 로드맵 · ADR
+tracking/            개발 칸반 보드 (카드 1장 = JSON 1개) — 계획의 원본
+docs/                아키텍처 · 로드맵(생성) · 보드(생성) · 계획(plans/) · ADR
 ```
 
 자세한 설계는 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -59,13 +64,13 @@ docs/                아키텍처 · 로드맵 · ADR
 | POST | `/api/v1/agents/{name}/run` | 단일 에이전트 실행 |
 | POST | `/api/v1/orchestrations/incident-response` | 알람 → 탐지 → RCA → 조치 → 인시던트 → 보고서 워크플로우 |
 | POST | `/api/v1/orchestrations/supervised` | Supervisor LLM 이 동적으로 에이전트 선택 |
+| POST | `/api/v1/orchestrations/kanban` | Pull 방식 — 에이전트가 보드의 READY 카드를 당겨 처리 (중단 후 재개 가능) |
+| GET/POST | `/api/v1/boards/{board_id}/...` | 칸반 보드 조회·카드 생성/이동/메모·브리핑·claim-next·지표 |
 | POST | `/api/v1/analytics/{anomalies,situation,events,forecast}` | 이상탐지 · 상황인식 · 이벤트 분석 · 예측 |
 | POST | `/api/v1/rag/{ingest,search,answer}` | 지식 인제스트 · 하이브리드 검색 · 근거 기반 답변 |
 | GET/POST | `/api/v1/incidents` | 인시던트 관리 |
 
 ## 개발 규칙
 
-- 브랜치 → PR → CI(ruff + pytest) 통과 후 머지.
-- 새 기능은 ROADMAP 의 번호(예: `2.3`)를 커밋/PR 제목과 코드 `TODO(2.3)` 주석에 표기해 추적한다.
-- 외부 시스템(LLM, Vector DB, 모니터링)은 반드시 인터페이스(ABC) 뒤에 두고, 테스트는 Fake 구현으로 작성한다.
-- 상태를 바꾸는 도구는 `ToolRisk.WRITE/DESTRUCTIVE` 로 선언해 승인 정책을 거치게 한다.
+[CLAUDE.md](CLAUDE.md) 참고 — 카드 claim → 작업 → handoff 와 함께 이동, 커밋 메시지에 `[카드ID]`,
+문서는 보드에서 생성(`make docs`), 커밋 전 `make check`. git 훅은 `make install` 시 자동 설정된다.

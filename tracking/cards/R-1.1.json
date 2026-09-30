@@ -1,0 +1,43 @@
+{
+  "id": "R-1.1",
+  "board_id": "dev",
+  "title": "AI Agent 설계·개발",
+  "description": "스트리밍 응답, 구조화 출력(JSON Schema 강제), 에이전트별 모델 지정",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:minimal"
+  ],
+  "refs": [
+    "src/aiops/agents/base.py"
+  ],
+  "acceptance": [
+    {
+      "text": "모든 특화 Agent 가 구조화 결과(data)를 스키마 검증 통과",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.857155Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.857120Z",
+  "updated_at": "2026-09-30T10:30:02.857281Z",
+  "started_at": null,
+  "done_at": null
+}

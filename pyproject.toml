@@ -19,6 +19,9 @@ dependencies = [
     "numpy>=1.26",
 ]
 
+[project.scripts]
+kanban = "aiops.kanban.cli:main"
+
 [project.optional-dependencies]
 # Agent Framework 어댑터 (1.x) — 자체 오케스트레이터가 기본, LangGraph는 선택
 agents = ["langgraph>=0.2"]

@@ -1,0 +1,52 @@
+{
+  "id": "M1-01",
+  "board_id": "dev",
+  "title": "구조화 출력 스키마 검증 + 1회 재시도",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M1",
+    "plan:0002"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "LLMAgent.output_model 로 pydantic 검증",
+      "done": false
+    },
+    {
+      "text": "위반 시 오류를 알려주고 재요청",
+      "done": false
+    },
+    {
+      "text": "특화 Agent 3종 스키마 적용",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "llm"
+  ],
+  "parent_id": "R-4.1",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.877112Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.877091Z",
+  "updated_at": "2026-09-30T10:30:02.877194Z",
+  "started_at": null,
+  "done_at": null
+}

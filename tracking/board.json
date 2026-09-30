@@ -1,0 +1,23 @@
+{
+  "board_id": "dev",
+  "default_prefix": "T",
+  "policy": {
+    "wip_limits": {"in_progress": 5, "review": 10},
+    "per_assignee_wip": 3,
+    "lease_seconds": 28800,
+    "handoff_required": true
+  },
+  "sections": {
+    "1": "Multi-Agent 플랫폼",
+    "2": "AIOps 및 운영 자동화",
+    "3": "상황 인식 및 데이터 분석",
+    "4": "AI 서비스 Backend"
+  },
+  "milestones": [
+    {"id": "M0", "goal": "골격 — 전 영역 인터페이스 + Fake LLM 으로 E2E 동작", "epics": ["전체"], "done": true},
+    {"id": "M1", "goal": "실 LLM + 실 지식으로 RCA 품질 확보", "epics": ["4.1", "4.2", "4.3", "2.2", "2.6"]},
+    {"id": "M2", "goal": "실데이터 연동과 상황 인식 고도화", "epics": ["2.1", "3.1", "3.2", "3.3", "3.5"]},
+    {"id": "M3", "goal": "안전한 자동 조치 (HITL)", "epics": ["2.3", "2.4", "1.4", "4.5"]},
+    {"id": "M4", "goal": "예측·보고·운영 안정화", "epics": ["3.4", "2.5", "4.4", "4.6", "1.6"]}
+  ]
+}

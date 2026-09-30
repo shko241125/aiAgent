@@ -20,3 +20,5 @@ jobs:
         run: .venv/bin/ruff check src tests scripts && .venv/bin/ruff format --check src tests scripts
       - name: Test
         run: .venv/bin/python -m pytest -q
+      - name: Docs ↔ Kanban board in sync
+        run: .venv/bin/python -m aiops.kanban.cli docs check

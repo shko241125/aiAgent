@@ -1,0 +1,90 @@
+{
+  "id": "KB-03",
+  "board_id": "dev",
+  "title": "브리핑 · 에이전트용 칸반 도구 · ToolRuntime 주입",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "done",
+  "labels": [
+    "plan:0001"
+  ],
+  "refs": [
+    "src/aiops/kanban/briefing.py",
+    "src/aiops/kanban/tools.py"
+  ],
+  "acceptance": [
+    {
+      "text": "lease 만료 후 새 에이전트가 브리핑만으로 이어받는 테스트",
+      "done": true
+    },
+    {
+      "text": "도구 호출자 신원 위조 불가",
+      "done": true
+    }
+  ],
+  "capabilities": [],
+  "parent_id": "R-1.6",
+  "depends_on": [],
+  "assignee": "claude-code",
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "briefing.py(렌더), tools.py(board_* 7종), ToolRuntime 은 agents/tools/base.py. LLMAgent 가 task.card_id 있으면 브리핑 주입 + 보드 도구 개방",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.875413Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:19.089070Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:19.556106Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ lease 만료 후 새 에이전트가 브리핑만으로 이어받는 테스트",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:19.561212Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 도구 호출자 신원 위조 불가",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:20.062984Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "도구 함수에 runtime: ToolRuntime 파라미터가 있으면 스키마에서 제외하고 실행 시 주입 → LLM 이 actor 를 위조할 수 없음",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:20.558128Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "briefing.py(렌더), tools.py(board_* 7종), ToolRuntime 은 agents/tools/base.py. LLMAgent 가 task.card_id 있으면 브리핑 주입 + 보드 도구 개방",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:20.558183Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
+    }
+  ],
+  "version": 6,
+  "created_at": "2026-09-30T10:30:02.875399Z",
+  "updated_at": "2026-09-30T10:30:20.558486Z",
+  "started_at": "2026-09-30T10:30:19.089031Z",
+  "done_at": "2026-09-30T10:30:20.558168Z"
+}

@@ -23,6 +23,9 @@ from aiops.agents.tools.builtin.ops import build_ops_tools
 from aiops.core.config import Settings
 from aiops.db.models import create_engine, create_sessionmaker, init_db
 from aiops.integrations.simulated import SimulatedOpsSource
+from aiops.kanban.board import KanbanBoard
+from aiops.kanban.stores import BoardStore, SqlBoardStore
+from aiops.kanban.tools import build_kanban_tools
 from aiops.llm.base import LLMProvider
 from aiops.llm.router import build_llm_router
 from aiops.prompts.registry import PromptRegistry
@@ -43,6 +46,11 @@ class Platform:
     source: SimulatedOpsSource
     db_engine: AsyncEngine
     sessionmaker: async_sessionmaker
+    board_store: BoardStore
+
+    def board(self, board_id: str) -> KanbanBoard:
+        """보드 = 작업 공간 단위 (인시던트 1건, 목표 1개 등). 저장소는 DB 로 영속."""
+        return KanbanBoard(self.board_store, board_id)
 
     async def aclose(self) -> None:
         await self.llm.aclose()
@@ -59,7 +67,7 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
     await rag.ingest_directory(settings.knowledge_dir)
 
     tools = ToolRegistry(ApprovalPolicy(auto_approve=settings.auto_approve_actions))
-    tools.register(*build_ops_tools(source, rag))
+    tools.register(*build_ops_tools(source, rag), *build_kanban_tools())
 
     common = dict(max_steps=settings.agent_max_steps, memory_window=settings.memory_window)
     agents = AgentRegistry()
@@ -74,6 +82,7 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
 
     engine = create_engine(settings.database_url)
     await init_db(engine)
+    sessionmaker = create_sessionmaker(engine)
 
     return Platform(
         settings=settings,
@@ -86,5 +95,6 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
         memory=InMemoryMemoryStore(),
         source=source,
         db_engine=engine,
-        sessionmaker=create_sessionmaker(engine),
+        sessionmaker=sessionmaker,
+        board_store=SqlBoardStore(sessionmaker),
     )

@@ -10,6 +10,7 @@ import inspect
 import json
 import logging
 from collections.abc import Callable
+from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any, get_type_hints
 
@@ -18,6 +19,21 @@ from pydantic import BaseModel, Field, ValidationError, create_model
 from aiops.llm.base import ToolCall, ToolSpec
 
 logger = logging.getLogger(__name__)
+
+
+RUNTIME_PARAM = "runtime"
+
+
+@dataclass
+class ToolRuntime:
+    """도구 실행 시 주입되는 호출자 정보. LLM 이 조작할 수 없도록 스키마에서 제외된다.
+
+    함수 시그니처에 `runtime: ToolRuntime` 파라미터가 있으면 자동 주입.
+    """
+
+    agent: str
+    ctx: Any = None  # AgentContext (순환 import 회피)
+    card_id: str | None = None
 
 
 class ToolRisk(StrEnum):
@@ -52,6 +68,7 @@ class Tool(BaseModel):
     risk: ToolRisk = ToolRisk.READ
     timeout_s: float = 30.0
     tags: set[str] = Field(default_factory=set)
+    needs_runtime: bool = False
 
     @property
     def spec(self) -> ToolSpec:
@@ -59,9 +76,11 @@ class Tool(BaseModel):
         schema.pop("title", None)
         return ToolSpec(name=self.name, description=self.description, parameters=schema)
 
-    async def invoke(self, arguments: dict[str, Any]) -> Any:
+    async def invoke(self, arguments: dict[str, Any], runtime: ToolRuntime | None = None) -> Any:
         args = self.args_model.model_validate(arguments)
         kwargs = args.model_dump()
+        if self.needs_runtime:
+            kwargs[RUNTIME_PARAM] = runtime
         if inspect.iscoroutinefunction(self.func):
             return await asyncio.wait_for(self.func(**kwargs), timeout=self.timeout_s)
         return await asyncio.wait_for(asyncio.to_thread(self.func, **kwargs), self.timeout_s)
@@ -80,7 +99,10 @@ def tool(
     def decorator(func: Callable[..., Any]) -> Tool:
         hints = get_type_hints(func)
         fields: dict[str, Any] = {}
-        for pname, param in inspect.signature(func).parameters.items():
+        params = inspect.signature(func).parameters
+        for pname, param in params.items():
+            if pname == RUNTIME_PARAM:
+                continue
             annotation = hints.get(pname, Any)
             default = ... if param.default is inspect.Parameter.empty else param.default
             fields[pname] = (annotation, default)
@@ -94,6 +116,7 @@ def tool(
             risk=risk,
             timeout_s=timeout_s,
             tags=tags or set(),
+            needs_runtime=RUNTIME_PARAM in params,
         )
 
     return decorator
@@ -134,7 +157,13 @@ class ToolRegistry:
         selected = names if names is not None else list(self._tools)
         return [self._tools[n].spec for n in selected]
 
-    async def invoke(self, call: ToolCall, *, approved: set[str] | None = None) -> ToolResult:
+    async def invoke(
+        self,
+        call: ToolCall,
+        *,
+        approved: set[str] | None = None,
+        runtime: ToolRuntime | None = None,
+    ) -> ToolResult:
         t = self._tools.get(call.name)
         if t is None:
             return ToolResult(call_id=call.id, name=call.name, ok=False, error="unknown tool")
@@ -147,7 +176,7 @@ class ToolRegistry:
                 error=f"'{t.name}' ({t.risk}) requires human approval",
             )
         try:
-            output = await t.invoke(call.arguments)
+            output = await t.invoke(call.arguments, runtime)
             return ToolResult(call_id=call.id, name=call.name, ok=True, output=output)
         except ValidationError as exc:
             return ToolResult(call_id=call.id, name=call.name, ok=False, error=str(exc))

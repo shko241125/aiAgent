@@ -1,0 +1,45 @@
+{
+  "id": "R-1.6",
+  "board_id": "dev",
+  "title": "Memory·Context 관리",
+  "description": "토큰 기준 트리밍 + 요약 메모리, 장기 메모리 Vector DB 이관, 컨텍스트 압축",
+  "type": "epic",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "maturity:minimal"
+  ],
+  "refs": [
+    "src/aiops/agents/memory/",
+    "src/aiops/agents/context.py",
+    "src/aiops/kanban/briefing.py"
+  ],
+  "acceptance": [
+    {
+      "text": "50+ step 대화에서 컨텍스트 한도 초과 없음",
+      "done": false
+    }
+  ],
+  "capabilities": [],
+  "parent_id": null,
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.862735Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.862718Z",
+  "updated_at": "2026-09-30T10:30:02.862815Z",
+  "started_at": null,
+  "done_at": null
+}

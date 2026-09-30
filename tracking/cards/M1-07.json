@@ -1,0 +1,52 @@
+{
+  "id": "M1-07",
+  "board_id": "dev",
+  "title": "프롬프트 eval 러너 + 시나리오 + RCA few-shot(v2)",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M1",
+    "plan:0002"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "시나리오 JSON → 체크(JSON/스키마/키워드/인용)",
+      "done": false
+    },
+    {
+      "text": "CI 는 scripted LLM 으로 회귀",
+      "done": false
+    },
+    {
+      "text": "실 LLM 실행 스크립트",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "prompt"
+  ],
+  "parent_id": "R-4.3",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.880744Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.880729Z",
+  "updated_at": "2026-09-30T10:30:02.880821Z",
+  "started_at": null,
+  "done_at": null
+}

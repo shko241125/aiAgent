@@ -60,3 +60,15 @@ def create_sessionmaker(engine: AsyncEngine) -> async_sessionmaker:
 async def init_db(engine: AsyncEngine) -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+
+class KanbanCardRow(Base):
+    """칸반 카드 (PLAN-0001). 조회용 컬럼 + 전체 카드 JSON. version 으로 compare-and-swap."""
+
+    __tablename__ = "kanban_cards"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    board_id: Mapped[str] = mapped_column(String(64), index=True)
+    column: Mapped[str] = mapped_column(String(16), index=True)
+    version: Mapped[int] = mapped_column(default=0)
+    data: Mapped[dict[str, Any]] = mapped_column(default=dict)

@@ -1,0 +1,83 @@
+{
+  "id": "KB-04",
+  "board_id": "dev",
+  "title": "오케스트레이터 통합 (카드 수명주기·Pull 루프·인시던트 보드) + API",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "done",
+  "labels": [
+    "plan:0001"
+  ],
+  "refs": [
+    "src/aiops/agents/orchestration/orchestrator.py",
+    "src/aiops/api/routers/boards.py"
+  ],
+  "acceptance": [
+    {
+      "text": "승인 대기 시 카드 BLOCKED",
+      "done": true
+    },
+    {
+      "text": "인시던트 실행 후 에픽+단계 카드 생성",
+      "done": true
+    }
+  ],
+  "capabilities": [],
+  "parent_id": "R-1.4",
+  "depends_on": [],
+  "assignee": "claude-code",
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "Orchestrator.run_agent 가 claim→실행→outputs→DONE/REVIEW/BLOCKED. run_kanban(Pull)+plan_cards(Planner). build_incident_response/finalize_incident_board. /api/v1/boards/*, /orchestrations/kanban",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.875955Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:21.014911Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:21.480720Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 승인 대기 시 카드 BLOCKED",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:21.485656Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 인시던트 실행 후 에픽+단계 카드 생성",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:22.050685Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "Orchestrator.run_agent 가 claim→실행→outputs→DONE/REVIEW/BLOCKED. run_kanban(Pull)+plan_cards(Planner). build_incident_response/finalize_incident_board. /api/v1/boards/*, /orchestrations/kanban",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:22.050728Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
+    }
+  ],
+  "version": 5,
+  "created_at": "2026-09-30T10:30:02.875943Z",
+  "updated_at": "2026-09-30T10:30:22.050935Z",
+  "started_at": "2026-09-30T10:30:21.014897Z",
+  "done_at": "2026-09-30T10:30:22.050718Z"
+}

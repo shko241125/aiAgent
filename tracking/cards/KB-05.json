@@ -1,0 +1,115 @@
+{
+  "id": "KB-05",
+  "board_id": "dev",
+  "title": "개발 보드 이관 · 문서 자동 연동 · CLAUDE.md · 훅 · CI",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "done",
+  "labels": [
+    "plan:0001"
+  ],
+  "refs": [
+    "src/aiops/kanban/docsync.py",
+    "src/aiops/kanban/cli.py"
+  ],
+  "acceptance": [
+    {
+      "text": "docs check 가 CI 에서 실행",
+      "done": true
+    },
+    {
+      "text": "SessionStart 훅이 보드 브리핑 주입",
+      "done": true
+    },
+    {
+      "text": "편집 시 문서 자동 재생성",
+      "done": true
+    }
+  ],
+  "capabilities": [],
+  "parent_id": "R-1.2",
+  "depends_on": [],
+  "assignee": "claude-code",
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "CLAUDE.md(최상위 규칙 R1~R12), .claude/settings.json(SessionStart/PostToolUse/Stop), .githooks(pre-commit 문서 재생성·스테이징, commit-msg 카드ID 경고), CI docs check, docsync(AUTO 구간: ROADMAP/MILESTONES/CARDS). 주의: Bash 로 파일을 고치면 PostToolUse 가 안 돌므로 pre-commit/Stop 훅이 보완",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.876537Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:22.520183Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:30:23.061461Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "CLI·docsync 구현, 보드 시드(에픽 24·KB 5·M1 10). 남은 일: CLAUDE.md, 훅, pre-commit, CI, ROADMAP AUTO 구간 전환",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:31:56.916986Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "훅 스크립트 작성, pipe-test 중",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:33:29.762797Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ docs check 가 CI 에서 실행",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:33:29.767300Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ SessionStart 훅이 보드 브리핑 주입",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:33:29.774514Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 편집 시 문서 자동 재생성",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:33:30.237578Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "PostToolUse 훅은 실제 Edit 로 발화 확인(센티널), Stop 훅은 잘못된 TODO 에서 block·stop_hook_active 시 통과 확인",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:33:30.665985Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "CLAUDE.md(최상위 규칙 R1~R12), .claude/settings.json(SessionStart/PostToolUse/Stop), .githooks(pre-commit 문서 재생성·스테이징, commit-msg 카드ID 경고), CI docs check, docsync(AUTO 구간: ROADMAP/MILESTONES/CARDS). 주의: Bash 로 파일을 고치면 PostToolUse 가 안 돌므로 pre-commit/Stop 훅이 보완",
+      "data": {}
+    },
+    {
+      "ts": "2026-09-30T10:33:30.666062Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
+    }
+  ],
+  "version": 9,
+  "created_at": "2026-09-30T10:30:02.876525Z",
+  "updated_at": "2026-09-30T10:33:30.666308Z",
+  "started_at": "2026-09-30T10:30:22.520158Z",
+  "done_at": "2026-09-30T10:33:30.666050Z"
+}

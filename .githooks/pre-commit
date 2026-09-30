@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# 커밋 전: 보드 → 생성 문서 재생성 후 스테이징. 검증 실패(잘못된 TODO ID·끊긴 refs) 시 커밋 차단.
+root=$(git rev-parse --show-toplevel) && cd "$root" || exit 1
+PY=.venv/bin/python
+[ -x "$PY" ] || PY=python3
+if ! "$PY" -c "import aiops.kanban" 2>/dev/null; then
+  echo "[pre-commit] aiops 미설치 — 'make install' 필요 (문서 동기화 생략)" >&2
+  exit 0
+fi
+changed=$("$PY" -m aiops.kanban.cli docs sync --porcelain) || {
+  echo "[pre-commit] ✘ 보드/문서 검증 실패 — 위 메시지를 해결한 뒤 다시 커밋하세요" >&2
+  exit 1
+}
+if [ -n "$changed" ]; then
+  echo "$changed" | xargs -r git add --
+  echo "[pre-commit] 생성 문서 갱신·스테이징: $(echo "$changed" | tr '\n' ' ')"
+fi
+exit 0

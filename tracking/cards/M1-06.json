@@ -1,0 +1,52 @@
+{
+  "id": "M1-06",
+  "board_id": "dev",
+  "title": "검색 평가 하네스 + 평가셋 + 운영 지식 확충",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M1",
+    "plan:0002"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "Recall@k·MRR·nDCG",
+      "done": false
+    },
+    {
+      "text": "질의 20+ 평가셋",
+      "done": false
+    },
+    {
+      "text": "bm25/vector/hybrid 비교 스크립트",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "rag"
+  ],
+  "parent_id": "R-4.2",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-09-30T10:30:02.880059Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-09-30T10:30:02.880009Z",
+  "updated_at": "2026-09-30T10:30:02.880156Z",
+  "started_at": null,
+  "done_at": null
+}

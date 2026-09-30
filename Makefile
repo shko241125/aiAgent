@@ -1,7 +1,8 @@
-.PHONY: install dev test lint format run demo docker-up docker-down
+.PHONY: install dev test lint format run demo docker-up docker-down docs docs-check board hooks check
 
 install:
 	uv venv .venv -p 3.11 && uv pip install -p .venv -e ".[dev]"
+	git config core.hooksPath .githooks
 
 dev:
 	uv pip install -p .venv -e ".[dev,agents,ml,vector,postgres]"
@@ -26,3 +27,18 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+# ---- 칸반 / 문서 자동 연동 (CLAUDE.md) ----
+board:
+	.venv/bin/python -m aiops.kanban.cli brief
+
+docs:
+	.venv/bin/python -m aiops.kanban.cli docs sync
+
+docs-check:
+	.venv/bin/python -m aiops.kanban.cli docs check
+
+hooks:
+	git config core.hooksPath .githooks
+
+check: lint test docs-check
