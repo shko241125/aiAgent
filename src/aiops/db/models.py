@@ -85,3 +85,18 @@ class KnowledgeDocRow(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, onupdate=utcnow
     )
+
+
+class OpsEventRow(Base):
+    """웹훅으로 수집한 운영 이벤트 (알람·배포·설정 변경) — RCA 의 change 신호 원천 (M2-02)."""
+
+    __tablename__ = "ops_events"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)  # 재전송 중복 제거 키
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    source: Mapped[str] = mapped_column(String(32))
+    service: Mapped[str] = mapped_column(String(128), index=True)
+    type: Mapped[str] = mapped_column(String(128))
+    severity: Mapped[str] = mapped_column(String(16))
+    message: Mapped[str] = mapped_column(Text, default="")
+    attributes: Mapped[dict[str, Any]] = mapped_column(default=dict)

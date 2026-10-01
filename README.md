@@ -73,6 +73,7 @@ docs/                아키텍처 · 로드맵(생성) · 보드(생성) · 계�
 | POST | `/api/v1/rag/{ingest,search,answer}` | 지식 인제스트 · 하이브리드 검색 · 근거 기반 답변 |
 | GET/POST | `/api/v1/incidents` | 인시던트 관리 |
 | POST | `/api/v1/incidents/{id}/resolve` | 인시던트 종료 + 포스트모템 지식 자동 축적 (RAG·DB) |
+| POST | `/api/v1/events/alertmanager` · `/api/v1/events/changes` | 알람·배포/설정 변경 웹훅 수집 (멱등), 옵션으로 인시던트 자동 대응 |
 | GET | `/api/v1/llm/usage?group_by=agent` | LLM 토큰·지연·비용 집계 (provider/model/agent 별) |
 | GET/DELETE | `/api/v1/rag/documents` | 지식 문서 목록·삭제 (인제스트는 증분: 같은 내용 skip, 변경 시 교체) |
 

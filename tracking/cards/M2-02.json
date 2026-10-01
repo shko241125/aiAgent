@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M2",
     "plan:0003"
@@ -14,19 +14,19 @@
   "acceptance": [
     {
       "text": "POST /api/v1/events/alertmanager (Alertmanager v4 페이로드)",
-      "done": false
+      "done": true
     },
     {
       "text": "POST /api/v1/events/changes (배포·설정 변경)",
-      "done": false
+      "done": true
     },
     {
       "text": "DB 이벤트 저장소가 EventSource 로 동작 → RCA change 신호",
-      "done": false
+      "done": true
     },
     {
       "text": "알람 수신 시 인시던트 파이프라인 자동 실행(옵션)",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -34,10 +34,10 @@
   ],
   "parent_id": "R-2.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "integrations/events.py(Alertmanager v4·ChangePayload 파싱, SqlEventStore=EventSource, id 기반 멱등), db OpsEventRow, API /api/v1/events/{alertmanager,changes}, GET /api/v1/events. AIOPS_AUTO_INCIDENT_*. live 모드에서만 웹훅 이벤트가 RCA change 신호로 쓰임 — simulated 모드는 시뮬레이터 이벤트만 사용(평가 재현성 때문)",
   "outputs": {},
   "log": [
     {
@@ -46,11 +46,67 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:06:06.994216Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:08:13.623776Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ POST /api/v1/events/alertmanager (Alertmanager v4 페이로드)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:08:13.629580Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ POST /api/v1/events/changes (배포·설정 변경)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:08:13.634098Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ DB 이벤트 저장소가 EventSource 로 동작 → RCA change 신호",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:08:13.638252Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 알람 수신 시 인시던트 파이프라인 자동 실행(옵션)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:08:14.054460Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "인시던트 대응 로직을 services/incident_response.py 로 추출 — API 요청 세션이 아니라 자체 세션을 열어 BackgroundTasks 에서도 안전. 알람 폭주 억제: 같은 서비스의 미해결 인시던트가 30분 안에 있으면 새로 만들지 않음",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:08:14.461028Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "integrations/events.py(Alertmanager v4·ChangePayload 파싱, SqlEventStore=EventSource, id 기반 멱등), db OpsEventRow, API /api/v1/events/{alertmanager,changes}, GET /api/v1/events. AIOPS_AUTO_INCIDENT_*. live 모드에서만 웹훅 이벤트가 RCA change 신호로 쓰임 — simulated 모드는 시뮬레이터 이벤트만 사용(평가 재현성 때문)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:08:14.461064Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 8,
   "created_at": "2026-10-01T16:03:37.946223Z",
-  "updated_at": "2026-10-01T16:03:37.946428Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-01T16:08:14.461288Z",
+  "started_at": "2026-10-01T16:06:06.994201Z",
+  "done_at": "2026-10-01T16:08:14.461054Z"
 }

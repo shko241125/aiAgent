@@ -65,6 +65,11 @@ class Settings(BaseSettings):
     agent_max_steps: int = 8
     memory_window: int = 20
 
+    # --- 알람 → 인시던트 자동 대응 (M2-02) ---
+    auto_incident_on_alert: bool = False
+    auto_incident_min_severity: Literal["info", "warning", "major", "critical"] = "major"
+    auto_incident_dedup_minutes: int = 30  # 같은 서비스 미해결 인시던트가 있으면 새로 만들지 않음
+
     # --- 운영 자동화 안전장치 (2.3) ---
     auto_approve_actions: bool = False
 

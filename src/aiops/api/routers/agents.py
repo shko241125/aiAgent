@@ -8,13 +8,10 @@ from pydantic import BaseModel, Field
 from aiops.agents.base import AgentResult, AgentTask
 from aiops.agents.context import AgentContext
 from aiops.agents.orchestration.orchestrator import OrchestrationResult
-from aiops.agents.orchestration.workflows import (
-    build_incident_response,
-    finalize_incident_board,
-)
 from aiops.api.deps import PlatformDep, SessionDep
-from aiops.db.repositories import AgentRunRepository, IncidentRepository
-from aiops.domain.models import Alert, Incident
+from aiops.db.repositories import AgentRunRepository
+from aiops.domain.models import Alert
+from aiops.services.incident_response import respond_to_alert
 
 router = APIRouter(prefix="/api/v1", tags=["agents"])
 
@@ -68,56 +65,14 @@ async def run_agent(
 
 
 @router.post("/orchestrations/incident-response")
-async def incident_response(
-    req: IncidentResponseRequest,
-    p: PlatformDep,
-    session: SessionDep,
-) -> dict:
+async def incident_response(req: IncidentResponseRequest, p: PlatformDep) -> dict:
     """알람 1건에 대해 전체 인시던트 대응 워크플로우를 실행한다."""
-    alert = req.alert
-    incident = await IncidentRepository(session).create(
-        Incident(
-            title=alert.title, service=alert.service, severity=alert.severity, alert_ids=[alert.id]
-        )
-    )
-    ctx = AgentContext(
-        incident_id=incident.id,
-        long_term=p.memory,
-        approved_tools=set(req.approved_tools),
-        board=p.board(incident.id),
-    )
-    wf, cards = await build_incident_response(
-        p.orchestrator,
-        ctx,
-        title=f"[{alert.service}] {alert.title}",
+    return await respond_to_alert(
+        p,
+        req.alert,
         with_remediation=req.with_remediation,
+        approved_tools=set(req.approved_tools),
     )
-    result = await p.orchestrator.run_workflow(
-        wf, ctx, state={"alert": alert.model_dump(mode="json")}
-    )
-    await finalize_incident_board(ctx, result.workflow_run, cards)
-
-    run = result.workflow_run
-    rca = ctx.blackboard.read("rca.data") or {}
-    await IncidentRepository(session).update(
-        incident.id,
-        status="investigating",
-        summary=(ctx.blackboard.read("incident.output") or "")[:4000],
-        root_cause=rca.get("root_cause"),
-    )
-    await AgentRunRepository(session).save(
-        ctx, "workflow", run.status.value, {"steps": {k: v.status for k, v in run.steps.items()}}
-    )
-    return {
-        "incident_id": incident.id,
-        "board_id": incident.id,
-        "cards": cards,
-        "run_id": ctx.run_id,
-        "workflow_status": run.status,
-        "steps": {k: {"status": v.status, "error": v.error} for k, v in run.steps.items()},
-        "pending_approvals": sorted({t for r in result.results for t in r.pending_approvals}),
-        "report": ctx.blackboard.read("report.output"),
-    }
 
 
 @router.post("/orchestrations/supervised", response_model=OrchestrationResult)

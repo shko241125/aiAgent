@@ -23,6 +23,7 @@ from aiops.agents.tools.builtin.ops import build_ops_tools
 from aiops.core.config import Settings
 from aiops.db.models import create_engine, create_sessionmaker, init_db
 from aiops.integrations.base import OpsSource
+from aiops.integrations.events import SqlEventStore
 from aiops.integrations.factory import build_ops_source
 from aiops.kanban.board import KanbanBoard
 from aiops.kanban.stores import BoardStore, SqlBoardStore
@@ -50,6 +51,7 @@ class Platform:
     sessionmaker: async_sessionmaker
     board_store: BoardStore
     knowledge: KnowledgeRepository
+    events: SqlEventStore
 
     def board(self, board_id: str) -> KanbanBoard:
         """보드 = 작업 공간 단위 (인시던트 1건, 목표 1개 등). 저장소는 DB 로 영속."""
@@ -64,7 +66,12 @@ class Platform:
 async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> Platform:
     llm = llm or build_llm_router(settings)
     prompts = PromptRegistry()
-    source = build_ops_source(settings)  # simulated | live(Prometheus+Loki+토폴로지 파일)
+    engine = create_engine(settings.database_url)
+    await init_db(engine)
+    sessionmaker = create_sessionmaker(engine)
+    events = SqlEventStore(sessionmaker)  # 웹훅 수집 이벤트 (M2-02)
+    # simulated | live(Prometheus + Loki + 웹훅 이벤트 DB + 토폴로지 파일)
+    source = build_ops_source(settings, events=events)
 
     retriever = HybridRetriever(
         build_embedder(settings),
@@ -93,9 +100,6 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
         KnowledgeAgent(llm_for("knowledge"), tools, prompts, **common),
     )
 
-    engine = create_engine(settings.database_url)
-    await init_db(engine)
-    sessionmaker = create_sessionmaker(engine)
     knowledge = KnowledgeRepository(sessionmaker)
     await rag.ingest(await knowledge.all())  # 운영 중 축적된 지식 재적재 (M1-09)
 
@@ -113,4 +117,5 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
         sessionmaker=sessionmaker,
         board_store=SqlBoardStore(sessionmaker),
         knowledge=knowledge,
+        events=events,
     )

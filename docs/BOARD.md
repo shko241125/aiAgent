@@ -3,7 +3,7 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 7 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 1 · ✅ done 15**
+**📥 backlog 0 · 🟦 ready 6 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 1 · ✅ done 16**
 
 ## ⛔ blocked (1)
 
@@ -11,11 +11,10 @@
 |---|---|---|---|---|---|
 | M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | p2 | claude-code | R-4.1 | 실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요 |
 
-## 🟦 ready (7)
+## 🟦 ready (6)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
-| M2-02 | 이벤트 수집: Alertmanager·CI/CD 웹훅 → DB 이벤트 저장소 | p1 | - | R-2.1 |  |
 | M2-03 | 이상 탐지 평가 하네스 + 계절성 탐지기 + 스트리밍 인터페이스 | p1 | - | R-3.1 |  |
 | M2-04 | 로그 템플릿 추출(Drain) + 알람 폭주 압축률 | p1 | - | R-3.3 |  |
 | M2-05 | 상황 인식 가중치 학습(로지스틱 회귀) + 토폴로지 영향 전파 | p1 | - | R-3.2 |  |
@@ -23,7 +22,7 @@
 | M2-07 | 장애 판정(is_incident) 결정적 평가 | p1 | - | R-2.1 |  |
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | - | R-2.1 |  |
 
-## ✅ done (15)
+## ✅ done (16)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
@@ -42,3 +41,4 @@
 | M1-08 | RCA 원인 후보 랭킹 엔진 + 장애 시나리오 평가 | p1 | claude-code | R-2.2 | analytics/rca.py(RCAAnalyzer: downstream depth3 근거 수집, rank_candidates: change/error_signature/dependency/resource, 시그니… |
 | M1-09 | 인용 검증 + 해결 인시던트 지식 자동 축적 | p1 | claude-code | R-2.6 | rag/citations.py(문서id·번호 인용, invalid, citation_rate), RAG answer 에 citation_report, KnowledgeAgent 가 검색 결과 기준으로 검증(data… |
 | M2-01 | Prometheus·Loki 어댑터 + 소스 조합(Composite) + 토폴로지 파일 | p1 | claude-code | R-2.1 | integrations/prometheus.py(DEFAULT_QUERIES: k8s+Micrometer 기준, 파일로 덮어쓰기), loki.py(LogQL, 나노초, X-Scope-OrgID), composite… |
+| M2-02 | 이벤트 수집: Alertmanager·CI/CD 웹훅 → DB 이벤트 저장소 | p1 | claude-code | R-2.1 | integrations/events.py(Alertmanager v4·ChangePayload 파싱, SqlEventStore=EventSource, id 기반 멱등), db OpsEventRow, API /api… |

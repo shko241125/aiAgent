@@ -114,3 +114,47 @@ def test_rag_answer_reports_citations(client, llm):
     body = client.post("/api/v1/rag/answer", json={"query": "HikariPool 커넥션 고갈"}).json()
     report = body["citation_report"]
     assert report["valid"] and report["citation_rate"] == 0.5
+
+
+AM_PAYLOAD = {
+    "version": "4",
+    "status": "firing",
+    "alerts": [
+        {
+            "status": "firing",
+            "fingerprint": "abc",
+            "startsAt": "2026-10-01T01:00:00Z",
+            "labels": {
+                "alertname": "HighLatency",
+                "service": "order-service",
+                "severity": "critical",
+            },
+            "annotations": {"summary": "p95 > 2s"},
+        }
+    ],
+}
+
+
+def test_alertmanager_webhook_is_idempotent(client):
+    first = client.post("/api/v1/events/alertmanager", json=AM_PAYLOAD).json()
+    again = client.post("/api/v1/events/alertmanager", json=AM_PAYLOAD).json()
+    assert (first["stored"], again["stored"]) == (1, 0)
+    assert first["incident_triggered_for"] == []  # 자동 대응은 기본 꺼짐
+    events = client.get(
+        "/api/v1/events", params={"service": "order-service", "minutes": 10**7}
+    ).json()
+    assert [e["type"] for e in events] == ["alert.HighLatency"]
+
+
+def test_alert_auto_triggers_incident_and_suppresses_duplicates(settings, llm):
+    s = settings.model_copy(update={"auto_incident_on_alert": True})
+    with TestClient(create_app(s, llm=llm)) as c:
+        r1 = c.post("/api/v1/events/alertmanager", json=AM_PAYLOAD).json()
+        assert r1["incident_triggered_for"] == ["order-service"]
+        incidents = c.get("/api/v1/incidents").json()
+        assert len(incidents) == 1 and incidents[0]["status"] == "investigating"
+
+        second = {**AM_PAYLOAD, "alerts": [{**AM_PAYLOAD["alerts"][0], "fingerprint": "def"}]}
+        r2 = c.post("/api/v1/events/alertmanager", json=second).json()
+        assert r2["incident_triggered_for"] == [] and len(r2["suppressed"]) == 1
+        assert len(c.get("/api/v1/incidents").json()) == 1  # 알람 폭주 → 인시던트 1건 유지
