@@ -32,6 +32,7 @@ class Fault(BaseModel):
     metric: str
     magnitude: float = 3.0
     onset_min_ago: float = 9.0  # 몇 분 전부터 이상이 시작됐는가
+    duration_min: float | None = None  # None = 지금도 진행 중, 값이 있으면 일시적 이상
 
 
 class ChangeEvent(BaseModel):
@@ -89,7 +90,9 @@ class SimulatedOpsSource(OpsSource):
             seasonal = 0.1 * base * math.sin(2 * math.pi * i / 60)
             value = base + seasonal + rng.gauss(0, 0.05 * base)
             for f in faults:
-                if ts >= end - timedelta(minutes=f.onset_min_ago):
+                f_start = end - timedelta(minutes=f.onset_min_ago)
+                f_end = f_start + timedelta(minutes=f.duration_min) if f.duration_min else end
+                if f_start <= ts <= f_end:
                     value *= f.magnitude
             points.append(MetricPoint(timestamp=ts, value=value))
         return MetricSeries(service=service, metric=metric, points=points)

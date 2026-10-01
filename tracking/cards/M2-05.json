@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M2",
     "plan:0003"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "라벨 데이터로 가중치 학습(numpy, 해석 가능한 계수)",
-      "done": false
+      "done": true
     },
     {
       "text": "규칙 기반 대비 오탐률·재현율 비교",
-      "done": false
+      "done": true
     },
     {
       "text": "하위 서비스 이상이 상위 헬스 스코어에 전파",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,11 +30,13 @@
   ],
   "parent_id": "R-3.2",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "analytics/situation_model.py(featurize 8특징, LogisticModel numpy GD+L2+표준화·explain·save/load, assess_learned, propagate_risk), evals/situations.py(라벨 상황 생성·규칙 vs 학습 보류 평가·트리아지 스윕), scripts/eval_situation.py --save → data/models/situation_lr.json. Fault.duration_min(일시적 이상) 추가. 에이전트 통합·트리아지는 M2-07",
+  "outputs": {
+    "baseline": "학습 120/보류 80 상황(양성 4종·헷갈리는 음성 4종): rule P=1.000 R=0.850 FPR=0 F1=0.919 | learned(logistic) P=1.000 R=0.950 FPR=0 F1=0.974. 오판 2건 모두 resource 유형(p=0.08). 계수: ongoing_minutes 1.33 > anomalous_metrics 1.18 > latency 0.96 > error 0.68 …"
+  },
   "log": [
     {
       "ts": "2026-10-01T16:03:39.225078Z",
@@ -42,11 +44,67 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:13:09.232630Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:16:04.521548Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.baseline 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:16:04.932089Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "첫 학습에서 recent_change 계수가 -0.55 — deploy_only 음성에만 변경이 몰린 데이터 편향을 모델이 학습한 것. 양·음성 모두 비슷한 비율(0.53/0.45)로 변경을 섞어 +0.25 로 교정, 테스트로 부호를 고정. 교훈: 계수가 해석 가능하면 데이터 결함이 보인다",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:16:05.341342Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 라벨 데이터로 가중치 학습(numpy, 해석 가능한 계수)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:16:05.347075Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 규칙 기반 대비 오탐률·재현율 비교",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:16:05.351256Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 하위 서비스 이상이 상위 헬스 스코어에 전파",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:16:05.754404Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "analytics/situation_model.py(featurize 8특징, LogisticModel numpy GD+L2+표준화·explain·save/load, assess_learned, propagate_risk), evals/situations.py(라벨 상황 생성·규칙 vs 학습 보류 평가·트리아지 스윕), scripts/eval_situation.py --save → data/models/situation_lr.json. Fault.duration_min(일시적 이상) 추가. 에이전트 통합·트리아지는 M2-07",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:16:05.754440Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 8,
   "created_at": "2026-10-01T16:03:39.225045Z",
-  "updated_at": "2026-10-01T16:03:39.225213Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-01T16:16:05.754741Z",
+  "started_at": "2026-10-01T16:13:09.232616Z",
+  "done_at": "2026-10-01T16:16:05.754430Z"
 }
