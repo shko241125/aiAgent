@@ -22,6 +22,7 @@ from pydantic import BaseModel, Field
 
 from aiops.analytics.anomaly.base import AnomalyDetector
 from aiops.analytics.anomaly.ensemble import default_detector
+from aiops.analytics.logs import summarize_logs
 from aiops.domain.models import OpsEvent, utcnow
 from aiops.integrations.base import OpsSource
 
@@ -258,9 +259,10 @@ class RCAAnalyzer:
                 for e in await self.source.list_events(end - timedelta(hours=2), end, svc)
                 if e.type in ("deploy", "config")
             ]
-            ev.log_lines = [
-                r["message"] for r in await self.source.search(svc, "error", start, end)
+            raw = [
+                r["message"] for r in await self.source.search(svc, "error", start, end, limit=500)
             ]
+            ev.log_lines = summarize_logs(raw)  # Drain 템플릿 (×개수) — M2-04
             out.append(ev)
         return out
 

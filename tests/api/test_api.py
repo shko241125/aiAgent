@@ -158,3 +158,10 @@ def test_alert_auto_triggers_incident_and_suppresses_duplicates(settings, llm):
         r2 = c.post("/api/v1/events/alertmanager", json=second).json()
         assert r2["incident_triggered_for"] == [] and len(r2["suppressed"]) == 1
         assert len(c.get("/api/v1/incidents").json()) == 1  # 알람 폭주 → 인시던트 1건 유지
+
+
+def test_log_templates_endpoint(client):
+    lines = [f"Connection to 10.0.0.{i}:5432 timed out after {i * 10}ms" for i in range(1, 30)]
+    body = client.post("/api/v1/analytics/log-templates", json={"lines": lines}).json()
+    assert len(body) == 1 and body[0]["count"] == 29
+    assert body[0]["template"] == "Connection to <*> timed out after <*>"

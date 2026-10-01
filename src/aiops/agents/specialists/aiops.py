@@ -81,6 +81,7 @@ class RCAAgent(LLMAgent):
     output_model = RCAOutput
     tool_names = [
         "rank_root_causes",
+        "summarize_service_logs",
         "query_metrics",
         "search_logs",
         "get_recent_changes",

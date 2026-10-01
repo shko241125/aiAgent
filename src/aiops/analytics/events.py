@@ -95,3 +95,26 @@ def mine_patterns(
         for i in range(len(c.types) - length + 1):
             counter[tuple(c.types[i : i + length])] += 1
     return [PatternStat(pattern=p, count=n) for p, n in counter.most_common(top_k)]
+
+
+class CompressionReport(BaseModel):
+    raw: int
+    deduplicated: int
+    clusters: int
+    ratio: float  # raw / clusters — 운영자가 실제로 봐야 하는 '상황' 1건당 원본 알람 수
+
+
+def alert_compression(
+    events: list[OpsEvent],
+    window: timedelta = timedelta(minutes=10),
+    topology: dict[str, set[str]] | None = None,
+) -> CompressionReport:
+    """알람 폭주 압축률 (M2-04 / 3.3): 원본 → 중복 제거 → 상관 클러스터."""
+    dedup = deduplicate([e.model_copy(deep=True) for e in events], window=window)
+    clusters = correlate(dedup, window=window, topology=topology)
+    return CompressionReport(
+        raw=len(events),
+        deduplicated=len(dedup),
+        clusters=len(clusters),
+        ratio=round(len(events) / max(len(clusters), 1), 2),
+    )

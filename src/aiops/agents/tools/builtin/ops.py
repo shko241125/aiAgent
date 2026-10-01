@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from aiops.agents.tools.base import Tool, ToolRisk, tool
 from aiops.analytics.anomaly.ensemble import default_detector
 from aiops.analytics.insights import summarize_series
+from aiops.analytics.logs import summarize_logs
 from aiops.analytics.rca import RCAAnalyzer
 from aiops.domain.models import utcnow
 from aiops.integrations.base import OpsSource
@@ -35,6 +36,18 @@ def build_ops_tools(source: OpsSource, rag: "RAGService | None" = None) -> list[
         """서비스 로그에서 키워드를 검색한다 (최대 20건)."""
         end = utcnow()
         return await source.search(service, query, end - timedelta(minutes=minutes), end, limit=20)
+
+    @tool(tags={"observability"})
+    async def summarize_service_logs(
+        service: str, query: str = "error", minutes: int = 30, top_k: int = 10
+    ) -> list[str]:
+        """서비스 로그를 Drain 템플릿으로 압축해 '템플릿 (×개수)' 목록으로 반환한다.
+
+        원문 수백 줄 대신 패턴 단위로 보므로 토큰을 크게 아끼고 반복 에러를 한눈에 본다.
+        """
+        end = utcnow()
+        rows = await source.search(service, query, end - timedelta(minutes=minutes), end, 1000)
+        return summarize_logs([r["message"] for r in rows], k=top_k)
 
     @tool(tags={"change"})
     async def get_recent_changes(service: str | None = None, minutes: int = 120) -> list[dict]:
@@ -88,6 +101,7 @@ def build_ops_tools(source: OpsSource, rag: "RAGService | None" = None) -> list[
         query_metrics,
         rank_root_causes,
         search_logs,
+        summarize_service_logs,
         get_recent_changes,
         get_service_dependencies,
         restart_service,
