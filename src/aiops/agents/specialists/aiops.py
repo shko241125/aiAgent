@@ -5,15 +5,13 @@
 """
 
 import json
-from datetime import timedelta
 from typing import Any
 
 from aiops.agents.base import AgentResult, AgentTask, LLMAgent
 from aiops.agents.context import AgentContext
 from aiops.agents.memory.base import MemoryItem
 from aiops.agents.schemas import DetectionOutput, RCAOutput, RemediationOutput
-from aiops.analytics.anomaly.ensemble import default_detector
-from aiops.analytics.insights import summarize_series
+from aiops.analytics.factsheet import build_fact_sheet
 from aiops.analytics.rca import RCAAnalyzer
 from aiops.analytics.situation import assess
 from aiops.analytics.situation_model import (
@@ -23,7 +21,7 @@ from aiops.analytics.situation_model import (
     propagate_risk,
     rule_signals,
 )
-from aiops.domain.models import Severity, utcnow
+from aiops.domain.models import Severity
 from aiops.integrations.base import OpsSource
 from aiops.rag.citations import validate_citations
 
@@ -46,7 +44,7 @@ class DetectionAgent(LLMAgent):
     description = "알람과 메트릭을 분석해 실제 장애 여부·심각도·영향 범위를 판단한다"
     prompt_name = "detection"
     output_model = DetectionOutput
-    tool_names = ["query_metrics", "search_logs", "get_service_dependencies"]
+    tool_names = ["get_fact_sheet", "query_metrics", "search_logs", "get_service_dependencies"]
 
     def __init__(
         self,
@@ -65,13 +63,10 @@ class DetectionAgent(LLMAgent):
     async def build_input(self, task: AgentTask, ctx: AgentContext) -> dict[str, Any]:
         alert = task.inputs.get("alert", {})
         service = alert.get("service") or task.inputs.get("service", "unknown")
-        end = utcnow()
-        facts = {}
-        for metric in DEFAULT_METRICS:
-            series = await self.source.query_range(service, metric, end - timedelta(hours=1), end)
-            facts[metric] = summarize_series(
-                series.values, default_detector().detect(series.values)
-            )
+        sheet, _ = await build_fact_sheet(self.source, service)  # M2-06 표준 fact sheet
+        ctx.blackboard.write(
+            "detection.fact_sheet", sheet.model_dump(mode="json"), author=self.name
+        )
 
         evidence = await self.analyzer.collect(service)
         rule = assess(rule_signals(evidence))
@@ -101,7 +96,7 @@ class DetectionAgent(LLMAgent):
         return {
             "alert": _dump(alert),
             "situation": _dump(situation),
-            "facts": _dump(facts),
+            "facts": sheet.to_prompt(),
             "input": task.instruction,
         }
 

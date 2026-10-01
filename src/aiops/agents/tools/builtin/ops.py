@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from aiops.agents.tools.base import Tool, ToolRisk, tool
 from aiops.analytics.anomaly.ensemble import default_detector
+from aiops.analytics.factsheet import build_fact_sheet
 from aiops.analytics.insights import summarize_series
 from aiops.analytics.logs import summarize_logs
 from aiops.analytics.rca import RCAAnalyzer
@@ -48,6 +49,14 @@ def build_ops_tools(source: OpsSource, rag: "RAGService | None" = None) -> list[
         end = utcnow()
         rows = await source.search(service, query, end - timedelta(minutes=minutes), end, 1000)
         return summarize_logs([r["message"] for r in rows], k=top_k)
+
+    @tool(tags={"observability"})
+    async def get_fact_sheet(service: str, minutes: int = 60) -> str:
+        """서비스의 표준 fact sheet: 메트릭 요약·변화점(언제부터 어느 방향)·함께 움직인 메트릭·
+        변경 이력·로그 템플릿을 압축 텍스트로 반환한다. 원시 시계열보다 훨씬 짧다.
+        """
+        sheet, _ = await build_fact_sheet(source, service, window_min=minutes)
+        return sheet.to_prompt()
 
     @tool(tags={"change"})
     async def get_recent_changes(service: str | None = None, minutes: int = 120) -> list[dict]:
@@ -99,6 +108,7 @@ def build_ops_tools(source: OpsSource, rag: "RAGService | None" = None) -> list[
 
     tools = [
         query_metrics,
+        get_fact_sheet,
         rank_root_causes,
         search_logs,
         summarize_service_logs,

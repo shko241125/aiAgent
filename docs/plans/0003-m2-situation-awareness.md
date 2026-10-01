@@ -30,11 +30,11 @@ M1 이 "LLM 이 맞는 답을 내는가"를 재는 도구를 만들었다면, M2
 | M2-03 | 이상 탐지 평가 하네스 + 계절성 탐지기 + 스트리밍 인터페이스 | ✅ done | claude-code | anomaly/synthetic.py(패턴 6종 라벨 생성), evaluation.py(이벤트 단위 P/R/F1·지연·헛알람 묶음), seasonal.py(ACF 주기 추정 + 과거 주기 중앙값 잔차 robust … |
 | M2-04 | 로그 템플릿 추출(Drain) + 알람 폭주 압축률 | ✅ done | claude-code | analytics/logs.py(DrainParser: 고정 깊이 트리·유사도 0.5·변수 마스킹, summarize_logs, grouping_accuracy), logs_synthetic.py, events.a… |
 | M2-05 | 상황 인식 가중치 학습(로지스틱 회귀) + 토폴로지 영향 전파 | ✅ done | claude-code | analytics/situation_model.py(featurize 8특징, LogisticModel numpy GD+L2+표준화·explain·save/load, assess_learned, propagate_… |
-| M2-06 | 변화점 탐지 + 메트릭 상관 + fact sheet 표준 스키마 | 🔄 in_progress | claude-code |  |
+| M2-06 | 변화점 탐지 + 메트릭 상관 + fact sheet 표준 스키마 | ✅ done | claude-code | analytics/changepoint.py(cusum: 클리핑 std 기준선·rewarm·cooldown·relative, CUSUMDetector), factsheet.py(FactSheet·MetricFact… |
 | M2-07 | 장애 판정(is_incident) 결정적 평가 | ✅ done | claude-code | DetectionAgent 가 RCAAnalyzer.collect 근거로 규칙·학습 판정+하위 위험 전파를 프롬프트에 주입, LLMAgent.pre_decide 훅으로 트리아지(AIOPS_DETECTION_TRIA… |
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | 🟦 ready | - |  |
 
-진행: 6/8
+진행: 7/8
 <!-- /AUTO -->
 
 ## 4. 완료 판정

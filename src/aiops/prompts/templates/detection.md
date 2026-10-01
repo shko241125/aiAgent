@@ -18,5 +18,5 @@ $alert
 [상황 인식 결과]
 $situation
 
-[메트릭 fact sheet]
+[fact sheet — 메트릭 요약·변화점·상관·변경·로그 템플릿]
 $facts

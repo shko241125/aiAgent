@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "in_progress",
+  "column": "done",
   "labels": [
     "milestone:M2",
     "plan:0003"
@@ -14,19 +14,19 @@
   "acceptance": [
     {
       "text": "변화점 탐지(CUSUM)",
-      "done": false
+      "done": true
     },
     {
       "text": "메트릭 간 상관(동시 변화) 분석",
-      "done": false
+      "done": true
     },
     {
       "text": "FactSheet pydantic 스키마로 LLM 입력 표준화",
-      "done": false
+      "done": true
     },
     {
       "text": "원시 시계열 대비 토큰 절감률 측정",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -35,10 +35,12 @@
   "parent_id": "R-3.5",
   "depends_on": [],
   "assignee": "claude-code",
-  "lease_expires_at": "2026-10-02T00:18:45.132800Z",
+  "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "analytics/changepoint.py(cusum: 클리핑 std 기준선·rewarm·cooldown·relative, CUSUMDetector), factsheet.py(FactSheet·MetricFact·Correlation, 1차 차분 상관, build_fact_sheet, to_prompt, compression). Detection 프롬프트 facts 를 fact sheet 로 교체(blackboard detection.fact_sheet), 도구 get_fact_sheet. 한계: 토큰 절감은 문자 수 근사 — 실 토크나이저 측정은 M1-10 과 함께",
+  "outputs": {
+    "baseline": "fact sheet: 변화 시작 시각(±2분)·방향 정확 18/20 시드, 원시 시계열 JSON 대비 크기 -83%(문자 수 근사). CUSUM(h=12) 단독 평가: drift recall 0.75→1.0·지연 18.3→11.5분(z-score 대비), 정상 헛알람 4(동급), 단 level_shift·spike 에선 z-score 보다 열세 → 보조 신호로만 사용"
+  },
   "log": [
     {
       "ts": "2026-10-01T16:03:39.679189Z",
@@ -53,11 +55,67 @@
       "kind": "claim",
       "message": "claimed",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:05.736800Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.baseline 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:06.151291Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "CUSUM 버그 3건을 평가로 발견: (1) 30점 MAD 로 σ 40% 과소추정 → 정상 데이터 헛알람 73 → 클리핑 후 std (2) 재기준선 후 옛 σ 사용 → 곱셈형 장애(잡음도 ×8)에서 가짜 변화 → 새 구간 μ·σ 재추정(rewarm) (3) 긴 cooldown 이 계절성 변화 뒤의 진짜 변화를 가림 → fact sheet 는 cooldown 5 + 20% 미만 변화 미보고",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:06.562750Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 변화점 탐지(CUSUM)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:06.568620Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 메트릭 간 상관(동시 변화) 분석",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:06.572738Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ FactSheet pydantic 스키마로 LLM 입력 표준화",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:06.576636Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 원시 시계열 대비 토큰 절감률 측정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:06.951880Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "analytics/changepoint.py(cusum: 클리핑 std 기준선·rewarm·cooldown·relative, CUSUMDetector), factsheet.py(FactSheet·MetricFact·Correlation, 1차 차분 상관, build_fact_sheet, to_prompt, compression). Detection 프롬프트 facts 를 fact sheet 로 교체(blackboard detection.fact_sheet), 도구 get_fact_sheet. 한계: 토큰 절감은 문자 수 근사 — 실 토크나이저 측정은 M1-10 과 함께",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:06.951913Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 2,
+  "version": 9,
   "created_at": "2026-10-01T16:03:39.679156Z",
-  "updated_at": "2026-10-01T16:18:45.133018Z",
+  "updated_at": "2026-10-01T16:23:06.952172Z",
   "started_at": "2026-10-01T16:18:45.132817Z",
-  "done_at": null
+  "done_at": "2026-10-01T16:23:06.951904Z"
 }

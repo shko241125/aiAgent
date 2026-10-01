@@ -3,13 +3,7 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 1 · 🔄 in_progress 1 · 👀 review 0 · ⛔ blocked 1 · ✅ done 20**
-
-## 🔄 in_progress (1)
-
-| 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
-|---|---|---|---|---|---|
-| M2-06 | 변화점 탐지 + 메트릭 상관 + fact sheet 표준 스키마 | p1 | claude-code | R-3.5 |  |
+**📥 backlog 0 · 🟦 ready 1 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 1 · ✅ done 21**
 
 ## ⛔ blocked (1)
 
@@ -23,7 +17,7 @@
 |---|---|---|---|---|---|
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | - | R-2.1 |  |
 
-## ✅ done (20)
+## ✅ done (21)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
@@ -46,4 +40,5 @@
 | M2-03 | 이상 탐지 평가 하네스 + 계절성 탐지기 + 스트리밍 인터페이스 | p1 | claude-code | R-3.1 | anomaly/synthetic.py(패턴 6종 라벨 생성), evaluation.py(이벤트 단위 P/R/F1·지연·헛알람 묶음), seasonal.py(ACF 주기 추정 + 과거 주기 중앙값 잔차 robust … |
 | M2-04 | 로그 템플릿 추출(Drain) + 알람 폭주 압축률 | p1 | claude-code | R-3.3 | analytics/logs.py(DrainParser: 고정 깊이 트리·유사도 0.5·변수 마스킹, summarize_logs, grouping_accuracy), logs_synthetic.py, events.a… |
 | M2-05 | 상황 인식 가중치 학습(로지스틱 회귀) + 토폴로지 영향 전파 | p1 | claude-code | R-3.2 | analytics/situation_model.py(featurize 8특징, LogisticModel numpy GD+L2+표준화·explain·save/load, assess_learned, propagate_… |
+| M2-06 | 변화점 탐지 + 메트릭 상관 + fact sheet 표준 스키마 | p1 | claude-code | R-3.5 | analytics/changepoint.py(cusum: 클리핑 std 기준선·rewarm·cooldown·relative, CUSUMDetector), factsheet.py(FactSheet·MetricFact… |
 | M2-07 | 장애 판정(is_incident) 결정적 평가 | p1 | claude-code | R-2.1 | DetectionAgent 가 RCAAnalyzer.collect 근거로 규칙·학습 판정+하위 위험 전파를 프롬프트에 주입, LLMAgent.pre_decide 훅으로 트리아지(AIOPS_DETECTION_TRIA… |
