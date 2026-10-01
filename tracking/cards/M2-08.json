@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p2",
-  "column": "ready",
+  "column": "blocked",
   "labels": [
     "milestone:M2",
     "plan:0003"
@@ -26,10 +26,10 @@
   ],
   "parent_id": "R-2.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
-  "blocked_reason": null,
-  "handoff": "",
+  "blocked_reason": "실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요",
+  "handoff": "해제 절차: 1) docker compose --profile observability up -d (또는 기존 모니터링 URL) 2) .env: AIOPS_OPS_SOURCE=live, AIOPS_PROMETHEUS_URL/LOKI_URL, 필요 시 AIOPS_PROMETHEUS_QUERIES_FILE 로 메트릭명 맞춤(DEFAULT_QUERIES 는 k8s+Micrometer 가정) 3) Alertmanager receiver webhook → http://<api>/api/v1/events/alertmanager, CI 배포 후 POST /api/v1/events/changes 4) curl /ready 후 실제 알람 1건으로 /orchestrations/incident-response 수행, RCA 후보·fact sheet 가 실데이터로 채워지는지 확인 5) 실 로그로 Drain GA, 실 알람 이력으로 scripts/eval_situation 재학습(트리아지 임계치 재스윕)",
   "outputs": {},
   "log": [
     {
@@ -38,11 +38,46 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:35.394538Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:35.828662Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "확인: 이 환경에 Prometheus(localhost:9090)·Loki·Alertmanager 없음, Docker 데몬 없음 → 실연결 검증 불가. 코드 경로는 MockTransport 계약 테스트(test_live_sources, test_events)로 검증됨",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:36.223603Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "해제 절차: 1) docker compose --profile observability up -d (또는 기존 모니터링 URL) 2) .env: AIOPS_OPS_SOURCE=live, AIOPS_PROMETHEUS_URL/LOKI_URL, 필요 시 AIOPS_PROMETHEUS_QUERIES_FILE 로 메트릭명 맞춤(DEFAULT_QUERIES 는 k8s+Micrometer 가정) 3) Alertmanager receiver webhook → http://<api>/api/v1/events/alertmanager, CI 배포 후 POST /api/v1/events/changes 4) curl /ready 후 실제 알람 1건으로 /orchestrations/incident-response 수행, RCA 후보·fact sheet 가 실데이터로 채워지는지 확인 5) 실 로그로 Drain GA, 실 알람 이력으로 scripts/eval_situation 재학습(트리아지 임계치 재스윕)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:36.223749Z",
+      "actor": "claude-code",
+      "kind": "block",
+      "message": "실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:36.223762Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → blocked",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-10-01T16:03:40.538265Z",
-  "updated_at": "2026-10-01T16:03:40.538477Z",
-  "started_at": null,
+  "updated_at": "2026-10-01T16:23:36.224051Z",
+  "started_at": "2026-10-01T16:23:35.394523Z",
   "done_at": null
 }

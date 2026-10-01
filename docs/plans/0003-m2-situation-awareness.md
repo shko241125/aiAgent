@@ -32,7 +32,7 @@ M1 이 "LLM 이 맞는 답을 내는가"를 재는 도구를 만들었다면, M2
 | M2-05 | 상황 인식 가중치 학습(로지스틱 회귀) + 토폴로지 영향 전파 | ✅ done | claude-code | analytics/situation_model.py(featurize 8특징, LogisticModel numpy GD+L2+표준화·explain·save/load, assess_learned, propagate_… |
 | M2-06 | 변화점 탐지 + 메트릭 상관 + fact sheet 표준 스키마 | ✅ done | claude-code | analytics/changepoint.py(cusum: 클리핑 std 기준선·rewarm·cooldown·relative, CUSUMDetector), factsheet.py(FactSheet·MetricFact… |
 | M2-07 | 장애 판정(is_incident) 결정적 평가 | ✅ done | claude-code | DetectionAgent 가 RCAAnalyzer.collect 근거로 규칙·학습 판정+하위 위험 전파를 프롬프트에 주입, LLMAgent.pre_decide 훅으로 트리아지(AIOPS_DETECTION_TRIA… |
-| M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | 🟦 ready | - |  |
+| M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | ⛔ blocked | claude-code | 실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요 |
 
 진행: 7/8
 <!-- /AUTO -->
@@ -41,3 +41,16 @@ M1 이 "LLM 이 맞는 답을 내는가"를 재는 도구를 만들었다면, M2
 
 - 모든 카드 DoD 체크 + `make check` 통과, 측정값은 각 카드 outputs 에 기록.
 - 실 인프라 검증 카드가 해제되면 결과를 §5 에 요약하고 M2 를 종료한다.
+
+## 5. 결과 요약 (합성 데이터 기준선, 2026-10-01)
+
+| 카드 | 측정 | 해석 |
+|---|---|---|
+| M2-01·02 실데이터 연동 | Prometheus·Loki·Alertmanager·변경 웹훅 HTTP 계약 테스트 통과, 조합 소스로 RCA 동작 | **실 인프라 연결은 미검증(M2-08 ⛔)** — PromQL 템플릿은 환경별 조정 필요 |
+| M2-03 이상 탐지 | 이벤트 단위 F1: robust z 0.449 → 임계치 조정 0.641 → **계절성 탐지 0.843**; 계절성 시계열 헛알람 25(앙상블) → 3 | 개선을 '임계치 효과'와 '계절성 모델 효과'로 분리해 보고. RCA 의 60분 창에는 적용 불가(3주기 필요) |
+| M2-04 로그 템플릿 | Drain Grouping Accuracy 1.000 (합성 8템플릿), 알람 폭주 60→1 | 합성 로그는 쉽다 (공개 벤치마크 Drain 평균 ≈ 0.86) |
+| M2-05·07 장애 판정 | 보류 80 상황: 규칙 F1 0.919 → **학습 0.974** (P=1.0, FPR=0). 트리아지 p<0.05: 정상 알람 60% LLM 생략·놓친 장애 0 | 계수 해석으로 데이터 편향(배포=정상)을 발견·교정. 트리아지 기본값은 꺼 둠 — 실 이력으로 재스윕 후 활성화 |
+| M2-06 fact sheet | 변화 시작 시각·방향 정확 18/20, 크기 **-83%**(문자 수 근사); CUSUM 은 drift 재현율 0.75→1.0·지연 18→11.5분 | CUSUM 은 보조 신호 (shift·spike 에선 z-score 우위) |
+
+공통 한계: 모든 수치는 합성 데이터 기준선이다. 실데이터 재검증 절차는 `show M2-08` 인계 메모 참조.
+M2 종료 조건: M2-08 해제 후 실데이터 결과를 이 절에 추가.

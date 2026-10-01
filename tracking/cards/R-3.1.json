@@ -2,7 +2,7 @@
   "id": "R-3.1",
   "board_id": "dev",
   "title": "이상 탐지",
-  "description": "스트리밍 탐지, 다변량 모델, 계절성 분해(STL), 모델 학습/버전 관리",
+  "description": "실 라벨 데이터 재평가, 장기 창 감시에 계절성 탐지기 적용(다중 주기: 일·주), 다변량 탐지",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -15,7 +15,7 @@
   "acceptance": [
     {
       "text": "라벨된 데이터셋에서 Precision/Recall 리포트",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -33,11 +33,32 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:37.139989Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:38.829538Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 라벨된 데이터셋에서 Precision/Recall 리포트",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:39.228712Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족(합성 라벨): 패턴 6종 이벤트 단위 P/R/F1 리포트 scripts/eval_anomaly.py (M2-03)",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-09-30T10:30:02.867105Z",
-  "updated_at": "2026-09-30T10:30:02.867192Z",
+  "updated_at": "2026-10-01T16:23:39.228939Z",
   "started_at": null,
   "done_at": null
 }

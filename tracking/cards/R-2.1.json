@@ -2,7 +2,7 @@
   "id": "R-2.1",
   "board_id": "dev",
   "title": "장애 탐지·분석 Agent",
-  "description": "실제 Prometheus/Loki 어댑터, 알람 노이즈 필터(3.3 연동)",
+  "description": "실 Prometheus/Loki 연결 검증(M2-08), 실 알람 이력 라벨로 장애 판정 재평가, K8s 이벤트 수집",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -10,7 +10,9 @@
     "maturity:minimal"
   ],
   "refs": [
-    "src/aiops/agents/specialists/aiops.py"
+    "src/aiops/agents/specialists/aiops.py",
+    "src/aiops/integrations/",
+    "src/aiops/services/incident_response.py"
   ],
   "acceptance": [
     {
@@ -33,11 +35,25 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:36.692067Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:56.967000Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 3,
   "created_at": "2026-09-30T10:30:02.863413Z",
-  "updated_at": "2026-09-30T10:30:02.863518Z",
+  "updated_at": "2026-10-01T16:23:56.967171Z",
   "started_at": null,
   "done_at": null
 }

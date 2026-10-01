@@ -2,7 +2,7 @@
   "id": "R-3.2",
   "board_id": "dev",
   "title": "ML 기반 Situation Awareness",
-  "description": "가중치 학습(과거 인시던트), 토폴로지 영향 전파, 서비스 헬스 스코어",
+  "description": "실 알람 이력으로 재학습·오탐률 비교(합성에선 규칙·학습 모두 FPR 0), 모델 버전 관리·드리프트 감시",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -10,7 +10,8 @@
     "maturity:minimal"
   ],
   "refs": [
-    "src/aiops/analytics/situation.py"
+    "src/aiops/analytics/situation.py",
+    "src/aiops/analytics/situation_model.py"
   ],
   "acceptance": [
     {
@@ -33,11 +34,32 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:37.567226Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:41.396406Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 미충족: 합성 평가에서 규칙·학습 모두 FPR=0 이라 '오탐률 감소'는 입증 불가 — 학습 모델은 재현율(0.85→0.95)을 개선. 실 알람 이력 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:57.384347Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-09-30T10:30:02.867737Z",
-  "updated_at": "2026-09-30T10:30:02.867834Z",
+  "updated_at": "2026-10-01T16:23:57.384528Z",
   "started_at": null,
   "done_at": null
 }

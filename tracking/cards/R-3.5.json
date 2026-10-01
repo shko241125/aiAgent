@@ -2,7 +2,7 @@
   "id": "R-3.5",
   "board_id": "dev",
   "title": "Agent 의사결정용 데이터 분석",
-  "description": "메트릭 간 상관 분석, 변화점 탐지, fact sheet 표준 스키마",
+  "description": "실 토크나이저로 절감률 재측정, fact sheet 다중 서비스 비교 뷰, 변화점-변경이력 자동 연결",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -10,12 +10,14 @@
     "maturity:minimal"
   ],
   "refs": [
-    "src/aiops/analytics/insights.py"
+    "src/aiops/analytics/insights.py",
+    "src/aiops/analytics/factsheet.py",
+    "src/aiops/analytics/changepoint.py"
   ],
   "acceptance": [
     {
       "text": "fact sheet 로 LLM 입력 토큰 절감률 측정",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -33,11 +35,39 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:38.408614Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:40.499864Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ fact sheet 로 LLM 입력 토큰 절감률 측정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:40.945463Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족(근사): fact sheet 가 원시 시계열 대비 -83%(문자 수 기준). 실 토크나이저 측정은 다음 과제 (M2-06)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:58.242284Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 5,
   "created_at": "2026-09-30T10:30:02.869468Z",
-  "updated_at": "2026-09-30T10:30:02.869561Z",
+  "updated_at": "2026-10-01T16:23:58.242480Z",
   "started_at": null,
   "done_at": null
 }

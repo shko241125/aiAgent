@@ -26,7 +26,7 @@
 
 | ID | 항목 | 모듈 | 상태 | 하위 카드 | 열린 TODO | 다음 과제 | 완료 기준 |
 |---|---|---|---|---|---|---|---|
-| 2.1 | 장애 탐지·분석 Agent | `src/aiops/agents/specialists/aiops.py` | 🟢 최소구현 | 3/4 | 1 | 실제 Prometheus/Loki 어댑터, 알람 노이즈 필터(3.3 연동) | 실데이터 알람 → 장애 여부 판정 정확도 측정 |
+| 2.1 | 장애 탐지·분석 Agent | `src/aiops/agents/specialists/aiops.py`, `src/aiops/integrations/`, `src/aiops/services/incident_response.py` | ⛔ 막힘 | 3/4 | 1 | 실 Prometheus/Loki 연결 검증(M2-08), 실 알람 이력 라벨로 장애 판정 재평가, K8s 이벤트 수집 | 실데이터 알람 → 장애 여부 판정 정확도 측정 |
 | 2.2 | RCA Agent | `src/aiops/agents/specialists/aiops.py` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 실 장애 이력으로 랭킹 재검증(합성 시나리오 과적합 해소), 다중 에이전트 교차 검증(1.2), 트레이스 기반 신호 추가 | 과거 장애 셋에서 Top-3 원인 적중률 측정 |
 | 2.3 | 운영 자동화 Agent | `src/aiops/agents/tools/builtin/ops.py` | 🧩 골격 | - | 3 | K8s/Ansible 실제 실행기, 승인 요청 채널(Slack) + 콜백, 조치 후 효과 검증 루프 | dry-run → 승인 → 실행 → 지표 회복 확인 자동화 |
 | 2.4 | Incident Management Agent | `src/aiops/api/routers/incidents.py` | 🧩 골격 | - | 1 | ITSM(Jira/ServiceNow) 연동, 상태 머신, 온콜 에스컬레이션, 타임라인 자동 기록 | 인시던트 생성~종료 전 과정 자동 기록 |
@@ -37,11 +37,11 @@
 
 | ID | 항목 | 모듈 | 상태 | 하위 카드 | 열린 TODO | 다음 과제 | 완료 기준 |
 |---|---|---|---|---|---|---|---|
-| 3.1 | 이상 탐지 | `src/aiops/analytics/anomaly/` | 🟢 최소구현 (+1 완료) | 1/1 | 2 | 스트리밍 탐지, 다변량 모델, 계절성 분해(STL), 모델 학습/버전 관리 | 라벨된 데이터셋에서 Precision/Recall 리포트 |
-| 3.2 | ML 기반 Situation Awareness | `src/aiops/analytics/situation.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 가중치 학습(과거 인시던트), 토폴로지 영향 전파, 서비스 헬스 스코어 | 규칙 대비 ML 버전 오탐률 감소 |
-| 3.3 | 이벤트 분석·패턴 탐지 | `src/aiops/analytics/events.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 로그 템플릿 추출(Drain3), 순차 패턴 마이닝, 알람 폭주 억제 | 알람 압축률(원본 대비 클러스터 수) 측정 |
+| 3.1 | 이상 탐지 | `src/aiops/analytics/anomaly/` | 🟢 최소구현 (+1 완료) | 1/1 | 2 | 실 라벨 데이터 재평가, 장기 창 감시에 계절성 탐지기 적용(다중 주기: 일·주), 다변량 탐지 | ☑ 라벨된 데이터셋에서 Precision/Recall 리포트 |
+| 3.2 | ML 기반 Situation Awareness | `src/aiops/analytics/situation.py`, `src/aiops/analytics/situation_model.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 실 알람 이력으로 재학습·오탐률 비교(합성에선 규칙·학습 모두 FPR 0), 모델 버전 관리·드리프트 감시 | 규칙 대비 ML 버전 오탐률 감소 |
+| 3.3 | 이벤트 분석·패턴 탐지 | `src/aiops/analytics/events.py`, `src/aiops/analytics/logs.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 실 로그 Drain 정확도 측정, 로그 템플릿 이상 빈도 탐지(신규 템플릿 출현), 순차 패턴 마이닝 | ☑ 알람 압축률(원본 대비 클러스터 수) 측정 |
 | 3.4 | 장애 예측·위험도 분석 | `src/aiops/analytics/prediction.py` | 🟢 최소구현 | - | 1 | 장애 확률 분류 모델, 용량 예측, 예측 기반 선제 알람 | N분 전 예측 적중률 측정 |
-| 3.5 | Agent 의사결정용 데이터 분석 | `src/aiops/analytics/insights.py` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 메트릭 간 상관 분석, 변화점 탐지, fact sheet 표준 스키마 | fact sheet 로 LLM 입력 토큰 절감률 측정 |
+| 3.5 | Agent 의사결정용 데이터 분석 | `src/aiops/analytics/insights.py`, `src/aiops/analytics/factsheet.py`, `src/aiops/analytics/changepoint.py` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 실 토크나이저로 절감률 재측정, fact sheet 다중 서비스 비교 뷰, 변화점-변경이력 자동 연결 | ☑ fact sheet 로 LLM 입력 토큰 절감률 측정 |
 
 ### 4. AI 서비스 Backend
 

@@ -2,7 +2,7 @@
   "id": "R-3.3",
   "board_id": "dev",
   "title": "이벤트 분석·패턴 탐지",
-  "description": "로그 템플릿 추출(Drain3), 순차 패턴 마이닝, 알람 폭주 억제",
+  "description": "실 로그 Drain 정확도 측정, 로그 템플릿 이상 빈도 탐지(신규 템플릿 출현), 순차 패턴 마이닝",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -10,12 +10,13 @@
     "maturity:minimal"
   ],
   "refs": [
-    "src/aiops/analytics/events.py"
+    "src/aiops/analytics/events.py",
+    "src/aiops/analytics/logs.py"
   ],
   "acceptance": [
     {
       "text": "알람 압축률(원본 대비 클러스터 수) 측정",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -33,11 +34,39 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:37.988098Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:39.666213Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 알람 압축률(원본 대비 클러스터 수) 측정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:40.065786Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족: alert_compression(원본→중복제거→상관 클러스터) 지표 구현·API 노출 (M2-04). 실 알람 폭주 데이터 측정은 M2-08 이후",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:23:57.815418Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 5,
   "created_at": "2026-09-30T10:30:02.868210Z",
-  "updated_at": "2026-09-30T10:30:02.868317Z",
+  "updated_at": "2026-10-01T16:23:57.815665Z",
   "started_at": null,
   "done_at": null
 }

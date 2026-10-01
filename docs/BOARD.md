@@ -3,19 +3,14 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 1 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 1 · ✅ done 21**
+**📥 backlog 0 · 🟦 ready 0 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 2 · ✅ done 21**
 
-## ⛔ blocked (1)
+## ⛔ blocked (2)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
 | M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | p2 | claude-code | R-4.1 | 실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요 |
-
-## 🟦 ready (1)
-
-| 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
-|---|---|---|---|---|---|
-| M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | - | R-2.1 |  |
+| M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | claude-code | R-2.1 | 실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요 |
 
 ## ✅ done (21)
 
