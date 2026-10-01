@@ -35,3 +35,10 @@ class TopologySource(ABC):
     @abstractmethod
     async def dependencies(self, service: str) -> dict[str, list[str]]:
         """{"upstream": [...], "downstream": [...]}"""
+
+
+class OpsSource(MetricsSource, LogSource, EventSource, TopologySource, ABC):
+    """에이전트·분석기가 보는 단일 운영 데이터 인터페이스 (시뮬레이터 또는 실 소스 조합)."""
+
+    async def aclose(self) -> None:  # noqa: B027 - 선택적 훅
+        pass

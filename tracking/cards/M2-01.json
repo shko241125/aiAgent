@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M2",
     "plan:0003"
@@ -14,19 +14,19 @@
   "acceptance": [
     {
       "text": "Prometheus query_range 어댑터(서비스·메트릭→PromQL 템플릿)",
-      "done": false
+      "done": true
     },
     {
       "text": "Loki query_range 어댑터(LogQL)",
-      "done": false
+      "done": true
     },
     {
       "text": "AIOPS_OPS_SOURCE 로 simulated|live 선택, 토폴로지 JSON 파일",
-      "done": false
+      "done": true
     },
     {
       "text": "MockTransport 계약 테스트",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -34,10 +34,10 @@
   ],
   "parent_id": "R-2.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "integrations/prometheus.py(DEFAULT_QUERIES: k8s+Micrometer 기준, 파일로 덮어쓰기), loki.py(LogQL, 나노초, X-Scope-OrgID), composite.py(CompositeOpsSource·FileTopologySource·NullEventSource), factory.py, base.OpsSource. AIOPS_OPS_SOURCE=simulated|live. 실 Prometheus 메트릭 이름은 환경마다 달라 템플릿 조정 필요 — 실연결 검증은 M2-08. 이벤트는 M2-02 에서 DB 저장소로 교체",
   "outputs": {},
   "log": [
     {
@@ -46,11 +46,67 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:03:52.074677Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:06:04.816006Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ Prometheus query_range 어댑터(서비스·메트릭→PromQL 템플릿)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:06:04.821480Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ Loki query_range 어댑터(LogQL)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:06:04.825861Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ AIOPS_OPS_SOURCE 로 simulated|live 선택, 토폴로지 JSON 파일",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:06:04.830691Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ MockTransport 계약 테스트",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:06:05.218503Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "PromQL 템플릿은 string.Template($service) — PromQL 의 {} 와 str.format 이 충돌하지 않게. NaN/Inf 샘플은 버림(Prometheus 결측 표현). 집계 쿼리 전제로 result[0] 만 사용 — 다중 시계열 쿼리는 템플릿에서 sum/avg 로 집계할 것",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:06:05.602684Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "integrations/prometheus.py(DEFAULT_QUERIES: k8s+Micrometer 기준, 파일로 덮어쓰기), loki.py(LogQL, 나노초, X-Scope-OrgID), composite.py(CompositeOpsSource·FileTopologySource·NullEventSource), factory.py, base.OpsSource. AIOPS_OPS_SOURCE=simulated|live. 실 Prometheus 메트릭 이름은 환경마다 달라 템플릿 조정 필요 — 실연결 검증은 M2-08. 이벤트는 M2-02 에서 DB 저장소로 교체",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:06:05.602722Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 8,
   "created_at": "2026-10-01T16:03:37.556000Z",
-  "updated_at": "2026-10-01T16:03:37.556483Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-01T16:06:05.602950Z",
+  "started_at": "2026-10-01T16:03:52.074662Z",
+  "done_at": "2026-10-01T16:06:05.602713Z"
 }

@@ -12,13 +12,13 @@ from aiops.analytics.anomaly.ensemble import default_detector
 from aiops.analytics.insights import summarize_series
 from aiops.analytics.rca import RCAAnalyzer
 from aiops.domain.models import utcnow
-from aiops.integrations.simulated import SimulatedOpsSource
+from aiops.integrations.base import OpsSource
 
 if TYPE_CHECKING:
     from aiops.rag.service import RAGService
 
 
-def build_ops_tools(source: SimulatedOpsSource, rag: "RAGService | None" = None) -> list[Tool]:
+def build_ops_tools(source: OpsSource, rag: "RAGService | None" = None) -> list[Tool]:
     @tool(tags={"observability"})
     async def query_metrics(service: str, metric: str, minutes: int = 60) -> dict:
         """서비스 메트릭 시계열을 조회하고 요약 통계와 이상 탐지 결과를 반환한다.

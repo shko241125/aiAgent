@@ -50,6 +50,17 @@ class Settings(BaseSettings):
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     reranker_api_style: Literal["tei", "jina"] = "tei"
 
+    # --- 운영 데이터 소스 (M2-01 / 2.1) ---
+    ops_source: Literal["simulated", "live"] = "simulated"
+    prometheus_url: str = "http://localhost:9090"
+    prometheus_token: str | None = None
+    prometheus_queries_file: Path | None = None  # {"metric": "PromQL($service,$namespace)"}
+    prometheus_labels: str = "namespace=default"  # 템플릿 변수: "namespace=prod,cluster=a"
+    loki_url: str = "http://localhost:3100"
+    loki_selector: str = '{app="$service"}'
+    loki_tenant: str | None = None
+    topology_file: Path = Path("data/topology.json")
+
     # --- Agent (1.x) ---
     agent_max_steps: int = 8
     memory_window: int = 20
@@ -67,6 +78,11 @@ class Settings(BaseSettings):
     def agent_provider_map(self) -> dict[str, str]:
         pairs = (p.split("=", 1) for p in self.agent_llm_providers.split(",") if "=" in p)
         return {a.strip(): v.strip() for a, v in pairs}
+
+    @property
+    def prometheus_label_map(self) -> dict[str, str]:
+        pairs = (p.split("=", 1) for p in self.prometheus_labels.split(",") if "=" in p)
+        return {k.strip(): v.strip() for k, v in pairs}
 
     @property
     def fallback_providers(self) -> list[str]:

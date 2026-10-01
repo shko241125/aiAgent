@@ -1,6 +1,7 @@
 # 로컬 개발 스택: API + PostgreSQL + Qdrant (+ 선택: Ollama 구축형 LLM)
 #   docker compose up -d                       # 기본
 #   docker compose --profile local-llm up -d   # Ollama 포함
+#   docker compose --profile observability up -d  # Prometheus + Loki (AIOPS_OPS_SOURCE=live 검증용)
 services:
   api:
     build: .
@@ -39,6 +40,16 @@ services:
     volumes: [ollama:/root/.ollama]
     # GPU 사용 시:
     # deploy: { resources: { reservations: { devices: [{ capabilities: [gpu] }] } } }
+
+  prometheus:
+    image: prom/prometheus:latest
+    profiles: ["observability"]
+    ports: ["9090:9090"]
+
+  loki:
+    image: grafana/loki:latest
+    profiles: ["observability"]
+    ports: ["3100:3100"]
 
 volumes:
   pgdata:

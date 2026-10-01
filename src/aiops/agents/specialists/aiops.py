@@ -17,7 +17,7 @@ from aiops.analytics.insights import summarize_series
 from aiops.analytics.rca import RCAAnalyzer
 from aiops.analytics.situation import SignalSet, assess
 from aiops.domain.models import utcnow
-from aiops.integrations.simulated import SimulatedOpsSource
+from aiops.integrations.base import OpsSource
 from aiops.rag.citations import validate_citations
 
 DEFAULT_METRICS = ["cpu_usage", "memory_usage", "latency_p95_ms", "error_rate"]
@@ -36,7 +36,7 @@ class DetectionAgent(LLMAgent):
     output_model = DetectionOutput
     tool_names = ["query_metrics", "search_logs", "get_service_dependencies"]
 
-    def __init__(self, *args: Any, source: SimulatedOpsSource, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, source: OpsSource, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.source = source
 
@@ -88,7 +88,7 @@ class RCAAgent(LLMAgent):
         "search_knowledge",
     ]
 
-    def __init__(self, *args: Any, source: SimulatedOpsSource | None = None, **kwargs: Any):
+    def __init__(self, *args: Any, source: OpsSource | None = None, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.analyzer = RCAAnalyzer(source) if source is not None else None
 

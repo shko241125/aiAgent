@@ -22,7 +22,8 @@ from aiops.agents.tools.base import ApprovalPolicy, ToolRegistry
 from aiops.agents.tools.builtin.ops import build_ops_tools
 from aiops.core.config import Settings
 from aiops.db.models import create_engine, create_sessionmaker, init_db
-from aiops.integrations.simulated import SimulatedOpsSource
+from aiops.integrations.base import OpsSource
+from aiops.integrations.factory import build_ops_source
 from aiops.kanban.board import KanbanBoard
 from aiops.kanban.stores import BoardStore, SqlBoardStore
 from aiops.kanban.tools import build_kanban_tools
@@ -44,7 +45,7 @@ class Platform:
     orchestrator: Orchestrator
     rag: RAGService
     memory: MemoryStore
-    source: SimulatedOpsSource
+    source: OpsSource
     db_engine: AsyncEngine
     sessionmaker: async_sessionmaker
     board_store: BoardStore
@@ -56,13 +57,14 @@ class Platform:
 
     async def aclose(self) -> None:
         await self.llm.aclose()
+        await self.source.aclose()
         await self.db_engine.dispose()
 
 
 async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> Platform:
     llm = llm or build_llm_router(settings)
     prompts = PromptRegistry()
-    source = SimulatedOpsSource()  # TODO: settings 에 따라 Prometheus/Loki 어댑터로 교체
+    source = build_ops_source(settings)  # simulated | live(Prometheus+Loki+토폴로지 파일)
 
     retriever = HybridRetriever(
         build_embedder(settings),

@@ -23,7 +23,7 @@ from pydantic import BaseModel, Field
 from aiops.analytics.anomaly.base import AnomalyDetector
 from aiops.analytics.anomaly.ensemble import default_detector
 from aiops.domain.models import OpsEvent, utcnow
-from aiops.integrations.base import EventSource, LogSource, MetricsSource, TopologySource
+from aiops.integrations.base import OpsSource
 
 METRICS = ["cpu_usage", "memory_usage", "latency_p95_ms", "error_rate"]
 RESOURCE_METRICS = {"cpu_usage", "memory_usage"}
@@ -215,7 +215,7 @@ class RCAAnalyzer:
 
     def __init__(
         self,
-        source: MetricsSource | LogSource | EventSource | TopologySource,
+        source: OpsSource,
         detector: AnomalyDetector | None = None,
         window_min: int = 60,
         max_depth: int = 3,

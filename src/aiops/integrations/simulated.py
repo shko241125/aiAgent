@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from pydantic import BaseModel, Field
 
 from aiops.domain.models import MetricPoint, MetricSeries, OpsEvent, Severity
-from aiops.integrations.base import EventSource, LogSource, MetricsSource, TopologySource
+from aiops.integrations.base import OpsSource
 
 TOPOLOGY = {
     "api-gateway": {"upstream": [], "downstream": ["order-service", "user-service"]},
@@ -56,7 +56,7 @@ class FaultScenario(BaseModel):
     accept: list[AcceptedCause] = Field(default_factory=list)  # 정답으로 인정할 (서비스, 종류)
 
 
-class SimulatedOpsSource(MetricsSource, LogSource, EventSource, TopologySource):
+class SimulatedOpsSource(OpsSource):
     def __init__(self, seed: int = 42) -> None:
         self._seed = seed
         self._faults: list[Fault] = []

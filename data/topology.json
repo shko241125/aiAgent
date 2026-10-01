@@ -1,0 +1,6 @@
+{
+  "api-gateway": {"downstream": ["order-service", "user-service"]},
+  "order-service": {"downstream": ["payment-service", "order-db", "redis-cache"]},
+  "payment-service": {"downstream": ["payment-db"]},
+  "user-service": {"downstream": ["user-db"]}
+}
