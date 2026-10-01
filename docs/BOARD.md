@@ -3,13 +3,26 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 0 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 1 · ✅ done 14**
+**📥 backlog 0 · 🟦 ready 8 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 1 · ✅ done 14**
 
 ## ⛔ blocked (1)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
 | M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | p2 | claude-code | R-4.1 | 실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요 |
+
+## 🟦 ready (8)
+
+| 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
+|---|---|---|---|---|---|
+| M2-01 | Prometheus·Loki 어댑터 + 소스 조합(Composite) + 토폴로지 파일 | p1 | - | R-2.1 |  |
+| M2-02 | 이벤트 수집: Alertmanager·CI/CD 웹훅 → DB 이벤트 저장소 | p1 | - | R-2.1 |  |
+| M2-03 | 이상 탐지 평가 하네스 + 계절성 탐지기 + 스트리밍 인터페이스 | p1 | - | R-3.1 |  |
+| M2-04 | 로그 템플릿 추출(Drain) + 알람 폭주 압축률 | p1 | - | R-3.3 |  |
+| M2-05 | 상황 인식 가중치 학습(로지스틱 회귀) + 토폴로지 영향 전파 | p1 | - | R-3.2 |  |
+| M2-06 | 변화점 탐지 + 메트릭 상관 + fact sheet 표준 스키마 | p1 | - | R-3.5 |  |
+| M2-07 | 장애 판정(is_incident) 결정적 평가 | p1 | - | R-2.1 |  |
+| M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | - | R-2.1 |  |
 
 ## ✅ done (14)
 

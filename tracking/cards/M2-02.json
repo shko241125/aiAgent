@@ -1,0 +1,56 @@
+{
+  "id": "M2-02",
+  "board_id": "dev",
+  "title": "이벤트 수집: Alertmanager·CI/CD 웹훅 → DB 이벤트 저장소",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M2",
+    "plan:0003"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "POST /api/v1/events/alertmanager (Alertmanager v4 페이로드)",
+      "done": false
+    },
+    {
+      "text": "POST /api/v1/events/changes (배포·설정 변경)",
+      "done": false
+    },
+    {
+      "text": "DB 이벤트 저장소가 EventSource 로 동작 → RCA change 신호",
+      "done": false
+    },
+    {
+      "text": "알람 수신 시 인시던트 파이프라인 자동 실행(옵션)",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "integration"
+  ],
+  "parent_id": "R-2.1",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-01T16:03:37.946255Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-01T16:03:37.946223Z",
+  "updated_at": "2026-10-01T16:03:37.946428Z",
+  "started_at": null,
+  "done_at": null
+}

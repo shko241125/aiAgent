@@ -1,0 +1,48 @@
+{
+  "id": "M2-08",
+  "board_id": "dev",
+  "title": "실 Prometheus·Loki·Alertmanager 연동 검증",
+  "description": "",
+  "type": "task",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "milestone:M2",
+    "plan:0003"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "실 인프라에서 RCA 근거 수집 동작",
+      "done": false
+    },
+    {
+      "text": "실 알람으로 파이프라인 1회 이상 수행",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "integration"
+  ],
+  "parent_id": "R-2.1",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-01T16:03:40.538334Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-01T16:03:40.538265Z",
+  "updated_at": "2026-10-01T16:03:40.538477Z",
+  "started_at": null,
+  "done_at": null
+}

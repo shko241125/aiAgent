@@ -1,0 +1,48 @@
+{
+  "id": "M2-07",
+  "board_id": "dev",
+  "title": "장애 판정(is_incident) 결정적 평가",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M2",
+    "plan:0003"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "라벨된 알람 시나리오셋",
+      "done": false
+    },
+    {
+      "text": "상황 인식 기반 장애 판정 Precision/Recall 측정",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "analytics"
+  ],
+  "parent_id": "R-2.1",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-01T16:03:40.124941Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-01T16:03:40.124906Z",
+  "updated_at": "2026-10-01T16:03:40.125077Z",
+  "started_at": null,
+  "done_at": null
+}

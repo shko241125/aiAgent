@@ -1,0 +1,56 @@
+{
+  "id": "M2-03",
+  "board_id": "dev",
+  "title": "이상 탐지 평가 하네스 + 계절성 탐지기 + 스트리밍 인터페이스",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M2",
+    "plan:0003"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "패턴별 라벨 합성 데이터셋(스파이크·레벨시프트·드리프트·계절성·정상)",
+      "done": false
+    },
+    {
+      "text": "탐지기별 Precision/Recall/F1 리포트",
+      "done": false
+    },
+    {
+      "text": "계절성 탐지기로 계절성 시계열 오탐 감소 입증",
+      "done": false
+    },
+    {
+      "text": "스트리밍 update(value) 인터페이스",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "analytics"
+  ],
+  "parent_id": "R-3.1",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-01T16:03:38.348700Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-01T16:03:38.348668Z",
+  "updated_at": "2026-10-01T16:03:38.348838Z",
+  "started_at": null,
+  "done_at": null
+}

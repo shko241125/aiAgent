@@ -1,0 +1,52 @@
+{
+  "id": "M2-05",
+  "board_id": "dev",
+  "title": "상황 인식 가중치 학습(로지스틱 회귀) + 토폴로지 영향 전파",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M2",
+    "plan:0003"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "라벨 데이터로 가중치 학습(numpy, 해석 가능한 계수)",
+      "done": false
+    },
+    {
+      "text": "규칙 기반 대비 오탐률·재현율 비교",
+      "done": false
+    },
+    {
+      "text": "하위 서비스 이상이 상위 헬스 스코어에 전파",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "analytics"
+  ],
+  "parent_id": "R-3.2",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-01T16:03:39.225078Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-01T16:03:39.225045Z",
+  "updated_at": "2026-10-01T16:03:39.225213Z",
+  "started_at": null,
+  "done_at": null
+}
