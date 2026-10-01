@@ -105,11 +105,18 @@
       "kind": "move",
       "message": "in_progress → done",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:19:30.692662Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "개선: 로컬 make check 가 카드 변경 직후 docs check 로 실패하는 마찰 → check 가 docs sync 후 검증하도록 변경. CI 는 동기화 없이 엄격 비교 유지(생성 문서 누락 커밋 차단)",
+      "data": {}
     }
   ],
-  "version": 9,
+  "version": 10,
   "created_at": "2026-09-30T10:30:02.876525Z",
-  "updated_at": "2026-09-30T10:33:30.666308Z",
+  "updated_at": "2026-10-01T16:19:30.692950Z",
   "started_at": "2026-09-30T10:30:22.520158Z",
   "done_at": "2026-09-30T10:33:30.666050Z"
 }

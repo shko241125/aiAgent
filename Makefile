@@ -41,7 +41,7 @@ docs-check:
 hooks:
 	git config core.hooksPath .githooks
 
-check: lint test docs-check
+check: lint test docs docs-check  # 로컬은 동기화 후 검증 (CI 는 동기화 없이 엄격 비교)
 
 # ---- 평가 (M1) ----
 eval:

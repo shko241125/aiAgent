@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "in_progress",
   "labels": [
     "milestone:M2",
     "plan:0003"
@@ -34,8 +34,8 @@
   ],
   "parent_id": "R-3.5",
   "depends_on": [],
-  "assignee": null,
-  "lease_expires_at": null,
+  "assignee": "claude-code",
+  "lease_expires_at": "2026-10-02T00:18:45.132800Z",
   "blocked_reason": null,
   "handoff": "",
   "outputs": {},
@@ -46,11 +46,18 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:18:45.132840Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 2,
   "created_at": "2026-10-01T16:03:39.679156Z",
-  "updated_at": "2026-10-01T16:03:39.679408Z",
-  "started_at": null,
+  "updated_at": "2026-10-01T16:18:45.133018Z",
+  "started_at": "2026-10-01T16:18:45.132817Z",
   "done_at": null
 }

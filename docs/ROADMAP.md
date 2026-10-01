@@ -41,7 +41,7 @@
 | 3.2 | ML 기반 Situation Awareness | `src/aiops/analytics/situation.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 가중치 학습(과거 인시던트), 토폴로지 영향 전파, 서비스 헬스 스코어 | 규칙 대비 ML 버전 오탐률 감소 |
 | 3.3 | 이벤트 분석·패턴 탐지 | `src/aiops/analytics/events.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 로그 템플릿 추출(Drain3), 순차 패턴 마이닝, 알람 폭주 억제 | 알람 압축률(원본 대비 클러스터 수) 측정 |
 | 3.4 | 장애 예측·위험도 분석 | `src/aiops/analytics/prediction.py` | 🟢 최소구현 | - | 1 | 장애 확률 분류 모델, 용량 예측, 예측 기반 선제 알람 | N분 전 예측 적중률 측정 |
-| 3.5 | Agent 의사결정용 데이터 분석 | `src/aiops/analytics/insights.py` | 🟢 최소구현 | 0/1 | 0 | 메트릭 간 상관 분석, 변화점 탐지, fact sheet 표준 스키마 | fact sheet 로 LLM 입력 토큰 절감률 측정 |
+| 3.5 | Agent 의사결정용 데이터 분석 | `src/aiops/analytics/insights.py` | 🔄 진행중 | 0/1 | 0 | 메트릭 간 상관 분석, 변화점 탐지, fact sheet 표준 스키마 | fact sheet 로 LLM 입력 토큰 절감률 측정 |
 
 ### 4. AI 서비스 Backend
 
