@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M2",
     "plan:0003"
@@ -14,19 +14,19 @@
   "acceptance": [
     {
       "text": "패턴별 라벨 합성 데이터셋(스파이크·레벨시프트·드리프트·계절성·정상)",
-      "done": false
+      "done": true
     },
     {
       "text": "탐지기별 Precision/Recall/F1 리포트",
-      "done": false
+      "done": true
     },
     {
       "text": "계절성 탐지기로 계절성 시계열 오탐 감소 입증",
-      "done": false
+      "done": true
     },
     {
       "text": "스트리밍 update(value) 인터페이스",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -34,11 +34,13 @@
   ],
   "parent_id": "R-3.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "anomaly/synthetic.py(패턴 6종 라벨 생성), evaluation.py(이벤트 단위 P/R/F1·지연·헛알람 묶음), seasonal.py(ACF 주기 추정 + 과거 주기 중앙값 잔차 robust z), streaming.py(StreamingEWMA O(1)), scripts/eval_anomaly.py(make eval·CI 포함). 한계: 합성 데이터 — 실 라벨셋으로 재검증 필요, drift 탐지 약함(CUSUM 은 M2-06)",
+  "outputs": {
+    "baseline": "패턴 6종×시드 8, 이벤트 단위 F1: robust_zscore 0.449 → (임계치 4) 0.641 → seasonal 0.843 | ensemble 0.551, ewma 0.135. 계절성 시계열 헛알람: ensemble 25 / robust(t=4) 14 / seasonal 3. seasonal_spike recall: ensemble 0.47 → seasonal 1.0. drift 는 모두 약함(F1≤0.63, 지연 12~18분)"
+  },
   "log": [
     {
       "ts": "2026-10-01T16:03:38.348700Z",
@@ -46,11 +48,81 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:08:15.921997Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:52.656265Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.baseline 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:53.064910Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "주기 추정 버그 2건을 평가로 발견·수정: (1) ACF 전역 최대는 매끄러운 곡선에서 작은 지연(10)을 고름 → 첫 음수 이후 봉우리만 후보 (2) 배수 주기(241)·스파이크 쌍이 만든 가짜 봉우리 → 이상치 클리핑, 최소 3주기, 가장 이른 강한 봉우리. 개선 효과를 임계치 효과와 분리해 보고(robust t=4 기준선 추가)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:53.514370Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "기본 탐지기(default_detector)는 바꾸지 않음: RCA 는 60분 창이라 3주기 관측이 불가해 계절성 모델이 동작하지 않음. 장기 창(수 일)을 쓰는 실데이터 감시에서 SeasonalDetector 사용 권장 → R-3.1 다음 과제",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:54.012921Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 패턴별 라벨 합성 데이터셋(스파이크·레벨시프트·드리프트·계절성·정상)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:54.018671Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 탐지기별 Precision/Recall/F1 리포트",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:54.023352Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 계절성 탐지기로 계절성 시계열 오탐 감소 입증",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:54.028962Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 스트리밍 update(value) 인터페이스",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:54.500598Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "anomaly/synthetic.py(패턴 6종 라벨 생성), evaluation.py(이벤트 단위 P/R/F1·지연·헛알람 묶음), seasonal.py(ACF 주기 추정 + 과거 주기 중앙값 잔차 robust z), streaming.py(StreamingEWMA O(1)), scripts/eval_anomaly.py(make eval·CI 포함). 한계: 합성 데이터 — 실 라벨셋으로 재검증 필요, drift 탐지 약함(CUSUM 은 M2-06)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:10:54.500646Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 10,
   "created_at": "2026-10-01T16:03:38.348668Z",
-  "updated_at": "2026-10-01T16:03:38.348838Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-01T16:10:54.500979Z",
+  "started_at": "2026-10-01T16:08:15.921981Z",
+  "done_at": "2026-10-01T16:10:54.500628Z"
 }

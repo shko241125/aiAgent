@@ -27,14 +27,14 @@ M1 이 "LLM 이 맞는 답을 내는가"를 재는 도구를 만들었다면, M2
 |---|---|---|---|---|
 | M2-01 | Prometheus·Loki 어댑터 + 소스 조합(Composite) + 토폴로지 파일 | ✅ done | claude-code | integrations/prometheus.py(DEFAULT_QUERIES: k8s+Micrometer 기준, 파일로 덮어쓰기), loki.py(LogQL, 나노초, X-Scope-OrgID), composite… |
 | M2-02 | 이벤트 수집: Alertmanager·CI/CD 웹훅 → DB 이벤트 저장소 | ✅ done | claude-code | integrations/events.py(Alertmanager v4·ChangePayload 파싱, SqlEventStore=EventSource, id 기반 멱등), db OpsEventRow, API /api… |
-| M2-03 | 이상 탐지 평가 하네스 + 계절성 탐지기 + 스트리밍 인터페이스 | 🟦 ready | - |  |
+| M2-03 | 이상 탐지 평가 하네스 + 계절성 탐지기 + 스트리밍 인터페이스 | ✅ done | claude-code | anomaly/synthetic.py(패턴 6종 라벨 생성), evaluation.py(이벤트 단위 P/R/F1·지연·헛알람 묶음), seasonal.py(ACF 주기 추정 + 과거 주기 중앙값 잔차 robust … |
 | M2-04 | 로그 템플릿 추출(Drain) + 알람 폭주 압축률 | 🟦 ready | - |  |
 | M2-05 | 상황 인식 가중치 학습(로지스틱 회귀) + 토폴로지 영향 전파 | 🟦 ready | - |  |
 | M2-06 | 변화점 탐지 + 메트릭 상관 + fact sheet 표준 스키마 | 🟦 ready | - |  |
 | M2-07 | 장애 판정(is_incident) 결정적 평가 | 🟦 ready | - |  |
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | 🟦 ready | - |  |
 
-진행: 2/8
+진행: 3/8
 <!-- /AUTO -->
 
 ## 4. 완료 판정
