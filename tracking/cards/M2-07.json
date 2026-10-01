@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M2",
     "plan:0003"
@@ -14,11 +14,11 @@
   "acceptance": [
     {
       "text": "라벨된 알람 시나리오셋",
-      "done": false
+      "done": true
     },
     {
       "text": "상황 인식 기반 장애 판정 Precision/Recall 측정",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -26,11 +26,13 @@
   ],
   "parent_id": "R-2.1",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "DetectionAgent 가 RCAAnalyzer.collect 근거로 규칙·학습 판정+하위 위험 전파를 프롬프트에 주입, LLMAgent.pre_decide 훅으로 트리아지(AIOPS_DETECTION_TRIAGE_THRESHOLD, 기본 0). rule_signals 를 analytics/situation_model.py 로 이동. scripts/eval_situation.py 가 make eval·CI 에 포함. 한계: 합성 상황 — 실 알람 라벨셋 필요(M2-08)",
+  "outputs": {
+    "baseline": "장애 판정(보류 80 상황): rule F1 0.919 / learned F1 0.974 (P=1.0, FPR=0). 트리아지 스윕: p<0.05 → 정상 알람 60% LLM 생략·놓친 장애 0, p<0.1 → 100% 생략·장애 2건 놓침"
+  },
   "log": [
     {
       "ts": "2026-10-01T16:03:40.124941Z",
@@ -38,11 +40,67 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:16:07.057236Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:18:42.173366Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.baseline 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:18:42.581512Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "트리아지 기본값은 끔(0). 놓친 장애 비용이 LLM 비용보다 훨씬 크므로 합성 데이터만으로 기본 활성화하지 않음 — 실 알람 이력으로 스윕을 다시 한 뒤 켤 것 (권장 시작값 0.05)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:18:42.987750Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "버그: propagate_risk 가 반올림(0.048→0.05)해서 임계치 0.05 비교가 틀어짐 → 계산 경로는 원값, 반올림은 표시용으로만. 테스트로 발견",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:18:43.370883Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 라벨된 알람 시나리오셋",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:18:43.377081Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 상황 인식 기반 장애 판정 Precision/Recall 측정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:18:43.769511Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "DetectionAgent 가 RCAAnalyzer.collect 근거로 규칙·학습 판정+하위 위험 전파를 프롬프트에 주입, LLMAgent.pre_decide 훅으로 트리아지(AIOPS_DETECTION_TRIAGE_THRESHOLD, 기본 0). rule_signals 를 analytics/situation_model.py 로 이동. scripts/eval_situation.py 가 make eval·CI 에 포함. 한계: 합성 상황 — 실 알람 라벨셋 필요(M2-08)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-01T16:18:43.769546Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 8,
   "created_at": "2026-10-01T16:03:40.124906Z",
-  "updated_at": "2026-10-01T16:03:40.125077Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-01T16:18:43.769798Z",
+  "started_at": "2026-10-01T16:16:07.057222Z",
+  "done_at": "2026-10-01T16:18:43.769537Z"
 }

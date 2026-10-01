@@ -11,7 +11,13 @@ def test_propagation_reaches_upstream_with_decay():
     eff = propagate_risk(
         {"gw": 0.0, "order": 0.1, "payment": 0.0, "pay-db": 1.0, "db": 0.0}, downstream, decay=0.5
     )
-    assert eff == {"gw": 0.12, "order": 0.25, "payment": 0.5, "pay-db": 1.0, "db": 0.0}
+    assert {k: round(v, 3) for k, v in eff.items()} == {
+        "gw": 0.125,
+        "order": 0.25,
+        "payment": 0.5,
+        "pay-db": 1.0,
+        "db": 0.0,
+    }
 
 
 def test_logistic_model_learns_and_explains():

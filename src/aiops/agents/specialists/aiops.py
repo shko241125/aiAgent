@@ -15,8 +15,15 @@ from aiops.agents.schemas import DetectionOutput, RCAOutput, RemediationOutput
 from aiops.analytics.anomaly.ensemble import default_detector
 from aiops.analytics.insights import summarize_series
 from aiops.analytics.rca import RCAAnalyzer
-from aiops.analytics.situation import SignalSet, assess
-from aiops.domain.models import utcnow
+from aiops.analytics.situation import assess
+from aiops.analytics.situation_model import (
+    LogisticModel,
+    assess_learned,
+    featurize,
+    propagate_risk,
+    rule_signals,
+)
+from aiops.domain.models import Severity, utcnow
 from aiops.integrations.base import OpsSource
 from aiops.rag.citations import validate_citations
 
@@ -28,7 +35,12 @@ def _dump(v: Any) -> str:
 
 
 class DetectionAgent(LLMAgent):
-    """2.1 장애 탐지 및 분석 — 알람 수신 시 메트릭 이상 탐지 + 상황 인식 후 장애 여부 판단."""
+    """2.1 장애 탐지 및 분석 — 알람 수신 시 근거 수집 + 상황 인식 후 장애 여부 판단.
+
+    M2-07: 평가에 쓴 것과 같은 근거 경로(RCAAnalyzer.collect)로 규칙·학습 판정과
+    하위 의존성 위험 전파를 계산해 LLM 에 준다. 학습 확률이 트리아지 임계치 미만이면
+    LLM 을 호출하지 않고 '장애 아님'으로 결정한다 (비용·지연 절감).
+    """
 
     name = "detection"
     description = "알람과 메트릭을 분석해 실제 장애 여부·심각도·영향 범위를 판단한다"
@@ -36,40 +48,81 @@ class DetectionAgent(LLMAgent):
     output_model = DetectionOutput
     tool_names = ["query_metrics", "search_logs", "get_service_dependencies"]
 
-    def __init__(self, *args: Any, source: OpsSource, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *args: Any,
+        source: OpsSource,
+        situation_model: LogisticModel | None = None,
+        triage_threshold: float = 0.0,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.source = source
+        self.analyzer = RCAAnalyzer(source)
+        self.situation_model = situation_model
+        self.triage_threshold = triage_threshold
 
     async def build_input(self, task: AgentTask, ctx: AgentContext) -> dict[str, Any]:
         alert = task.inputs.get("alert", {})
         service = alert.get("service") or task.inputs.get("service", "unknown")
         end = utcnow()
-        facts, anomalies_by_metric, length = {}, {}, 1
+        facts = {}
         for metric in DEFAULT_METRICS:
             series = await self.source.query_range(service, metric, end - timedelta(hours=1), end)
-            anomalies = default_detector().detect(series.values)
-            anomalies_by_metric[metric] = anomalies
-            facts[metric] = summarize_series(series.values, anomalies)
-            length = len(series.values)
-        changes = await self.source.list_events(end - timedelta(hours=2), end, service)
-        deps = await self.source.dependencies(service)
-        situation = assess(
-            SignalSet(
-                service=service,
-                anomalies=anomalies_by_metric,
-                series_length=length,
-                recent_changes=sum(1 for e in changes if e.type == "deploy"),
-                downstream_impacted=len(deps.get("upstream", [])),
+            facts[metric] = summarize_series(
+                series.values, default_detector().detect(series.values)
             )
+
+        evidence = await self.analyzer.collect(service)
+        rule = assess(rule_signals(evidence))
+        situation: dict[str, Any] = {"rule": rule.model_dump()}
+        own_risk = rule.risk_score / 100
+        if self.situation_model is not None:
+            learned = assess_learned(self.situation_model, service, evidence)
+            situation["learned"] = learned.model_dump()
+            own_risk = self.situation_model.predict_proba(featurize(evidence))  # 반올림 전 값
+        # 하위 의존성 위험 전파: 내 지표가 멀쩡해도 하위가 무너지면 나도 위험하다
+        risk = {e.service: min(1.0, len(e.anomalous_metrics) / 2) for e in evidence}
+        risk[service] = own_risk
+        downstream = {
+            e.service: (await self.source.dependencies(e.service))["downstream"] for e in evidence
+        }
+        propagated = propagate_risk(risk, downstream)[service]
+        ctx.blackboard.write(
+            "detection.risk", {"own": own_risk, "propagated": propagated}, author=self.name
         )
-        ctx.blackboard.write("detection.situation", situation.model_dump(), author=self.name)
+        situation["propagated_risk"] = round(propagated, 3)
+        situation["anomalous_services"] = {
+            e.service: sorted(e.anomalous_metrics) for e in evidence if e.anomalous_metrics
+        }
+
+        ctx.blackboard.write("detection.situation", situation, author=self.name)
         ctx.blackboard.write("service", service, author=self.name)
         return {
             "alert": _dump(alert),
-            "situation": _dump(situation.model_dump()),
+            "situation": _dump(situation),
             "facts": _dump(facts),
             "input": task.instruction,
         }
+
+    async def pre_decide(
+        self, task: AgentTask, ctx: AgentContext, variables: dict[str, Any]
+    ) -> AgentResult | None:
+        sit = ctx.blackboard.read("detection.situation") or {}
+        risk = ctx.blackboard.read("detection.risk") or {}
+        learned = sit.get("learned")
+        if not learned or self.triage_threshold <= 0:
+            return None
+        p = risk.get("own", 1.0)
+        if max(p, risk.get("propagated", 1.0)) >= self.triage_threshold:  # 원값으로 비교
+            return None
+        out = DetectionOutput(
+            is_incident=False,
+            severity=Severity.INFO,
+            summary=f"트리아지: 장애 확률 {p:.3f} < {self.triage_threshold} "
+            f"(근거: {learned['factors']}) — LLM 판단 생략",
+        )
+        return AgentResult(agent=self.name, output=out.summary, data=out.model_dump(mode="json"))
 
 
 class RCAAgent(LLMAgent):

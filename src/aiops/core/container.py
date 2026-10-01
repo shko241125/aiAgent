@@ -20,6 +20,7 @@ from aiops.agents.specialists.aiops import (
 )
 from aiops.agents.tools.base import ApprovalPolicy, ToolRegistry
 from aiops.agents.tools.builtin.ops import build_ops_tools
+from aiops.analytics.situation_model import LogisticModel
 from aiops.core.config import Settings
 from aiops.db.models import create_engine, create_sessionmaker, init_db
 from aiops.integrations.base import OpsSource
@@ -92,7 +93,15 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
 
     agents = AgentRegistry()
     agents.register(
-        DetectionAgent(llm_for("detection"), tools, prompts, source=source, **common),
+        DetectionAgent(
+            llm_for("detection"),
+            tools,
+            prompts,
+            source=source,
+            situation_model=LogisticModel.load(settings.situation_model_path),
+            triage_threshold=settings.detection_triage_threshold,
+            **common,
+        ),
         RCAAgent(llm_for("rca"), tools, prompts, source=source, **common),
         RemediationAgent(llm_for("remediation"), tools, prompts, **common),
         IncidentAgent(llm_for("incident"), tools, prompts, **common),

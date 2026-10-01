@@ -97,6 +97,15 @@ class LLMAgent(BaseAgent):
         """프롬프트 템플릿 변수. 서브클래스가 blackboard/분석 결과를 주입한다."""
         return {"input": task.instruction, **task.inputs}
 
+    async def pre_decide(
+        self, task: AgentTask, ctx: AgentContext, variables: dict[str, Any]
+    ) -> AgentResult | None:
+        """LLM 호출 전에 결정적으로 답할 수 있으면 결과를 반환 (예: 트리아지).
+
+        None 이면 평소대로 LLM 루프를 진행한다.
+        """
+        return None
+
     async def post_process(self, result: AgentResult, ctx: AgentContext) -> AgentResult:
         """결과를 blackboard 에 기록하는 등 후처리."""
         ctx.blackboard.write(f"{self.name}.output", result.output, author=self.name)
@@ -136,6 +145,10 @@ class LLMAgent(BaseAgent):
 
     async def _run(self, task: AgentTask, ctx: AgentContext) -> AgentResult:
         variables = await self.build_input(task, ctx)
+        early = await self.pre_decide(task, ctx, variables)
+        if early is not None:
+            ctx.log(self.name, "pre_decided", data=early.data)
+            return await self.post_process(early, ctx)
         prompt = self.prompts.render(self.prompt_name, **variables)
         user_prompt = prompt.user
         tool_names = list(self.tool_names)

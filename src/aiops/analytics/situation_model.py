@@ -12,8 +12,9 @@ from pathlib import Path
 import numpy as np
 from pydantic import BaseModel
 
+from aiops.analytics.anomaly.base import Anomaly
 from aiops.analytics.rca import RESOURCE_METRICS, ServiceEvidence, match_signatures
-from aiops.analytics.situation import SituationAssessment, SituationLevel
+from aiops.analytics.situation import SignalSet, SituationAssessment, SituationLevel
 
 FEATURES = [
     "error_score",  # error_rate 이상 최대 점수 (log1p)
@@ -129,4 +130,21 @@ def propagate_risk(
                 changed = True
         if not changed:
             break
-    return {k: round(v, 2) for k, v in eff.items()}
+    return eff  # 반올림은 표시할 때만 — 비교 전에 반올림하면 임계치 판정이 틀어진다
+
+
+def rule_signals(evidence: list[ServiceEvidence]) -> SignalSet:
+    """규칙 기반 assess() 입력으로 변환 — 같은 근거로 두 방식을 공정하게 비교하기 위함."""
+    alert = next(e for e in evidence if e.depth == 0)
+    span = int(alert.onset_min_ago or 0)
+    return SignalSet(
+        service=alert.service,
+        anomalies={
+            m: [Anomaly(index=0, value=0.0, score=s, method="ev")] * max(span, 1)
+            for m, s in alert.anomalous_metrics.items()
+        },
+        series_length=60,
+        error_events=sum(len(match_signatures(e.log_lines)) for e in evidence),
+        recent_changes=sum(len(e.changes) for e in evidence),
+        downstream_impacted=sum(1 for e in evidence if e.depth > 0 and e.onset_min_ago),
+    )

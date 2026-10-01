@@ -61,6 +61,12 @@ class Settings(BaseSettings):
     loki_tenant: str | None = None
     topology_file: Path = Path("data/topology.json")
 
+    # --- 상황 인식 (M2-05/07) ---
+    situation_model_path: Path = Path("data/models/situation_lr.json")
+    # 학습 확률이 이 값 미만이면 Detection 이 LLM 없이 '장애 아님' 결정 (0 = 끔).
+    # 합성 평가 기준 0.05 에서 정상 알람 60% 생략·놓친 장애 0 (scripts/eval_situation.py)
+    detection_triage_threshold: float = 0.0
+
     # --- Agent (1.x) ---
     agent_max_steps: int = 8
     memory_window: int = 20

@@ -11,10 +11,9 @@ import random
 import numpy as np
 from pydantic import BaseModel
 
-from aiops.analytics.anomaly.base import Anomaly
-from aiops.analytics.rca import RCAAnalyzer, ServiceEvidence, match_signatures
-from aiops.analytics.situation import SignalSet, SituationLevel, assess
-from aiops.analytics.situation_model import LogisticModel, featurize
+from aiops.analytics.rca import RCAAnalyzer, ServiceEvidence
+from aiops.analytics.situation import SituationLevel, assess
+from aiops.analytics.situation_model import LogisticModel, featurize, rule_signals
 from aiops.integrations.simulated import (
     TOPOLOGY,
     ChangeEvent,
@@ -135,23 +134,6 @@ async def collect_evidence(s: LabeledSituation, seed: int) -> list[ServiceEviden
     source = SimulatedOpsSource(seed=seed)
     source.apply_scenario(s.scenario)
     return await RCAAnalyzer(source).collect(s.scenario.alert_service)
-
-
-def rule_signals(evidence: list[ServiceEvidence]) -> SignalSet:
-    """규칙 기반 assess() 입력으로 변환 — 같은 근거로 두 방식을 공정하게 비교하기 위함."""
-    alert = next(e for e in evidence if e.depth == 0)
-    span = int(alert.onset_min_ago or 0)
-    return SignalSet(
-        service=alert.service,
-        anomalies={
-            m: [Anomaly(index=0, value=0.0, score=s, method="ev")] * max(span, 1)
-            for m, s in alert.anomalous_metrics.items()
-        },
-        series_length=60,
-        error_events=sum(len(match_signatures(e.log_lines)) for e in evidence),
-        recent_changes=sum(len(e.changes) for e in evidence),
-        downstream_impacted=sum(1 for e in evidence if e.depth > 0 and e.onset_min_ago),
-    )
 
 
 class BinaryScore(BaseModel):
