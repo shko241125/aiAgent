@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M3",
     "plan:0004"
@@ -14,19 +14,19 @@
   "acceptance": [
     {
       "text": "RCA 후보→조치 플레이북",
-      "done": false
+      "done": true
     },
     {
       "text": "조치 후 지표 회복 검증(진행 중 이상 소멸)",
-      "done": false
+      "done": true
     },
     {
       "text": "미복구 시 되돌림·에스컬레이션",
-      "done": false
+      "done": true
     },
     {
       "text": "시나리오별 조치 적중률·복구율 측정",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -34,11 +34,13 @@
   ],
   "parent_id": "R-2.3",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "remediation/playbook.py(change→rollback, 시그니처별 매핑, cpu→scale×2, 위험·불가 원인→manual), verify.py(verify_recovery: ongoing 이상 소멸 폴링), runner.py(remediate: 실행→검증→되돌림·에스컬레이션, RemediationOutcome), evals/remediation.py + scripts/eval_remediation.py(make eval·CI). 시나리오에 fixed_by·expected_action 정답 추가. service: scale factor→replicas 해석, revert 인자",
+  "outputs": {
+    "baseline": "시나리오 8 × 시드 10: 1차 조치 정확도 1.000, 자동화 대상(4) 복구율 1.000, 자동화 금지(4) 안전 위임 1.000. 테스트: 잘못된 조치(scale↔restart) → 미복구 → scale 되돌림 → 에스컬레이션"
+  },
   "log": [
     {
       "ts": "2026-10-02T00:23:30.508433Z",
@@ -46,11 +48,81 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:48.493777Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:50.053186Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.baseline 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:50.441139Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "승인은 1차 조치 하나에만 — 복구 실패 시 대안을 자동 연쇄 실행하지 않음(승인 안 받은 변경 금지). 효과 없는 변경은 원상 복구 후 사람에게. 되돌림 예외는 reason 문자열이 아니라 명시적 revert=True 인자로(문자열 판단은 우회 가능 — 작성 중 발견해 수정)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:50.834247Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "한계: 시나리오와 플레이북을 함께 작성 → 1.0 은 회귀 기준선. 원인 오판 시 잘못된 조치 위험은 승인 단계·효과 검증·되돌림으로 방어",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:51.233246Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ RCA 후보→조치 플레이북",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:51.238682Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 조치 후 지표 회복 검증(진행 중 이상 소멸)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:51.244441Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 미복구 시 되돌림·에스컬레이션",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:51.249147Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 시나리오별 조치 적중률·복구율 측정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:51.660730Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "remediation/playbook.py(change→rollback, 시그니처별 매핑, cpu→scale×2, 위험·불가 원인→manual), verify.py(verify_recovery: ongoing 이상 소멸 폴링), runner.py(remediate: 실행→검증→되돌림·에스컬레이션, RemediationOutcome), evals/remediation.py + scripts/eval_remediation.py(make eval·CI). 시나리오에 fixed_by·expected_action 정답 추가. service: scale factor→replicas 해석, revert 인자",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:31:51.660771Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 10,
   "created_at": "2026-10-02T00:23:30.508404Z",
-  "updated_at": "2026-10-02T00:23:30.508562Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T00:31:51.661063Z",
+  "started_at": "2026-10-02T00:28:48.493762Z",
+  "done_at": "2026-10-02T00:31:51.660760Z"
 }

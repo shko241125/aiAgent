@@ -49,4 +49,5 @@ eval:
 	.venv/bin/python scripts/eval_anomaly.py
 	.venv/bin/python scripts/eval_situation.py
 	.venv/bin/python scripts/eval_rca.py --seeds 10
+	.venv/bin/python scripts/eval_remediation.py --seeds 5
 	.venv/bin/python scripts/run_evals.py

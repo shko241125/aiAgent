@@ -58,6 +58,8 @@ class FaultScenario(BaseModel):
     changes: list[ChangeEvent] = Field(default_factory=list)
     logs: dict[str, list[str]] = Field(default_factory=dict)
     accept: list[AcceptedCause] = Field(default_factory=list)  # 정답으로 인정할 (서비스, 종류)
+    # 정답 1차 조치 종류 (M3-03 평가): restart | scale | rollback | manual
+    expected_action: str | None = None
 
 
 class SimulatedOpsSource(OpsSource):

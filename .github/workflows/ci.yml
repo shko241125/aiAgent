@@ -24,6 +24,7 @@ jobs:
         run: |
           .venv/bin/python scripts/run_evals.py
           .venv/bin/python scripts/eval_rca.py
+          .venv/bin/python scripts/eval_remediation.py
           .venv/bin/python scripts/eval_retrieval.py
           .venv/bin/python scripts/eval_anomaly.py
           .venv/bin/python scripts/eval_situation.py

@@ -1,8 +1,9 @@
 """조치 실행 서비스 (M3-02) — 가드레일 → 실행기 → 이력. 모든 조치는 이 경로로만 실행된다."""
 
 import logging
+import math
 
-from aiops.remediation.actions import ActionResult, RemediationAction
+from aiops.remediation.actions import ActionResult, ActionType, RemediationAction
 from aiops.remediation.executors import Executor
 from aiops.remediation.guardrails import Guardrails, GuardrailViolation
 
@@ -15,11 +16,25 @@ class RemediationService:
         self.guardrails = guardrails or Guardrails()
 
     async def execute(
-        self, action: RemediationAction, *, dry_run: bool = False, approved_by: str | None = None
+        self,
+        action: RemediationAction,
+        *,
+        dry_run: bool = False,
+        approved_by: str | None = None,
+        revert: bool = False,
     ) -> ActionResult:
+        """revert=True: 직전 조치의 원상 복구 (가드레일 시간당 한도·쿨다운만 면제)."""
         try:
             current = await self.executor.current_replicas(action)
-            self.guardrails.check(action, current)
+            if action.type == ActionType.SCALE and "replicas" not in action.params:
+                factor = float(action.params.get("factor", 2))  # 플레이북은 배율만 정한다
+                action = action.model_copy(
+                    deep=True,
+                    update={
+                        "params": {**action.params, "replicas": math.ceil((current or 1) * factor)}
+                    },
+                )
+            self.guardrails.check(action, current, revert=revert)
         except GuardrailViolation as exc:
             logger.warning("guardrail blocked %s: %s", action.describe(), exc)
             return ActionResult(

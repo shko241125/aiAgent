@@ -39,7 +39,14 @@ class Guardrails:
         self.clock = clock
         self.history: dict[str, list[datetime]] = defaultdict(list)
 
-    def check(self, action: RemediationAction, current_replicas: int | None = None) -> None:
+    def check(
+        self,
+        action: RemediationAction,
+        current_replicas: int | None = None,
+        *,
+        revert: bool = False,
+    ) -> None:
+        """revert=True: 직전 조치의 원상 복구 — 시간당 한도·쿨다운만 면제(나머지는 동일 적용)."""
         p, now = self.policy, self.clock()
         if action.type not in p.allowed_types:
             raise GuardrailViolation(f"허용되지 않은 조치 종류: {action.type}")
@@ -48,6 +55,8 @@ class Guardrails:
         if any(fnmatch.fnmatch(action.service, pat) for pat in p.denied_services):
             raise GuardrailViolation(f"자동 조치 금지 대상: {action.service}")
         recent = [t for t in self.history[action.service] if now - t < timedelta(hours=1)]
+        if revert:
+            recent = []
         if len(recent) >= p.max_actions_per_hour:
             raise GuardrailViolation(
                 f"{action.service} 시간당 조치 한도 초과({len(recent)}/{p.max_actions_per_hour})"
