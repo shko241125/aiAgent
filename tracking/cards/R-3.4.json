@@ -2,7 +2,7 @@
   "id": "R-3.4",
   "board_id": "dev",
   "title": "장애 예측·위험도 분석",
-  "description": "장애 확률 분류 모델, 용량 예측, 예측 기반 선제 알람",
+  "description": "실 인시던트 라벨로 재학습, 다변량·맥락 특징(배포 이벤트)으로 '오르다 멈춤' 구분, 예측 알람 → 인시던트 선행률 실측(주간 보고서 지표)",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -17,7 +17,7 @@
   "acceptance": [
     {
       "text": "N분 전 예측 적중률 측정",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -42,11 +42,32 @@
       "kind": "edit",
       "message": "edited: refs",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:18.830294Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:20.433718Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ N분 전 예측 적중률 측정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:20.838640Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족(합성): 15분 내 장애 예측, 5분 이상 전 적중률 0.744·리드타임 12분·오경보 0.107 vs 외삽 0.667·16분·0.220 (M4-06). 실 이력 재측정 필요",
+      "data": {}
     }
   ],
-  "version": 2,
+  "version": 5,
   "created_at": "2026-09-30T10:30:02.868845Z",
-  "updated_at": "2026-10-02T04:22:37.751159Z",
+  "updated_at": "2026-10-02T04:29:20.838852Z",
   "started_at": null,
   "done_at": null
 }

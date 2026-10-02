@@ -41,12 +41,29 @@ M1~M3 으로 "알람 → 원인 → 승인된 조치 → 복구" 가 돈다. M4 
 | M4-05 | 토큰 예산 컨텍스트 관리 + 요약 메모리 | ✅ done | claude-code | agents/memory/base.py: estimate_tokens(비ASCII 1자=1토큰, ASCII 4자=1토큰, 보수적)·message_tokens·total_tokens, ConversationMemor… |
 | M4-06 | 장애 확률 예측 모델 + 용량 예측 + 선제 알람 | ✅ done | claude-code | analytics/prediction.py: PRED_FEATURES 11종(강건 통계, 임계치 정규화) failure_features, predict_failure(FailurePrediction: 확률·eta·… |
 | M4-07 | 운영 보고서: 코드 집계 + LLM 서술 + 주간 자동 발송 | ✅ done | claude-code | services/reports.py(collect_facts: 인시던트·이전 기간·MTTR·자동 복구·조치·승인·예측 선행, render_markdown·render_chart_svg·sparkline, unver… |
-| M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | 🟦 ready | - |  |
+| M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | ✅ done | claude-code | 실 검증 완료(outputs 참조): prod 기동 거부/허용, PostgreSQL 마이그레이션·드리프트 0, 실 서버 부하(c20 p95 91ms·c50 p95 182ms, 에러 0), promtool 33규칙,… |
 
-진행: 7/8
+진행: 8/8
 <!-- /AUTO -->
 
 ## 4. 완료 판정
 
 - 모든 카드 DoD 체크 + `make check` 통과, 측정값은 각 카드 outputs 에 기록.
 - 인증을 켠 상태에서 M3 E2E(승인 → 조치 → 복구)가 그대로 동작하고, 승인자가 인증 주체로 기록된다.
+
+## 5. 결과 요약 (2026-10-02)
+
+| 카드 | 결과 | 해석·한계 |
+|---|---|---|
+| M4-01 인증·인가 | API Key(SHA-256 해시) + 역할 4종, 전역 의존성 1개가 판정(선언 없으면 GET=viewer·그 외=operator). 승인자·행위자 = 인증 주체, `approved_tools` 지정은 approver, Slack 은 서명 + 허용 목록, prod 무인증 기동 거부 | OIDC·키 회전·rate limit 은 다음 과제 (TODO(4.4)) |
+| M4-02 마이그레이션 | Alembic 0001·0002, 모델↔마이그레이션 드리프트 테스트, 이력 없는 기존 DB 는 일치할 때만 stamp | **실 PostgreSQL 에서 드리프트 0** (M4-08). 보고서 테이블 추가 때 실제로 이 절차를 사용 |
+| M4-03 관측성 | 라우트 템플릿 라벨 메트릭, SLO 3종 → burn-rate 규칙·Grafana 대시보드 **생성**, 생성물 drift 테스트, `/ready` DB 실점검 | 지연 SLO 는 분위수가 아니라 '임계 버킷 이하 비율' — 예산 계산이 가능하도록 |
+| M4-04 캐시·부하 | temperature 0 캐시 + single-flight: LLM 호출 99→5회, answer p50 314→21ms (p95 는 미스가 지배) | 프로세스 내 SQLite 기준선 c50 p95 450ms — 병목은 SQLite |
+| M4-05 컨텍스트 | 토큰 예산 + 요약 메모리, 과제 메시지 고정(기존 버그), 60 step 루프 예산 초과 0회·요약 9회 | 토큰 추정은 보수적 근사 — 모델별 토크나이저로 교체 여지 |
+| M4-06 예측 | 15분 내 장애, 5분 이상 전 적중: 학습 **0.744** / 리드타임 12분 / 오경보 **0.107** vs 선형 외삽 0.667 / 16분 / 0.220. 용량: 피크 기준 소진이 추세 기준보다 2.5배 이름 | 합성 = 회귀 기준선. '오르다 뚝 멈춤'은 과거 값만으론 누수와 구분 불가(대조군 47%) — 맥락 특징 필요 |
+| M4-07 보고서 | 숫자는 코드 집계, LLM 서술 속 사실표 밖 수치 경고, SVG 차트, 주간 스케줄(catch-up) — 결정적 id 로 재시작해도 1회 발송 | 다중 인스턴스 스케줄 리스는 TODO(4.5) |
+| M4-08 실 환경 | prod 모드 + PostgreSQL + Prometheus + Grafana: c20 p95 **91ms** · c50 p95 182ms(368 RPS 포화), 에러 0. DB 장애 주입 → 6h·1d·3d burn 알람 발화, 1h/5m 은 오류율 3.8% < 7.2% 라 미발화(설계대로) | **실측에서 버그 발견**: DB 장애 시 처리 안 된 예외로 keep-alive 연결이 끊겨 요청 절반이 연결 오류 → 503 핸들러로 수정, 재실험 2500/2500 = 503 |
+
+![Grafana SLO 대시보드 — DB 장애 주입 구간](../assets/m4-grafana-slo.png)
+
+M4 이후 과제: OIDC·API 이미지 빌드 검증(R-4.4), 실 인시던트 라벨로 예측 재학습(R-3.4), 다중 인스턴스(스케줄·재개 리스, R-4.5).

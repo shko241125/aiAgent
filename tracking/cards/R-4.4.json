@@ -2,7 +2,7 @@
   "id": "R-4.4",
   "board_id": "dev",
   "title": "FastAPI Backend",
-  "description": "인증/인가(API Key·OIDC), Alembic 마이그레이션, 비동기 작업 큐",
+  "description": "OIDC 인증기, API 키 회전·만료, rate limiting, 비동기 작업 큐(장시간 오케스트레이션을 요청 밖으로), 실 배포 검증(M4-08)",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -51,11 +51,32 @@
       "kind": "edit",
       "message": "edited: refs",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:17.549163Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:22.883766Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 미체크: 인증·인가(M4-01)·마이그레이션(M4-02)·/ready 실점검(M4-03) 완료. '운영 배포 가능' 은 실 배포 검증(M4-08)과 OIDC 후 판정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:22.760524Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "M4-08: prod 모드(인증·PostgreSQL·Alembic)로 실 기동·부하 검증, DB 장애 503 처리 추가. DoD 는 OIDC·Docker 이미지 빌드 검증 후 체크",
+      "data": {}
     }
   ],
-  "version": 3,
+  "version": 6,
   "created_at": "2026-09-30T10:30:02.872186Z",
-  "updated_at": "2026-10-02T04:00:52.965773Z",
+  "updated_at": "2026-10-02T04:38:22.760755Z",
   "started_at": null,
   "done_at": null
 }

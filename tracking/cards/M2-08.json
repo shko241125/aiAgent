@@ -73,11 +73,18 @@
       "kind": "move",
       "message": "in_progress → blocked",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:08.494060Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "참고(M4-08 에서 확인): 이 컨테이너는 dockerd 직접 기동·이미지 pull 이 가능 → Prometheus·Loki·Alertmanager 컨테이너로 해제 절차 진행 가능 (Docker Hub 429 시 mirror.gcr.io 사용)",
+      "data": {}
     }
   ],
-  "version": 4,
+  "version": 5,
   "created_at": "2026-10-01T16:03:40.538265Z",
-  "updated_at": "2026-10-01T16:23:36.224051Z",
+  "updated_at": "2026-10-02T04:38:08.494325Z",
   "started_at": "2026-10-01T16:23:35.394523Z",
   "done_at": null
 }

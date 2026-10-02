@@ -11,6 +11,7 @@
 import argparse
 import asyncio
 import json
+import logging
 import random
 import statistics
 import sys
@@ -135,6 +136,10 @@ async def main() -> int:
     ap.add_argument("--api-key")
     ap.add_argument("--out", type=Path)
     args = ap.parse_args()
+    # aiops.main 을 불러오면 앱 로깅(stdout)이 켜진다 — 결과 JSON 만 깨끗이 나오도록 낮춘다
+    logging.getLogger().setLevel(logging.WARNING)
+    for name in ("httpx", "aiops", "aiops.access"):
+        logging.getLogger(name).setLevel(logging.WARNING)
 
     headers = {"Authorization": f"Bearer {args.api_key}"} if args.api_key else {}
     async with AsyncExitStack() as stack:

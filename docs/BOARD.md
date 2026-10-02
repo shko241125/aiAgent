@@ -3,7 +3,7 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 1 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 3 · ✅ done 34**
+**📥 backlog 0 · 🟦 ready 0 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 3 · ✅ done 35**
 
 ## ⛔ blocked (3)
 
@@ -13,13 +13,7 @@
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | claude-code | R-2.1 | 실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요 |
 | M3-07 | 실 Kubernetes 클러스터 조치 검증 | p2 | claude-code | R-2.3 | 실 Kubernetes 클러스터(또는 kind/minikube + Docker) 필요 |
 
-## 🟦 ready (1)
-
-| 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
-|---|---|---|---|---|---|
-| M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | p2 | - | R-4.6 |  |
-
-## ✅ done (34)
+## ✅ done (35)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
@@ -57,3 +51,4 @@
 | M4-06 | 장애 확률 예측 모델 + 용량 예측 + 선제 알람 | p1 | claude-code | R-3.4 | analytics/prediction.py: PRED_FEATURES 11종(강건 통계, 임계치 정규화) failure_features, predict_failure(FailurePrediction: 확률·eta·… |
 | M4-07 | 운영 보고서: 코드 집계 + LLM 서술 + 주간 자동 발송 | p1 | claude-code | R-2.5 | services/reports.py(collect_facts: 인시던트·이전 기간·MTTR·자동 복구·조치·승인·예측 선행, render_markdown·render_chart_svg·sparkline, unver… |
 | M4-04 | LLM 응답 캐시 + 부하 테스트(p95·에러율 측정) | p2 | claude-code | R-4.6 | llm/cache.py(ResponseCache: TTL·LRU·deep copy, cache_key=provider+messages+tools+params SHA-256), LLMRouter(cache=, tem… |
+| M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | p2 | claude-code | R-4.6 | 실 검증 완료(outputs 참조): prod 기동 거부/허용, PostgreSQL 마이그레이션·드리프트 0, 실 서버 부하(c20 p95 91ms·c50 p95 182ms, 에러 0), promtool 33규칙,… |

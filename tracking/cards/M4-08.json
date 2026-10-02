@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p2",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M4",
     "plan:0005"
@@ -14,11 +14,11 @@
   "acceptance": [
     {
       "text": "배포된 서버에 부하 테스트 → p95·에러율 SLO 판정",
-      "done": false
+      "done": true
     },
     {
       "text": "생성된 규칙·대시보드를 실 Prometheus·Grafana 에 적재해 burn-rate 알람 발화 확인",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -29,11 +29,15 @@
     "M4-03",
     "M4-04"
   ],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "실 검증 완료(outputs 참조): prod 기동 거부/허용, PostgreSQL 마이그레이션·드리프트 0, 실 서버 부하(c20 p95 91ms·c50 p95 182ms, 에러 0), promtool 33규칙, DB 장애 주입 → 6h/1d/3d burn 알람 발화(1h/5m 은 오류율 3.8% < 7.2% 라 미발화, 설계대로), Grafana 대시보드 실데이터(docs/assets/m4-grafana-slo.png). 발견 버그: DB 장애 시 연결 끊김 → main.py 의존성 장애 503 핸들러로 수정·테스트(test_db_outage_is_503_not_crash). 재현법: dockerd & (데몬 직접 기동) → postgres(mirror.gcr.io/library/postgres:16-alpine)·prom/prometheus·grafana/grafana 를 --network host 로, API 는 AIOPS_ENV=prod·AIOPS_AUTH_MODE=api_key·AIOPS_API_KEYS·AIOPS_DATABASE_URL=postgresql+asyncpg://… 로 uvicorn 기동, scripts/loadtest.py --url --api-key. 미검증: API Docker 이미지 빌드(빌드 컨테이너가 프록시 CA 미신뢰 — /root/.ccr/README.md 참고), 다중 워커/인스턴스",
+  "outputs": {
+    "prod_boot": "prod+인증 off → InsecureConfig 로 기동 거부 확인. 키 설정 후 기동: Alembic 0001→0002 PostgreSQL 적용, 드리프트 0, 기동 catch-up 으로 weekly-2026-W39 보고서 생성, 무키 401·viewer 의 실행 403",
+    "live_load": "uvicorn 1워커+PostgreSQL, 혼합 부하 4000건: 동시 20 → 384 RPS, 대화형 p50 47 / p95 91 / p99 115ms · 동시 50 → 368 RPS(포화), p95 182 / p99 222ms, 에러 0 — SLO(p95<0.5s, 가용성 99.5%) 통과. 서버측 Prometheus p95 91ms 로 클라이언트 측정과 일치. 프로세스 내 SQLite 기준선(M4-04, c50 p95 450ms)보다 좋음 — SQLite 쓰기 직렬화가 병목이었음",
+    "burn_alerts": "promtool check rules: 33개 SUCCESS. DB 중지로 5xx 주입(5분 오류율 ~3.8%) → SLOBurn-api-availability-6h(page, 6x)·1d·3d(ticket) firing, 1h/5m page(14.4x=7.2%) 는 미발화 — 번 레이트 패널 최고 ~12x 로 설계대로. Grafana 대시보드 8패널 자동 적재·실데이터 표시(docs/assets/m4-grafana-slo.png)"
+  },
   "log": [
     {
       "ts": "2026-10-02T03:55:10.473537Z",
@@ -41,11 +45,123 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:16.263167Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:16.686898Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "확인: docker·prometheus·promtool·grafana 없음 → 배포 서버 부하·실 알람 발화 검증 불가. 준비물은 모두 있음: scripts/loadtest.py --url/--api-key, deploy/prometheus/(prometheus.yml·aiops-slo-rules.yml), deploy/grafana/(대시보드·provisioning), compose observability 프로필",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:17.129355Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "해제 절차: 1) docker compose --profile observability up -d (api·postgres·prometheus·grafana) — AIOPS_ENV=prod 면 AIOPS_AUTH_MODE=api_key·API_KEYS 필수, 스키마는 Alembic 자동 적용 2) promtool check rules deploy/prometheus/aiops-slo-rules.yml 3) python scripts/loadtest.py --url http://localhost:8000 --api-key <viewer 이상 키> --requests 5000 --concurrency 20/50 → outputs 기록(프로세스 내 기준선 M4-04 와 비교) 4) Grafana(3000) 'AIOps Platform — SLO' 대시보드에서 p95·번 레이트 패널 확인 5) 5xx 주입(예: DB 중지)으로 SLOBurn-api-availability-1h 알람 발화 확인 후 원복. 주의: /metrics 는 공개 경로 — 외부 노출은 네트워크 정책으로 차단",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:17.129387Z",
+      "actor": "claude-code",
+      "kind": "block",
+      "message": "배포 환경(Docker 또는 서버) + 실 Prometheus·Grafana 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:17.129395Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → blocked",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:30:21.376915Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed (이전 담당: claude-code)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:30:21.947605Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "환경 재확인: /usr/bin/dockerd 존재·root → dockerd 직접 기동 성공(overlayfs, cgroup v1), docker pull 프록시 경유 성공. 이전 판단('Docker 데몬 없음')은 데몬이 '안 떠 있던' 것이지 불가능이 아니었음",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:05.992294Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "구성: dockerd 직접 기동 → PostgreSQL 16(mirror.gcr.io — Docker Hub 429 회피)·Prometheus·Grafana 컨테이너(--network host), API 는 호스트에서 uvicorn 1 워커 prod 모드(AIOPS_ENV=prod, api_key 인증, asyncpg). API 이미지(Dockerfile) 빌드는 미검증 — 빌드 컨테이너가 프록시 CA 를 신뢰하지 않음",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:06.403357Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "발견·수정: DB 장애 시 처리 안 된 예외 → 서버가 keep-alive 연결을 끊어 요청 2500건 중 1224건이 500 도 아닌 연결 끊김(ReadError). DBAPIError·ConnectionError·TimeoutError → 503+Retry-After 핸들러 추가 후 재실험: 2500건 전부 503, 끊김 0, DB 복구 즉시 정상화(pool_pre_ping)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:06.825217Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.prod_boot 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:07.239012Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.live_load 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:07.656438Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.burn_alerts 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:08.071427Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 배포된 서버에 부하 테스트 → p95·에러율 SLO 판정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:08.081673Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 생성된 규칙·대시보드를 실 Prometheus·Grafana 에 적재해 burn-rate 알람 발화 확인",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:21.909281Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "실 검증 완료(outputs 참조): prod 기동 거부/허용, PostgreSQL 마이그레이션·드리프트 0, 실 서버 부하(c20 p95 91ms·c50 p95 182ms, 에러 0), promtool 33규칙, DB 장애 주입 → 6h/1d/3d burn 알람 발화(1h/5m 은 오류율 3.8% < 7.2% 라 미발화, 설계대로), Grafana 대시보드 실데이터(docs/assets/m4-grafana-slo.png). 발견 버그: DB 장애 시 연결 끊김 → main.py 의존성 장애 503 핸들러로 수정·테스트(test_db_outage_is_503_not_crash). 재현법: dockerd & (데몬 직접 기동) → postgres(mirror.gcr.io/library/postgres:16-alpine)·prom/prometheus·grafana/grafana 를 --network host 로, API 는 AIOPS_ENV=prod·AIOPS_AUTH_MODE=api_key·AIOPS_API_KEYS·AIOPS_DATABASE_URL=postgresql+asyncpg://… 로 uvicorn 기동, scripts/loadtest.py --url --api-key. 미검증: API Docker 이미지 빌드(빌드 컨테이너가 프록시 CA 미신뢰 — /root/.ccr/README.md 참고), 다중 워커/인스턴스",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:21.909323Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 14,
   "created_at": "2026-10-02T03:55:10.473502Z",
-  "updated_at": "2026-10-02T03:55:10.473683Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T04:38:21.909666Z",
+  "started_at": "2026-10-02T04:29:16.263150Z",
+  "done_at": "2026-10-02T04:38:21.909311Z"
 }

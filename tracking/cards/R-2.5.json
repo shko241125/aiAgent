@@ -2,7 +2,7 @@
   "id": "R-2.5",
   "board_id": "dev",
   "title": "운영 보고서 Agent",
-  "description": "일간/주간 리포트 스케줄러, 차트 첨부, 보고서 템플릿 다양화",
+  "description": "일간·월간 템플릿, 서술 수치 검증 통과율 추적, Slack 차트 이미지 업로드, 인시던트별 포스트모템 자동 초안",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -18,7 +18,7 @@
   "acceptance": [
     {
       "text": "주간 운영 리포트 자동 발송",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -43,11 +43,32 @@
       "kind": "edit",
       "message": "edited: refs",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:19.239357Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:21.240588Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 주간 운영 리포트 자동 발송",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:21.645346Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족: 주간 스케줄러가 직전 주 보고서 생성·알림 채널 발송, 결정적 id 로 재시작 후에도 1회 (M4-07). 실 Slack 수신은 Slack 설정 시",
+      "data": {}
     }
   ],
-  "version": 2,
+  "version": 5,
   "created_at": "2026-09-30T10:30:02.865930Z",
-  "updated_at": "2026-10-02T04:27:54.146587Z",
+  "updated_at": "2026-10-02T04:29:21.645584Z",
   "started_at": null,
   "done_at": null
 }

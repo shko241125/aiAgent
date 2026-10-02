@@ -2,7 +2,7 @@
   "id": "R-1.6",
   "board_id": "dev",
   "title": "Memory·Context 관리",
-  "description": "토큰 기준 트리밍 + 요약 메모리, 장기 메모리 Vector DB 이관, 컨텍스트 압축",
+  "description": "장기 메모리 Vector DB 이관(중요도·최신성 가중치), 모델별 실제 토크나이저, 요약 품질 평가(요약 후 과제 성공률)",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -17,7 +17,7 @@
   "acceptance": [
     {
       "text": "50+ step 대화에서 컨텍스트 한도 초과 없음",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -35,11 +35,32 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:18.375924Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:19.632653Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 50+ step 대화에서 컨텍스트 한도 초과 없음",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:20.034340Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족: 60 tool step 루프에서 컨텍스트 예산 초과 0회 (M4-05, test_60_step_loop_never_exceeds_budget)",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-09-30T10:30:02.862718Z",
-  "updated_at": "2026-09-30T10:30:02.862815Z",
+  "updated_at": "2026-10-02T04:29:20.034532Z",
   "started_at": null,
   "done_at": null
 }

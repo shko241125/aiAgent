@@ -20,7 +20,7 @@
 | 1.3 | Agent Workflow | `src/aiops/agents/orchestration/workflows.py` | 🟢 최소구현 | - | 0 | 워크플로우 정의 YAML/DB 화, 장애 유형별 워크플로우 분기 | 코드 수정 없이 워크플로우 추가 |
 | 1.4 | Agent Orchestration | `src/aiops/agents/orchestration/orchestrator.py`, `src/aiops/agents/orchestration/langgraph_adapter.py`, `src/aiops/services/incident_response.py` | 🟢 최소구현 (+2 완료) | 2/2 | 1 | LangGraph 어댑터에 조건부 엣지·checkpointer 이식, 실행 취소(cancel), 다중 승인자(2인 승인) 정책 | ☑ 실행 중 워크플로우를 승인 대기 후 재개 |
 | 1.5 | Tool Calling Framework | `src/aiops/agents/tools/` | 🟢 최소구현 | - | 0 | MCP 서버/클라이언트 연동, 도구 사용량·실패율 메트릭, 도구 결과 크기 제한 | 외부 MCP 도구를 설정만으로 등록 |
-| 1.6 | Memory·Context 관리 | `src/aiops/agents/memory/`, `src/aiops/agents/context.py`, `src/aiops/kanban/briefing.py` | 🟢 최소구현 (+2 완료) | 2/2 | 1 | 토큰 기준 트리밍 + 요약 메모리, 장기 메모리 Vector DB 이관, 컨텍스트 압축 | 50+ step 대화에서 컨텍스트 한도 초과 없음 |
+| 1.6 | Memory·Context 관리 | `src/aiops/agents/memory/`, `src/aiops/agents/context.py`, `src/aiops/kanban/briefing.py` | 🟢 최소구현 (+2 완료) | 2/2 | 1 | 장기 메모리 Vector DB 이관(중요도·최신성 가중치), 모델별 실제 토크나이저, 요약 품질 평가(요약 후 과제 성공률) | ☑ 50+ step 대화에서 컨텍스트 한도 초과 없음 |
 
 ### 2. AIOps 및 운영 자동화
 
@@ -30,7 +30,7 @@
 | 2.2 | RCA Agent | `src/aiops/agents/specialists/aiops.py` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 실 장애 이력으로 랭킹 재검증(합성 시나리오 과적합 해소), 다중 에이전트 교차 검증(1.2), 트레이스 기반 신호 추가 | 과거 장애 셋에서 Top-3 원인 적중률 측정 |
 | 2.3 | 운영 자동화 Agent | `src/aiops/agents/tools/builtin/ops.py`, `src/aiops/remediation/` | ⛔ 막힘 | 3/4 | 3 | 실 클러스터 검증(M3-07), 조치 이력 영속화(가드레일 한도가 재시작에도 유지), 다단계 조치 계획 승인, 카나리식 점진 조치 | ☑ dry-run → 승인 → 실행 → 지표 회복 확인 자동화 |
 | 2.4 | Incident Management Agent | `src/aiops/api/routers/incidents.py`, `src/aiops/services/incidents.py`, `src/aiops/services/approvals.py` | 🧩 골격 (+1 완료) | 1/1 | 1 | ITSM(Jira/ServiceNow) 티켓 연동, 온콜 스케줄(PagerDuty 등) 기반 에스컬레이션, MTTR 대시보드 | ☑ 인시던트 생성~종료 전 과정 자동 기록 |
-| 2.5 | 운영 보고서 Agent | `src/aiops/prompts/templates/report.md`, `src/aiops/services/reports.py`, `src/aiops/core/scheduler.py`, `src/aiops/prompts/templates/ops_report.md` | 🧩 골격 (+1 완료) | 1/1 | 0 | 일간/주간 리포트 스케줄러, 차트 첨부, 보고서 템플릿 다양화 | 주간 운영 리포트 자동 발송 |
+| 2.5 | 운영 보고서 Agent | `src/aiops/prompts/templates/report.md`, `src/aiops/services/reports.py`, `src/aiops/core/scheduler.py`, `src/aiops/prompts/templates/ops_report.md` | 🧩 골격 (+1 완료) | 1/1 | 0 | 일간·월간 템플릿, 서술 수치 검증 통과율 추적, Slack 차트 이미지 업로드, 인시던트별 포스트모템 자동 초안 | ☑ 주간 운영 리포트 자동 발송 |
 | 2.6 | 운영 지식 기반 Agent | `src/aiops/prompts/templates/knowledge.md` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 인용률 실측(M1-10), 답변 피드백 수집, 축적 지식 품질 관리(중복·노후 문서) | 운영자 Q&A 근거 인용률 > 90% |
 
 ### 3. 상황 인식 및 데이터 분석
@@ -40,7 +40,7 @@
 | 3.1 | 이상 탐지 | `src/aiops/analytics/anomaly/` | 🟢 최소구현 (+1 완료) | 1/1 | 2 | 실 라벨 데이터 재평가, 장기 창 감시에 계절성 탐지기 적용(다중 주기: 일·주), 다변량 탐지 | ☑ 라벨된 데이터셋에서 Precision/Recall 리포트 |
 | 3.2 | ML 기반 Situation Awareness | `src/aiops/analytics/situation.py`, `src/aiops/analytics/situation_model.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 실 알람 이력으로 재학습·오탐률 비교(합성에선 규칙·학습 모두 FPR 0), 모델 버전 관리·드리프트 감시 | 규칙 대비 ML 버전 오탐률 감소 |
 | 3.3 | 이벤트 분석·패턴 탐지 | `src/aiops/analytics/events.py`, `src/aiops/analytics/logs.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 실 로그 Drain 정확도 측정, 로그 템플릿 이상 빈도 탐지(신규 템플릿 출현), 순차 패턴 마이닝 | ☑ 알람 압축률(원본 대비 클러스터 수) 측정 |
-| 3.4 | 장애 예측·위험도 분석 | `src/aiops/analytics/prediction.py`, `src/aiops/services/prediction.py`, `src/aiops/evals/prediction.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 장애 확률 분류 모델, 용량 예측, 예측 기반 선제 알람 | N분 전 예측 적중률 측정 |
+| 3.4 | 장애 예측·위험도 분석 | `src/aiops/analytics/prediction.py`, `src/aiops/services/prediction.py`, `src/aiops/evals/prediction.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 실 인시던트 라벨로 재학습, 다변량·맥락 특징(배포 이벤트)으로 '오르다 멈춤' 구분, 예측 알람 → 인시던트 선행률 실측(주간 보고서 지표) | ☑ N분 전 예측 적중률 측정 |
 | 3.5 | Agent 의사결정용 데이터 분석 | `src/aiops/analytics/insights.py`, `src/aiops/analytics/factsheet.py`, `src/aiops/analytics/changepoint.py` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 실 토크나이저로 절감률 재측정, fact sheet 다중 서비스 비교 뷰, 변화점-변경이력 자동 연결 | ☑ fact sheet 로 LLM 입력 토큰 절감률 측정 |
 
 ### 4. AI 서비스 Backend
@@ -50,9 +50,9 @@
 | 4.1 | LLM 기반 AI 서비스 | `src/aiops/llm/` | ⛔ 막힘 | 3/4 | 1 | 구축형 모델(Gemma/Qwen)·상용 모델 품질/지연/비용 벤치마크(M1-10), 스트리밍, 프롬프트 캐싱 | 동일 시나리오 모델별 품질/지연/비용 비교표 |
 | 4.2 | RAG 시스템 | `src/aiops/rag/` | 🟢 최소구현 (+3 완료) | 3/3 | 5 | 실 임베딩(bge-m3)으로 재측정해 의역형 Recall 개선 확인, 한국어 형태소 분석기(kiwi) 비교, Reranker 효과 측정 | ☑ 평가셋 기준 하이브리드 > 단일 검색 입증 |
 | 4.3 | Prompt Engineering / KB | `src/aiops/prompts/`, `data/knowledge/` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | few-shot 예시 관리 체계, 실모델 eval 결과의 프롬프트 버전별 추적, 지식 수집 파이프라인 | ☑ 프롬프트 변경 시 회귀 eval CI |
-| 4.4 | FastAPI Backend | `src/aiops/api/`, `src/aiops/db/`, `src/aiops/api/auth.py`, `src/aiops/db/migrate.py` | 🟢 최소구현 (+2 완료) | 2/2 | 2 | 인증/인가(API Key·OIDC), Alembic 마이그레이션, 비동기 작업 큐 | 운영 배포 가능한 API |
+| 4.4 | FastAPI Backend | `src/aiops/api/`, `src/aiops/db/`, `src/aiops/api/auth.py`, `src/aiops/db/migrate.py` | 🟢 최소구현 (+2 완료) | 2/2 | 2 | OIDC 인증기, API 키 회전·만료, rate limiting, 비동기 작업 큐(장시간 오케스트레이션을 요청 밖으로), 실 배포 검증(M4-08) | 운영 배포 가능한 API |
 | 4.5 | Workflow Engine | `src/aiops/workflow/engine.py`, `src/aiops/workflow/store.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 분산 실행(다중 프로세스 재개 경쟁: DB 락/리스), 스케줄 트리거, 단계 타임아웃 정책, 워크플로우 정의 버전 관리 | ☑ 프로세스 재시작 후 워크플로우 재개 |
-| 4.6 | 성능 최적화·안정성 | `src/aiops/core/resilience.py`, `src/aiops/api/middleware.py`, `src/aiops/observability/`, `deploy/`, `scripts/gen_observability.py` | 🧩 골격 | 2/3 | 4 | /metrics(Prometheus), OpenTelemetry 트레이싱, LLM 응답 캐시, 부하 테스트 | p95 지연·에러율 SLO 정의 및 대시보드 |
+| 4.6 | 성능 최적화·안정성 | `src/aiops/core/resilience.py`, `src/aiops/api/middleware.py`, `src/aiops/observability/`, `deploy/`, `scripts/gen_observability.py`, `docs/assets/m4-grafana-slo.png` | 🧩 골격 (+3 완료) | 3/3 | 4 | OpenTelemetry 트레이싱, Qdrant 헬스체크, 실 Prometheus·Grafana 적재·부하 검증(M4-08), LLM 캐시 다중 인스턴스 공유(Redis) | ☑ p95 지연·에러율 SLO 정의 및 대시보드 |
 <!-- /AUTO -->
 
 ## 마일스톤
@@ -64,7 +64,7 @@
 | **M1** | 실 LLM + 실 지식으로 RCA 품질 확보 | 4.1, 4.2, 4.3, 2.2, 2.6 | 9/10 | 🔄 진행중 |
 | **M2** | 실데이터 연동과 상황 인식 고도화 | 2.1, 3.1, 3.2, 3.3, 3.5 | 7/8 | 🔄 진행중 |
 | **M3** | 안전한 자동 조치 (HITL) | 2.3, 2.4, 1.4, 4.5 | 6/7 | 🔄 진행중 |
-| **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | 7/8 | 🔄 진행중 |
+| **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | 8/8 | ✅ 완료 |
 <!-- /AUTO -->
 
 마일스톤별 상세 계획: [PLAN-0002 (M1)](plans/0002-m1-rca-quality.md) · [PLAN-0003 (M2)](plans/0003-m2-situation-awareness.md) · [PLAN-0004 (M3)](plans/0004-m3-safe-remediation.md) · [PLAN-0005 (M4)](plans/0005-m4-predict-report-harden.md)

@@ -2,7 +2,7 @@
   "id": "R-4.6",
   "board_id": "dev",
   "title": "성능 최적화·안정성",
-  "description": "/metrics(Prometheus), OpenTelemetry 트레이싱, LLM 응답 캐시, 부하 테스트",
+  "description": "OpenTelemetry 트레이싱, Qdrant 헬스체크, 실 Prometheus·Grafana 적재·부하 검증(M4-08), LLM 캐시 다중 인스턴스 공유(Redis)",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -14,12 +14,13 @@
     "src/aiops/api/middleware.py",
     "src/aiops/observability/",
     "deploy/",
-    "scripts/gen_observability.py"
+    "scripts/gen_observability.py",
+    "docs/assets/m4-grafana-slo.png"
   ],
   "acceptance": [
     {
       "text": "p95 지연·에러율 SLO 정의 및 대시보드",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -44,11 +45,46 @@
       "kind": "edit",
       "message": "edited: refs",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:17.962921Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:22.046547Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ p95 지연·에러율 SLO 정의 및 대시보드",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:29:22.452067Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족(정의·생성): SLO 3종 코드 정의 → burn-rate 규칙·Grafana 대시보드 생성, 생성물 drift 테스트 (M4-03). 실 적재·발화 검증은 M4-08 ⛔",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:22.339925Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "M4-08 실 검증: Prometheus 규칙 적재·burn 알람 발화·Grafana 실데이터 확인",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:38:23.174510Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 2,
+  "version": 7,
   "created_at": "2026-09-30T10:30:02.873159Z",
-  "updated_at": "2026-10-02T04:04:52.251816Z",
+  "updated_at": "2026-10-02T04:38:23.174726Z",
   "started_at": null,
   "done_at": null
 }

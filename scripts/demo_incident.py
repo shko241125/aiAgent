@@ -8,11 +8,12 @@
 
 import asyncio
 import tempfile
+from datetime import timedelta
 from pathlib import Path
 
 from aiops.core.config import get_settings
 from aiops.core.container import build_platform
-from aiops.domain.models import Alert, Severity
+from aiops.domain.models import Alert, Severity, utcnow
 from aiops.evals.rca import load_scenarios
 from aiops.services.incident_response import respond_to_alert
 
@@ -56,6 +57,13 @@ async def main() -> None:
     for col, cards in (await p.board(out["board_id"]).snapshot()).items():
         for c in cards:
             print(f"  {col:12s} {c['title']}")
+
+    # 5. 운영 보고서 (M4-07): 숫자는 코드가 집계 — 방금 일어난 대응이 그대로 집계된다
+    end = utcnow() + timedelta(minutes=1)
+    report = await p.reports.generate("demo", "adhoc", end - timedelta(days=1), end)
+    print("\n== 5. 운영 보고서 (요약 표) ==")
+    table = report.markdown.split("## 한눈에 보기")[1].split("## 일별")[0]
+    print("\n".join("  " + line for line in table.strip().splitlines()))
     await p.aclose()
 
 

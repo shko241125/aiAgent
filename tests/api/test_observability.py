@@ -128,3 +128,19 @@ def test_generated_observability_files_are_fresh():
             f"{path} 가 SLO 정의와 다릅니다 → python scripts/gen_observability.py"
         )
     yaml.safe_load((ROOT / "deploy/prometheus/aiops-slo-rules.yml").read_text())
+
+
+def test_db_outage_is_503_not_crash(settings):
+    """의존성 장애는 처리된 503 (Retry-After) — 처리 안 된 예외로 연결이 끊기지 않게 (M4-08)."""
+    with TestClient(create_app(settings)) as c:
+        p = c.app.state.platform
+        good = p.sessionmaker
+
+        def broken():
+            raise ConnectionRefusedError(111, "Connection refused")
+
+        p.sessionmaker = broken
+        r = c.get("/api/v1/incidents")
+        assert r.status_code == 503 and r.headers["retry-after"] == "5"
+        p.sessionmaker = good
+        assert c.get("/api/v1/incidents").status_code == 200

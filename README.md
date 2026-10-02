@@ -91,6 +91,7 @@ SLO 는 `src/aiops/observability/slo.py` 한 곳에 정의한다 — 가용성 9
 LLM 호출 성공 99%. `make observability` 가 멀티 윈도우 burn-rate 알람 규칙(`deploy/prometheus/aiops-slo-rules.yml`)과
 Grafana 대시보드(`deploy/grafana/aiops-slo-dashboard.json`)를 생성하며, 생성물이 정의와 다르면 테스트가 실패한다.
 `docker compose --profile observability up -d` 로 Prometheus·Grafana 에 자동 적재된다.
+DB 등 의존성 장애는 503 + `Retry-After` 로 응답한다(연결을 끊지 않음). 실 환경 검증 결과는 PLAN-0005 §5.
 
 ## 개발 규칙
 

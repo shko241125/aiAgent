@@ -3,9 +3,12 @@
 실행: uvicorn aiops.main:app --reload
 """
 
+import logging
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import DBAPIError
 
 from aiops import __version__
 from aiops.api.auth import authorize, build_authenticator
@@ -74,6 +77,25 @@ def create_app(settings: Settings | None = None, llm: LLMProvider | None = None)
         dependencies=[Depends(authorize)],  # 모든 API 라우트: 인증 + 역할 검사
     )
     app.state.authenticator = authenticator
+
+    async def dependency_down(request: Request, exc: Exception) -> JSONResponse:
+        """DB 등 의존성 장애 → 503 (M4-08 실측에서 발견).
+
+        처리 안 된 예외로 두면 서버가 keep-alive 연결을 끊어, 그 연결을 재사용하던 요청들이 500 도
+        아닌 '연결 끊김'(클라이언트 ReadError)으로 실패한다 — 실측에서 장애 중 요청의 절반이 그랬다.
+        """
+        logging.getLogger("aiops.api").warning("dependency unavailable: %r", exc)
+        return JSONResponse(
+            {
+                "detail": "의존 서비스(DB) 일시 장애 — 잠시 후 재시도",
+                "error": exc.__class__.__name__,
+            },
+            status_code=503,
+            headers={"Retry-After": "5"},
+        )
+
+    for exc_type in (DBAPIError, ConnectionError, TimeoutError):
+        app.add_exception_handler(exc_type, dependency_down)
     app.add_middleware(RequestContextMiddleware)
     for r in (
         health.router,
