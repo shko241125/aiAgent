@@ -90,7 +90,7 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
     llm = llm or build_llm_router(settings)
     prompts = PromptRegistry()
     engine = create_engine(settings.database_url)
-    await init_db(engine)
+    await init_db(engine, settings.schema_mode)
     sessionmaker = create_sessionmaker(engine)
     events = SqlEventStore(sessionmaker)  # 웹훅 수집 이벤트 (M2-02)
     # simulated | live(Prometheus + Loki + 웹훅 이벤트 DB + 토폴로지 파일)

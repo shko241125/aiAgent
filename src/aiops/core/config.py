@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     env: Literal["local", "dev", "prod"] = "local"
     log_level: str = "INFO"
     database_url: str = "sqlite+aiosqlite:///./aiops.db"
+    # auto: prod=migrate(Alembic), 그 외=create_all (M4-02)
+    db_schema_mode: Literal["auto", "create_all", "migrate"] = "auto"
 
     # --- LLM (4.1) ---
     llm_default_provider: str = "fake"
@@ -138,6 +140,12 @@ class Settings(BaseSettings):
             max_actions_per_hour=self.remediation_max_actions_per_hour,
             cooldown_s=self.remediation_cooldown_s,
         )
+
+    @property
+    def schema_mode(self) -> str:
+        if self.db_schema_mode != "auto":
+            return self.db_schema_mode
+        return "migrate" if self.env == "prod" else "create_all"
 
     @property
     def slack_approvers(self) -> set[str]:

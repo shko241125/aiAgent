@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M4",
     "plan:0005"
@@ -14,11 +14,11 @@
   "acceptance": [
     {
       "text": "alembic upgrade head 로 만든 스키마 = 모델 메타데이터 (드리프트 테스트)",
-      "done": false
+      "done": true
     },
     {
       "text": "설정으로 기동 시 create_all / migrate 선택 (prod 기본 migrate)",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -26,11 +26,13 @@
   ],
   "parent_id": "R-4.4",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "pyproject 에 alembic 추가. alembic.ini(script_location=src/aiops/db/migrations, URL 은 AIOPS_DATABASE_URL), migrations/env.py(앱: attributes['connection'] 재사용 / CLI: async 엔진, SQLite batch 모드), versions/0001_initial_schema.py, db/migrate.py(upgrade·diff·init_schema, 이력 없는 기존 DB 는 일치 시 stamp·불일치 시 SchemaDrift). 설정 AIOPS_DB_SCHEMA_MODE(auto: prod=migrate). 테스트 tests/unit/test_migrations.py(드리프트·멱등·stamp·거부·head 단일). 모델 수정 시 반드시 alembic revision --autogenerate 후 ruff format",
+  "outputs": {
+    "migration": "0001_initial_schema (테이블 8개)"
+  },
   "log": [
     {
       "ts": "2026-10-02T03:55:07.992931Z",
@@ -38,11 +40,67 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:59:29.010902Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:00:51.285267Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "create_all 로 만든 기존 DB 는 '모델과 완전히 같을 때만' head 로 stamp, 다르면 SchemaDrift 로 기동 거부 — 어설프게 stamp 하면 이후 마이그레이션이 없는 컬럼을 전제로 돌아 더 크게 깨진다",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:00:51.703527Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "드리프트 검사는 CI 별도 단계가 아니라 pytest(test_migrations_match_models) 로: make check·CI 가 이미 돌리므로 추가 배선 없이 강제됨. head 분기(브랜치 병합 시 리비전 2개)도 같은 테스트가 잡음",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:00:52.107874Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.migration 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:00:52.533206Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ alembic upgrade head 로 만든 스키마 = 모델 메타데이터 (드리프트 테스트)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:00:52.540244Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 설정으로 기동 시 create_all / migrate 선택 (prod 기본 migrate)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:00:53.378273Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "pyproject 에 alembic 추가. alembic.ini(script_location=src/aiops/db/migrations, URL 은 AIOPS_DATABASE_URL), migrations/env.py(앱: attributes['connection'] 재사용 / CLI: async 엔진, SQLite batch 모드), versions/0001_initial_schema.py, db/migrate.py(upgrade·diff·init_schema, 이력 없는 기존 DB 는 일치 시 stamp·불일치 시 SchemaDrift). 설정 AIOPS_DB_SCHEMA_MODE(auto: prod=migrate). 테스트 tests/unit/test_migrations.py(드리프트·멱등·stamp·거부·head 단일). 모델 수정 시 반드시 alembic revision --autogenerate 후 ruff format",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:00:53.378327Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 8,
   "created_at": "2026-10-02T03:55:07.992893Z",
-  "updated_at": "2026-10-02T03:55:07.993101Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T04:00:53.378591Z",
+  "started_at": "2026-10-02T03:59:29.010885Z",
+  "done_at": "2026-10-02T04:00:53.378316Z"
 }

@@ -1,6 +1,8 @@
 """SQL 영속 계층 (SQLAlchemy 2.0 async). 로컬 SQLite / 운영 PostgreSQL.
 
-TODO(4.4): Alembic 마이그레이션 도입, 이벤트/메트릭 원본은 시계열 DB(TimescaleDB 등)로 분리.
+스키마 변경은 Alembic 마이그레이션으로 (db/migrate.py, M4-02): 모델을 고치면
+`alembic revision --autogenerate -m ...` — 누락하면 tests/unit/test_migrations.py 가 실패한다.
+TODO(4.4): 이벤트/메트릭 원본은 시계열 DB(TimescaleDB 등)로 분리.
 """
 
 from datetime import datetime
@@ -57,9 +59,10 @@ def create_sessionmaker(engine: AsyncEngine) -> async_sessionmaker:
     return async_sessionmaker(engine, expire_on_commit=False)
 
 
-async def init_db(engine: AsyncEngine) -> None:
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+async def init_db(engine: AsyncEngine, mode: str = "create_all") -> None:
+    from aiops.db.migrate import init_schema  # 순환 import 방지
+
+    await init_schema(engine, mode)
 
 
 class KanbanCardRow(Base):

@@ -3,7 +3,7 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 7 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 3 · ✅ done 28**
+**📥 backlog 0 · 🟦 ready 6 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 3 · ✅ done 29**
 
 ## ⛔ blocked (3)
 
@@ -13,11 +13,10 @@
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | claude-code | R-2.1 | 실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요 |
 | M3-07 | 실 Kubernetes 클러스터 조치 검증 | p2 | claude-code | R-2.3 | 실 Kubernetes 클러스터(또는 kind/minikube + Docker) 필요 |
 
-## 🟦 ready (7)
+## 🟦 ready (6)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
-| M4-02 | Alembic 마이그레이션 + 모델↔마이그레이션 드리프트 검사 | p1 | - | R-4.4 |  |
 | M4-03 | /metrics·SLO 정의·burn-rate 알람 규칙·대시보드 생성 | p1 | - | R-4.6 |  |
 | M4-05 | 토큰 예산 컨텍스트 관리 + 요약 메모리 | p1 | - | R-1.6 |  |
 | M4-06 | 장애 확률 예측 모델 + 용량 예측 + 선제 알람 | p1 | - | R-3.4 |  |
@@ -25,7 +24,7 @@
 | M4-04 | LLM 응답 캐시 + 부하 테스트(p95·에러율 측정) | p2 | - | R-4.6 |  |
 | M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | p2 | - | R-4.6 |  |
 
-## ✅ done (28)
+## ✅ done (29)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
@@ -57,3 +56,4 @@
 | M3-04 | 인시던트 상태 머신 + 타임라인 | p1 | claude-code | R-2.4 | services/incidents.py(TRANSITIONS, IncidentService.transition/record/timeline/mttr_minutes, TimelineEvent), db Incident… |
 | M3-05 | 승인 요청 저장소·API + Slack 승인 채널 + 만료·에스컬레이션 | p1 | claude-code | R-2.3 | db ApprovalRow(결정적 id=apr-<run>-<step> 로 멱등), services/approvals.py(ApprovalService=엔진 ApprovalGate+decide/find/sweep/a… |
 | M3-06 | 인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동 | p1 | claude-code | R-1.4 | services/incident_response.py v2(WORKFLOW=incident_response_v2: detect→rca→plan→approve→execute(+verify)→incident(after… |
+| M4-02 | Alembic 마이그레이션 + 모델↔마이그레이션 드리프트 검사 | p1 | claude-code | R-4.4 | pyproject 에 alembic 추가. alembic.ini(script_location=src/aiops/db/migrations, URL 은 AIOPS_DATABASE_URL), migrations/env.… |
