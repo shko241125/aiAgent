@@ -3,7 +3,7 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 6 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 2 · ✅ done 22**
+**📥 backlog 0 · 🟦 ready 5 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 2 · ✅ done 23**
 
 ## ⛔ blocked (2)
 
@@ -12,18 +12,17 @@
 | M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | p2 | claude-code | R-4.1 | 실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요 |
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | claude-code | R-2.1 | 실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요 |
 
-## 🟦 ready (6)
+## 🟦 ready (5)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
-| M3-02 | 조치 실행기(시뮬레이터·Kubernetes) + 가드레일 | p1 | - | R-2.3 |  |
 | M3-03 | 조치 플레이북 + 효과 검증 + 되돌림·에스컬레이션 | p1 | - | R-2.3 |  |
 | M3-04 | 인시던트 상태 머신 + 타임라인 | p1 | - | R-2.4 |  |
 | M3-05 | 승인 요청 저장소·API + Slack 승인 채널 + 만료·에스컬레이션 | p1 | - | R-2.3 |  |
 | M3-06 | 인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동 | p1 | - | R-1.4 |  |
 | M3-07 | 실 Kubernetes 클러스터 조치 검증 | p2 | - | R-2.3 |  |
 
-## ✅ done (22)
+## ✅ done (23)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
@@ -49,3 +48,4 @@
 | M2-06 | 변화점 탐지 + 메트릭 상관 + fact sheet 표준 스키마 | p1 | claude-code | R-3.5 | analytics/changepoint.py(cusum: 클리핑 std 기준선·rewarm·cooldown·relative, CUSUMDetector), factsheet.py(FactSheet·MetricFact… |
 | M2-07 | 장애 판정(is_incident) 결정적 평가 | p1 | claude-code | R-2.1 | DetectionAgent 가 RCAAnalyzer.collect 근거로 규칙·학습 판정+하위 위험 전파를 프롬프트에 주입, LLMAgent.pre_decide 훅으로 트리아지(AIOPS_DETECTION_TRIA… |
 | M3-01 | 워크플로우 상태 영속화·재개 + 승인 대기(HITL) 단계 | p1 | claude-code | R-4.5 | workflow/engine.py: StepStatus/RunStatus.WAITING, Step(kind=approval, describe), RunStore(InMemory)·ApprovalGate(InMemo… |
+| M3-02 | 조치 실행기(시뮬레이터·Kubernetes) + 가드레일 | p1 | claude-code | R-2.3 | remediation/actions.py(ActionType restart·scale·rollback·manual, risk), guardrails.py(GuardrailPolicy·Guardrails, glob … |

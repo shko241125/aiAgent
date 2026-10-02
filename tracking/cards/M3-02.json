@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M3",
     "plan:0004"
@@ -14,19 +14,19 @@
   "acceptance": [
     {
       "text": "조치 모델(restart·scale·rollback·manual)",
-      "done": false
+      "done": true
     },
     {
       "text": "Kubernetes 실행기(rollout restart·scale·rollback, 서버측 dry-run) 계약 테스트",
-      "done": false
+      "done": true
     },
     {
       "text": "가드레일: 허용 네임스페이스·금지 서비스·시간당 횟수·스케일 배율·쿨다운",
-      "done": false
+      "done": true
     },
     {
       "text": "시뮬레이터 실행기(조치가 장애를 실제로 해소)",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -34,10 +34,10 @@
   ],
   "parent_id": "R-2.3",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "remediation/actions.py(ActionType restart·scale·rollback·manual, risk), guardrails.py(GuardrailPolicy·Guardrails, glob 금지·시간당·쿨다운·배율), executors.py(SimulatedExecutor: Fault.fixed_by 로만 해소·recovery_min 시간 압축 / KubernetesExecutor: strategic-merge restart·/scale merge-patch·json-patch rollback(RS 리비전), ?dryRun=All), service.py(RemediationService). 가드레일 이력은 메모리 — 재시작 시 초기화(M3-04 타임라인에서 재구성 검토)",
   "outputs": {},
   "log": [
     {
@@ -46,11 +46,74 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:20.501023Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:45.986293Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "시뮬레이터 시간은 '조회 시점 기준 상대 시간'이라 조치 직후엔 장애가 여전히 진행 중으로 보임 → SimulatedExecutor.recovery_min(기본 5분)으로 시간 압축을 명시. 실 환경도 검증 전에 수 분 대기",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:46.367916Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "안전 기본값: 승인자 없는 상태 변경 조치는 RemediationService 가 거부, dry-run 만 허용. 가드레일은 실제 실행만 이력에 반영(dry-run 은 한도 소모 안 함). DB 류(*-db) 기본 금지",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:46.767231Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 조치 모델(restart·scale·rollback·manual)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:46.772656Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ Kubernetes 실행기(rollout restart·scale·rollback, 서버측 dry-run) 계약 테스트",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:46.777617Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 가드레일: 허용 네임스페이스·금지 서비스·시간당 횟수·스케일 배율·쿨다운",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:46.782668Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 시뮬레이터 실행기(조치가 장애를 실제로 해소)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:47.207380Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "remediation/actions.py(ActionType restart·scale·rollback·manual, risk), guardrails.py(GuardrailPolicy·Guardrails, glob 금지·시간당·쿨다운·배율), executors.py(SimulatedExecutor: Fault.fixed_by 로만 해소·recovery_min 시간 압축 / KubernetesExecutor: strategic-merge restart·/scale merge-patch·json-patch rollback(RS 리비전), ?dryRun=All), service.py(RemediationService). 가드레일 이력은 메모리 — 재시작 시 초기화(M3-04 타임라인에서 재구성 검토)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:28:47.207417Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 9,
   "created_at": "2026-10-02T00:23:30.119184Z",
-  "updated_at": "2026-10-02T00:23:30.119344Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T00:28:47.207649Z",
+  "started_at": "2026-10-02T00:26:20.501011Z",
+  "done_at": "2026-10-02T00:28:47.207407Z"
 }

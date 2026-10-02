@@ -33,6 +33,9 @@ class Fault(BaseModel):
     magnitude: float = 3.0
     onset_min_ago: float = 9.0  # 몇 분 전부터 이상이 시작됐는가
     duration_min: float | None = None  # None = 지금도 진행 중, 값이 있으면 일시적 이상
+    # 이 장애를 실제로 해소하는 조치 종류 (M3-02).
+    # 잘못된 조치는 효과가 없다 → 효과 검증이 의미를 가진다
+    fixed_by: list[str] = Field(default_factory=list)
 
 
 class ChangeEvent(BaseModel):
