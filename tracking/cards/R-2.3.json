@@ -2,7 +2,7 @@
   "id": "R-2.3",
   "board_id": "dev",
   "title": "운영 자동화 Agent",
-  "description": "K8s/Ansible 실제 실행기, 승인 요청 채널(Slack) + 콜백, 조치 후 효과 검증 루프",
+  "description": "실 클러스터 검증(M3-07), 조치 이력 영속화(가드레일 한도가 재시작에도 유지), 다단계 조치 계획 승인, 카나리식 점진 조치",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -10,12 +10,13 @@
     "maturity:skeleton"
   ],
   "refs": [
-    "src/aiops/agents/tools/builtin/ops.py"
+    "src/aiops/agents/tools/builtin/ops.py",
+    "src/aiops/remediation/"
   ],
   "acceptance": [
     {
       "text": "dry-run → 승인 → 실행 → 지표 회복 확인 자동화",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -33,11 +34,32 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:08.001287Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description, refs",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:09.615576Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ dry-run → 승인 → 실행 → 지표 회복 확인 자동화",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:10.018559Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족(시뮬레이터): dry-run→승인→실행→지표 회복 확인 자동화 E2E (M3-06). 실 클러스터는 M3-07 ⛔",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-09-30T10:30:02.864540Z",
-  "updated_at": "2026-09-30T10:30:02.864635Z",
+  "updated_at": "2026-10-02T00:44:10.018750Z",
   "started_at": null,
   "done_at": null
 }

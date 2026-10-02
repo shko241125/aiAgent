@@ -36,7 +36,7 @@ M1·M2 는 "무엇이 왜 고장 났는가"를 답하게 했다. M3 은 **고치
 | M3-04 | 인시던트 상태 머신 + 타임라인 | ✅ done | claude-code | services/incidents.py(TRANSITIONS, IncidentService.transition/record/timeline/mttr_minutes, TimelineEvent), db Incident… |
 | M3-05 | 승인 요청 저장소·API + Slack 승인 채널 + 만료·에스컬레이션 | ✅ done | claude-code | db ApprovalRow(결정적 id=apr-<run>-<step> 로 멱등), services/approvals.py(ApprovalService=엔진 ApprovalGate+decide/find/sweep/a… |
 | M3-06 | 인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동 | ✅ done | claude-code | services/incident_response.py v2(WORKFLOW=incident_response_v2: detect→rca→plan→approve→execute(+verify)→incident(after… |
-| M3-07 | 실 Kubernetes 클러스터 조치 검증 | 🟦 ready | - |  |
+| M3-07 | 실 Kubernetes 클러스터 조치 검증 | ⛔ blocked | claude-code | 실 Kubernetes 클러스터(또는 kind/minikube + Docker) 필요 |
 
 진행: 6/7
 <!-- /AUTO -->
@@ -45,3 +45,16 @@ M1·M2 는 "무엇이 왜 고장 났는가"를 답하게 했다. M3 은 **고치
 
 - 모든 카드 DoD 체크 + `make check` 통과, 측정값은 각 카드 outputs 에 기록.
 - E2E: 시뮬레이터 장애 → 승인 대기 중 '재시작' → 승인 → 실행 → 지표 회복 확인 → 인시던트 해결까지 테스트로 고정.
+
+## 5. 결과 요약 (시뮬레이터 기준, 2026-10-02)
+
+| 카드 | 결과 | 해석 |
+|---|---|---|
+| M3-01 영속화·재개 | 승인 대기 일시정지·재시작 후 재개·실행 중 사망 단계 재실행(at-least-once) 테스트 | 단계는 멱등이어야 한다. 재개 동시성은 프로세스 내 lock — 다중 인스턴스는 R-4.5 다음 과제 |
+| M3-02 실행기·가드레일 | Kubernetes restart/scale/rollback·서버측 dry-run 계약 테스트, 가드레일 6종 | **실 클러스터 미검증(M3-07 ⛔)**. 가드레일 이력은 메모리 — 재시작 시 초기화 |
+| M3-03 플레이북·검증 | 시나리오 8 × 시드 10: 1차 조치 정확도 **1.0**, 복구율 **1.0**, 자동화 금지 안전 위임 **1.0** | 시나리오·플레이북 동시 작성 → 회귀 기준선. 오판 위험은 승인·검증·되돌림으로 방어 |
+| M3-04 상태 머신·타임라인 | 알람~해결 전 과정 자동 기록, MTTR | CLOSED 는 종결(재발은 새 인시던트) |
+| M3-05 승인 | 웹·Slack(서명 검증) 승인, 15분 에스컬레이션·60분 만료 자동 거부 | **승인 API 인증 없음 — 운영 전 필수(TODO(4.4))** |
+| M3-06 v2 E2E | 승인 복구 / 재시작 후 재개 / 거부 / 오진 미복구·에스컬레이션 4종 E2E | 재개 후 에이전트가 복원된 기억(RCA·조치 결과)을 받는 것까지 검증 |
+
+M3 종료 조건: M3-07 해제(스테이징 클러스터에서 승인→조치→복구 1회) + 승인 API 인증(R-4.4).

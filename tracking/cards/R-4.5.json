@@ -2,7 +2,7 @@
   "id": "R-4.5",
   "board_id": "dev",
   "title": "Workflow Engine",
-  "description": "상태 영속화·재개, 승인 대기 단계, 스케줄 트리거, 타임아웃 정책",
+  "description": "분산 실행(다중 프로세스 재개 경쟁: DB 락/리스), 스케줄 트리거, 단계 타임아웃 정책, 워크플로우 정의 버전 관리",
   "type": "epic",
   "priority": "p2",
   "column": "ready",
@@ -10,12 +10,13 @@
     "maturity:minimal"
   ],
   "refs": [
-    "src/aiops/workflow/engine.py"
+    "src/aiops/workflow/engine.py",
+    "src/aiops/workflow/store.py"
   ],
   "acceptance": [
     {
       "text": "프로세스 재시작 후 워크플로우 재개",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [],
@@ -33,11 +34,32 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:09.207643Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: description, refs",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:11.978805Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 프로세스 재시작 후 워크플로우 재개",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:12.377688Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD 충족: 프로세스 재시작 후 DB 체크포인트에서 재개 E2E (test_resume_after_restart_while_waiting). 한계: 재개 동시성 제어는 프로세스 내 lock — 다중 인스턴스는 다음 과제",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-09-30T10:30:02.872639Z",
-  "updated_at": "2026-09-30T10:30:02.872720Z",
+  "updated_at": "2026-10-02T00:44:12.377921Z",
   "started_at": null,
   "done_at": null
 }

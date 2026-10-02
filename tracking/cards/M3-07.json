@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p2",
-  "column": "ready",
+  "column": "blocked",
   "labels": [
     "milestone:M3",
     "plan:0004"
@@ -26,10 +26,10 @@
   ],
   "parent_id": "R-2.3",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
-  "blocked_reason": null,
-  "handoff": "",
+  "blocked_reason": "실 Kubernetes 클러스터(또는 kind/minikube + Docker) 필요",
+  "handoff": "해제 절차: 1) 스테이징 클러스터에 전용 ServiceAccount 생성 — 권한은 대상 네임스페이스의 deployments get/patch, deployments/scale get/patch, replicasets list 만(Role, ClusterRole 금지) 2) .env: AIOPS_REMEDIATION_EXECUTOR=kubernetes, AIOPS_K8S_API_URL/K8S_TOKEN/K8S_CA_CERT, AIOPS_REMEDIATION_ALLOWED_NAMESPACES=staging 3) 먼저 AIOPS_REMEDIATION_EXECUTOR=dry_run 으로 1주 운영해 계획·dry-run 품질 확인 4) 테스트용 서비스에 장애 주입(잘못된 이미지 배포) → 알람 → 승인 → rollback → 복구 확인 5) 서비스명≠Deployment명이면 KubernetesExecutor(deployments=...) 매핑 설정 필요",
   "outputs": {},
   "log": [
     {
@@ -38,11 +38,46 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:06.766626Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:07.182545Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "확인: kubernetes.default.svc 응답 없음, kubectl/kind/minikube 없음, Docker 데몬 없음 → 실 클러스터 검증 불가. 실행 경로는 MockTransport 계약 테스트(restart strategic-merge, scale merge-patch, rollback json-patch, ?dryRun=All)로 고정됨",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:07.581921Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "해제 절차: 1) 스테이징 클러스터에 전용 ServiceAccount 생성 — 권한은 대상 네임스페이스의 deployments get/patch, deployments/scale get/patch, replicasets list 만(Role, ClusterRole 금지) 2) .env: AIOPS_REMEDIATION_EXECUTOR=kubernetes, AIOPS_K8S_API_URL/K8S_TOKEN/K8S_CA_CERT, AIOPS_REMEDIATION_ALLOWED_NAMESPACES=staging 3) 먼저 AIOPS_REMEDIATION_EXECUTOR=dry_run 으로 1주 운영해 계획·dry-run 품질 확인 4) 테스트용 서비스에 장애 주입(잘못된 이미지 배포) → 알람 → 승인 → rollback → 복구 확인 5) 서비스명≠Deployment명이면 KubernetesExecutor(deployments=...) 매핑 설정 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:07.581949Z",
+      "actor": "claude-code",
+      "kind": "block",
+      "message": "실 Kubernetes 클러스터(또는 kind/minikube + Docker) 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:44:07.581958Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → blocked",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 4,
   "created_at": "2026-10-02T00:23:32.087251Z",
-  "updated_at": "2026-10-02T00:23:32.087414Z",
-  "started_at": null,
+  "updated_at": "2026-10-02T00:44:07.582152Z",
+  "started_at": "2026-10-02T00:44:06.766611Z",
   "done_at": null
 }
