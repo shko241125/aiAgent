@@ -3,7 +3,7 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 8 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 3 · ✅ done 27**
+**📥 backlog 0 · 🟦 ready 7 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 3 · ✅ done 28**
 
 ## ⛔ blocked (3)
 
@@ -13,11 +13,10 @@
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | claude-code | R-2.1 | 실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요 |
 | M3-07 | 실 Kubernetes 클러스터 조치 검증 | p2 | claude-code | R-2.3 | 실 Kubernetes 클러스터(또는 kind/minikube + Docker) 필요 |
 
-## 🟦 ready (8)
+## 🟦 ready (7)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
-| M4-01 | API 인증·인가 (API Key + 역할) — 승인자는 인증 주체로 | p0 | - | R-4.4 |  |
 | M4-02 | Alembic 마이그레이션 + 모델↔마이그레이션 드리프트 검사 | p1 | - | R-4.4 |  |
 | M4-03 | /metrics·SLO 정의·burn-rate 알람 규칙·대시보드 생성 | p1 | - | R-4.6 |  |
 | M4-05 | 토큰 예산 컨텍스트 관리 + 요약 메모리 | p1 | - | R-1.6 |  |
@@ -26,10 +25,11 @@
 | M4-04 | LLM 응답 캐시 + 부하 테스트(p95·에러율 측정) | p2 | - | R-4.6 |  |
 | M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | p2 | - | R-4.6 |  |
 
-## ✅ done (27)
+## ✅ done (28)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
+| M4-01 | API 인증·인가 (API Key + 역할) — 승인자는 인증 주체로 | p0 | claude-code | R-4.4 | api/auth.py: Role(viewer/operator/approver/admin), Principal, ApiKeyAuthenticator(SHA-256 해시·compare_digest), build_aut… |
 | KB-01 | 칸반 도메인 모델·정책 (컬럼·전이·WIP·lease·DoD) | p1 | claude-code | R-1.2 | models.py/policy.py 완료. 전이표 ALLOWED_TRANSITIONS, WIP(컬럼/담당자), lease, DoD. 테스트: tests/unit/kanban/test_board.py |
 | KB-02 | 칸반 저장소 3종 (memory/file/SQL) + 낙관적 동시성 | p1 | claude-code | R-1.2 | stores.py: InMemory/File/Sql. 개발 보드는 FileBoardStore(tracking/cards). 파일 저장소는 단일 프로세스 가정 — 동시 다중 쓰기는 git merge 로 해소 |
 | KB-03 | 브리핑 · 에이전트용 칸반 도구 · ToolRuntime 주입 | p1 | claude-code | R-1.6 | briefing.py(렌더), tools.py(board_* 7종), ToolRuntime 은 agents/tools/base.py. LLMAgent 가 task.card_id 있으면 브리핑 주입 + 보드 도구 개방 |

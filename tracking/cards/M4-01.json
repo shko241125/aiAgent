@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p0",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M4",
     "plan:0005"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "API Key 해시 저장·역할(viewer/operator/approver/admin) 검사, 미인증 401·권한 부족 403",
-      "done": false
+      "done": true
     },
     {
       "text": "승인·해결 등 actor 를 인증 주체로 강제(자기 신고 금지), Slack 은 서명 + 승인자 허용 목록",
-      "done": false
+      "done": true
     },
     {
       "text": "prod 에서 인증 꺼짐/키 없음이면 기동 거부",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,11 +30,13 @@
   ],
   "parent_id": "R-4.4",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "api/auth.py: Role(viewer/operator/approver/admin), Principal, ApiKeyAuthenticator(SHA-256 해시·compare_digest), build_authenticator(prod off/키 없음 → InsecureConfig), 전역 의존성 authorize(@requires 선언 우선, 없으면 GET=viewer·그 외=operator, PUBLIC 예외), actor_of(인증 시 본문 actor 무시), PrincipalDep. main.create_app 에 dependencies=[Depends(authorize)]. 라우트: health·slack 콜백 PUBLIC, analytics·rag search/answer VIEWER, approve/reject APPROVER, sweep·rag delete ADMIN, approved_tools 지정은 approver 필요. 설정 AIOPS_AUTH_MODE/API_KEYS/SLACK_ALLOWED_APPROVERS, 키 발급 python -m aiops.api.auth <name> <roles>. 남은 것: OIDC 인증기(TODO(4.4)), 키 회전·만료, rate limit",
+  "outputs": {
+    "tests": "tests/api/test_auth.py 5건 (401/403·주체=행위자·Slack 허용목록·prod 기동 거부·인증 off 호환)"
+  },
   "log": [
     {
       "ts": "2026-10-02T03:55:07.501777Z",
@@ -42,11 +44,74 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:55:43.098068Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:58:30.134936Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "역할 검사를 라우트마다 의존성으로 흩뿌리지 않고 앱 전역 의존성 1개(authorize)가 '@requires 선언 → 없으면 메서드 기본값(GET=viewer, 그 외=operator)'으로 판정. 새 라우트가 권한 선언을 잊어도 쓰기는 operator 로 막힘(안전한 기본값)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:58:30.537203Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "approved_tools(도구 사전 승인)는 사실상 조치 승인 → approver 역할 요구. Slack 은 서명만으론 '누가' 를 보장 못 하므로 허용 목록 추가, 인증 켜면 빈 목록=전원 불가(fail-closed)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:59:02.778902Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.tests 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:59:03.192621Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ API Key 해시 저장·역할(viewer/operator/approver/admin) 검사, 미인증 401·권한 부족 403",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:59:03.198963Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 승인·해결 등 actor 를 인증 주체로 강제(자기 신고 금지), Slack 은 서명 + 승인자 허용 목록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:59:03.204813Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ prod 에서 인증 꺼짐/키 없음이면 기동 거부",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:59:04.033697Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "api/auth.py: Role(viewer/operator/approver/admin), Principal, ApiKeyAuthenticator(SHA-256 해시·compare_digest), build_authenticator(prod off/키 없음 → InsecureConfig), 전역 의존성 authorize(@requires 선언 우선, 없으면 GET=viewer·그 외=operator, PUBLIC 예외), actor_of(인증 시 본문 actor 무시), PrincipalDep. main.create_app 에 dependencies=[Depends(authorize)]. 라우트: health·slack 콜백 PUBLIC, analytics·rag search/answer VIEWER, approve/reject APPROVER, sweep·rag delete ADMIN, approved_tools 지정은 approver 필요. 설정 AIOPS_AUTH_MODE/API_KEYS/SLACK_ALLOWED_APPROVERS, 키 발급 python -m aiops.api.auth <name> <roles>. 남은 것: OIDC 인증기(TODO(4.4)), 키 회전·만료, rate limit",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:59:04.033738Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 9,
   "created_at": "2026-10-02T03:55:07.501246Z",
-  "updated_at": "2026-10-02T03:55:07.502045Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T03:59:04.033991Z",
+  "started_at": "2026-10-02T03:55:43.098051Z",
+  "done_at": "2026-10-02T03:59:04.033727Z"
 }

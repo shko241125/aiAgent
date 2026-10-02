@@ -7,9 +7,10 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 
 from aiops import __version__
+from aiops.api.auth import authorize, build_authenticator
 from aiops.api.middleware import RequestContextMiddleware
 from aiops.api.routers import (
     agents,
@@ -53,7 +54,14 @@ def create_app(settings: Settings | None = None, llm: LLMProvider | None = None)
             sweeper.cancel()
         await platform.aclose()
 
-    app = FastAPI(title=settings.app_name, version=__version__, lifespan=lifespan)
+    authenticator = build_authenticator(settings)  # prod 무인증 설정이면 여기서 기동 거부 (M4-01)
+    app = FastAPI(
+        title=settings.app_name,
+        version=__version__,
+        lifespan=lifespan,
+        dependencies=[Depends(authorize)],  # 모든 API 라우트: 인증 + 역할 검사
+    )
+    app.state.authenticator = authenticator
     app.add_middleware(RequestContextMiddleware)
     for r in (
         health.router,

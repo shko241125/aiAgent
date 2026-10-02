@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from aiops.api.auth import Role, requires
 from aiops.api.deps import PlatformDep
 from aiops.rag.models import Document
 from aiops.rag.service import IngestReport
@@ -34,12 +35,14 @@ async def documents(p: PlatformDep) -> list[str]:
 
 
 @router.delete("/documents/{doc_id}", status_code=204)
+@requires(Role.ADMIN)
 async def delete_document(doc_id: str, p: PlatformDep) -> None:
     if not await p.rag.delete(doc_id):
         raise HTTPException(404, f"document not found: {doc_id}")
 
 
 @router.post("/search")
+@requires(Role.VIEWER)
 async def search(req: SearchRequest, p: PlatformDep) -> list[dict]:
     hits = await p.rag.search(req.query, k=req.k, filters=req.filters)
     return [
@@ -55,5 +58,6 @@ async def search(req: SearchRequest, p: PlatformDep) -> list[dict]:
 
 
 @router.post("/answer")
+@requires(Role.VIEWER)
 async def answer(req: SearchRequest, p: PlatformDep) -> dict:
     return await p.rag.answer(req.query, k=req.k)

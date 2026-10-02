@@ -34,7 +34,7 @@ M1~M3 으로 "알람 → 원인 → 승인된 조치 → 복구" 가 돈다. M4 
 <!-- AUTO:CARDS label=plan:0005 -->
 | 카드 | 제목 | 상태 | 담당 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|
-| M4-01 | API 인증·인가 (API Key + 역할) — 승인자는 인증 주체로 | 🟦 ready | - |  |
+| M4-01 | API 인증·인가 (API Key + 역할) — 승인자는 인증 주체로 | ✅ done | claude-code | api/auth.py: Role(viewer/operator/approver/admin), Principal, ApiKeyAuthenticator(SHA-256 해시·compare_digest), build_aut… |
 | M4-02 | Alembic 마이그레이션 + 모델↔마이그레이션 드리프트 검사 | 🟦 ready | - |  |
 | M4-03 | /metrics·SLO 정의·burn-rate 알람 규칙·대시보드 생성 | 🟦 ready | - |  |
 | M4-04 | LLM 응답 캐시 + 부하 테스트(p95·에러율 측정) | 🟦 ready | - |  |
@@ -43,7 +43,7 @@ M1~M3 으로 "알람 → 원인 → 승인된 조치 → 복구" 가 돈다. M4 
 | M4-07 | 운영 보고서: 코드 집계 + LLM 서술 + 주간 자동 발송 | 🟦 ready | - |  |
 | M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | 🟦 ready | - |  |
 
-진행: 0/8
+진행: 1/8
 <!-- /AUTO -->
 
 ## 4. 완료 판정

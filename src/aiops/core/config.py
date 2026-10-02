@@ -98,6 +98,14 @@ class Settings(BaseSettings):
     k8s_token: str | None = None
     k8s_ca_cert: str | None = None  # 경로. 없으면 시스템 CA
 
+    # --- API 인증 (M4-01 / 4.4) ---
+    auth_mode: Literal["off", "api_key"] = "off"  # prod 에서 off 면 기동 거부
+    # JSON: [{"name": "alice", "sha256": "<sha256(key)>", "roles": ["approver"]}] — 평문 키 금지.
+    # 키 발급(키와 설정용 해시 출력): python -m aiops.api.auth <name> <role...>
+    api_keys: str = "[]"
+    # Slack 승인 허용 사용자(ID·username, 쉼표 구분). 인증이 켜져 있으면 비었을 때 아무도 불가
+    slack_allowed_approvers: str = ""
+
     # --- 운영 자동화 안전장치 (2.3) ---
     auto_approve_actions: bool = False
 
@@ -130,6 +138,10 @@ class Settings(BaseSettings):
             max_actions_per_hour=self.remediation_max_actions_per_hour,
             cooldown_s=self.remediation_cooldown_s,
         )
+
+    @property
+    def slack_approvers(self) -> set[str]:
+        return {x.strip() for x in self.slack_allowed_approvers.split(",") if x.strip()}
 
     @property
     def fallback_providers(self) -> list[str]:

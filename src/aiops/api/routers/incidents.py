@@ -3,6 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from aiops.api.auth import PrincipalDep, actor_of
 from aiops.api.deps import PlatformDep, SessionDep
 from aiops.db.repositories import IncidentRepository
 from aiops.domain.models import Incident, IncidentStatus
@@ -50,7 +51,7 @@ class ResolveResponse(BaseModel):
 
 @router.post("/{incident_id}/resolve", response_model=ResolveResponse)
 async def resolve_incident(
-    incident_id: str, req: ResolveRequest, session: SessionDep, p: PlatformDep
+    incident_id: str, req: ResolveRequest, session: SessionDep, p: PlatformDep, who: PrincipalDep
 ) -> ResolveResponse:
     """인시던트 해결 + 포스트모템 지식화 (M1-09): RAG 에 즉시 반영되고 DB 에 영속화된다."""
     repo = IncidentRepository(session)
@@ -59,7 +60,7 @@ async def resolve_incident(
         raise HTTPException(404, "incident not found")
     try:
         await p.incidents.transition(
-            incident_id, IncidentStatus.RESOLVED, req.actor, req.resolution
+            incident_id, IncidentStatus.RESOLVED, actor_of(who, req.actor), req.resolution
         )
     except InvalidTransition as exc:
         raise HTTPException(409, str(exc)) from exc
@@ -100,9 +101,11 @@ async def timeline(incident_id: str, p: PlatformDep) -> dict:
 
 
 @router.post("/{incident_id}/transition", response_model=Incident)
-async def transition(incident_id: str, req: TransitionRequest, p: PlatformDep) -> Incident:
+async def transition(
+    incident_id: str, req: TransitionRequest, p: PlatformDep, who: PrincipalDep
+) -> Incident:
     try:
-        return await p.incidents.transition(incident_id, req.to, req.actor, req.note)
+        return await p.incidents.transition(incident_id, req.to, actor_of(who, req.actor), req.note)
     except InvalidTransition as exc:
         raise HTTPException(409, str(exc)) from exc
     except KeyError as exc:
@@ -110,5 +113,7 @@ async def transition(incident_id: str, req: TransitionRequest, p: PlatformDep) -
 
 
 @router.post("/{incident_id}/notes", response_model=TimelineEvent)
-async def note(incident_id: str, req: NoteRequest, p: PlatformDep) -> TimelineEvent:
-    return await p.incidents.record(incident_id, "note", req.actor, req.message)
+async def note(
+    incident_id: str, req: NoteRequest, p: PlatformDep, who: PrincipalDep
+) -> TimelineEvent:
+    return await p.incidents.record(incident_id, "note", actor_of(who, req.actor), req.message)

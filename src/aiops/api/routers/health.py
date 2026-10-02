@@ -1,17 +1,20 @@
 from fastapi import APIRouter
 
 from aiops import __version__
+from aiops.api.auth import PUBLIC, requires
 from aiops.api.deps import PlatformDep
 
 router = APIRouter(tags=["health"])
 
 
 @router.get("/health")
+@requires(PUBLIC)
 async def health() -> dict:
     return {"status": "ok", "version": __version__}
 
 
 @router.get("/ready")
+@requires(PUBLIC)
 async def ready(p: PlatformDep) -> dict:
     """의존 구성요소 준비 상태. TODO(4.6): DB ping, Vector DB, LLM 헬스체크 포함."""
     return {

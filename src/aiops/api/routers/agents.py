@@ -8,12 +8,19 @@ from pydantic import BaseModel, Field
 from aiops.agents.base import AgentResult, AgentTask
 from aiops.agents.context import AgentContext
 from aiops.agents.orchestration.orchestrator import OrchestrationResult
+from aiops.api.auth import Principal, PrincipalDep, Role
 from aiops.api.deps import PlatformDep, SessionDep
 from aiops.db.repositories import AgentRunRepository
 from aiops.domain.models import Alert
 from aiops.services.incident_response import respond_to_alert
 
 router = APIRouter(prefix="/api/v1", tags=["agents"])
+
+
+def _check_preapproval(who: Principal, tools: list[str]) -> None:
+    """도구 사전 승인(approved_tools)은 곧 조치 승인이다 → approver 역할 필요 (M4-01)."""
+    if tools and not who.has(Role.APPROVER):
+        raise HTTPException(403, "approved_tools 지정에는 'approver' 역할이 필요합니다")
 
 
 class AgentRunRequest(BaseModel):
@@ -51,7 +58,9 @@ async def run_agent(
     req: AgentRunRequest,
     p: PlatformDep,
     session: SessionDep,
+    who: PrincipalDep,
 ) -> AgentResult:
+    _check_preapproval(who, req.approved_tools)
     if name not in p.agents:
         raise HTTPException(404, f"unknown agent: {name}")
     ctx = AgentContext(long_term=p.memory, approved_tools=set(req.approved_tools))
@@ -65,8 +74,11 @@ async def run_agent(
 
 
 @router.post("/orchestrations/incident-response")
-async def incident_response(req: IncidentResponseRequest, p: PlatformDep) -> dict:
+async def incident_response(
+    req: IncidentResponseRequest, p: PlatformDep, who: PrincipalDep
+) -> dict:
     """알람 1건에 대해 전체 인시던트 대응 워크플로우를 실행한다."""
+    _check_preapproval(who, req.approved_tools)
     return await respond_to_alert(
         p,
         req.alert,
@@ -82,11 +94,12 @@ async def supervised(req: SupervisedRequest, p: PlatformDep):
 
 
 @router.post("/orchestrations/kanban", response_model=OrchestrationResult)
-async def kanban(req: KanbanRunRequest, p: PlatformDep):
+async def kanban(req: KanbanRunRequest, p: PlatformDep, who: PrincipalDep):
     """Pull 방식: 에이전트들이 보드의 READY 카드를 능력에 맞게 당겨가 처리한다.
 
     이전 실행이 중단됐어도 같은 board_id 로 다시 호출하면 남은 카드부터 이어서 처리한다.
     """
+    _check_preapproval(who, req.approved_tools)
     ctx = AgentContext(
         long_term=p.memory, board=p.board(req.board_id), approved_tools=set(req.approved_tools)
     )

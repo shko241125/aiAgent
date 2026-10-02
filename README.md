@@ -60,6 +60,10 @@ docs/                아키텍처 · 로드맵(생성) · 보드(생성) · 계�
 
 ## 주요 API
 
+인증 (M4-01): `AIOPS_AUTH_MODE=api_key` 이면 `Authorization: Bearer <key>` 필요.
+조회는 viewer, 실행·기록은 operator, **조치 승인은 approver** 역할이며 승인자·행위자는 요청 본문이 아니라
+인증된 키의 이름으로 기록된다. `/health`·`/ready`·Slack 콜백(서명 검증)은 공개. prod 에서 인증을 끄면 기동하지 않는다.
+
 | Method | Path | 설명 |
 |---|---|---|
 | GET | `/health`, `/ready` | 상태 확인 |

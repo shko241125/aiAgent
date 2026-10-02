@@ -11,7 +11,8 @@
   ],
   "refs": [
     "src/aiops/api/",
-    "src/aiops/db/"
+    "src/aiops/db/",
+    "src/aiops/api/auth.py"
   ],
   "acceptance": [
     {
@@ -34,11 +35,18 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T03:59:03.616978Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 2,
   "created_at": "2026-09-30T10:30:02.872186Z",
-  "updated_at": "2026-09-30T10:30:02.872285Z",
+  "updated_at": "2026-10-02T03:59:03.617156Z",
   "started_at": null,
   "done_at": null
 }

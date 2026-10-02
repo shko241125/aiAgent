@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
+from aiops.api.auth import PrincipalDep, actor_of
 from aiops.api.deps import PlatformDep
 from aiops.kanban.board import BoardMetrics
 from aiops.kanban.models import Card, CardType, Column, Priority
@@ -69,8 +70,8 @@ async def metrics(board_id: str, p: PlatformDep) -> BoardMetrics:
 
 
 @router.post("/{board_id}/cards", response_model=Card, status_code=201)
-async def create_card(board_id: str, req: CardCreate, p: PlatformDep) -> Card:
-    return await _guard(p.board(board_id).create(actor="human", **req.model_dump()))
+async def create_card(board_id: str, req: CardCreate, p: PlatformDep, who: PrincipalDep) -> Card:
+    return await _guard(p.board(board_id).create(actor=actor_of(who, None), **req.model_dump()))
 
 
 @router.get("/{board_id}/cards/{card_id}", response_model=Card)
@@ -84,21 +85,29 @@ async def briefing(board_id: str, card_id: str, p: PlatformDep) -> str:
 
 
 @router.post("/{board_id}/cards/{card_id}/move", response_model=Card)
-async def move(board_id: str, card_id: str, req: MoveRequest, p: PlatformDep) -> Card:
+async def move(
+    board_id: str, card_id: str, req: MoveRequest, p: PlatformDep, who: PrincipalDep
+) -> Card:
     """예: 승인 후 BLOCKED → READY 로 옮기면 다음 Kanban 실행에서 에이전트가 이어받는다."""
     return await _guard(
-        p.board(board_id).move(card_id, req.to, req.actor, handoff=req.handoff, reason=req.reason)
+        p.board(board_id).move(
+            card_id, req.to, actor_of(who, req.actor), handoff=req.handoff, reason=req.reason
+        )
     )
 
 
 @router.post("/{board_id}/cards/{card_id}/notes", response_model=Card)
-async def note(board_id: str, card_id: str, req: NoteRequest, p: PlatformDep) -> Card:
-    return await _guard(p.board(board_id).note(card_id, req.actor, req.message))
+async def note(
+    board_id: str, card_id: str, req: NoteRequest, p: PlatformDep, who: PrincipalDep
+) -> Card:
+    return await _guard(p.board(board_id).note(card_id, actor_of(who, req.actor), req.message))
 
 
 @router.post("/{board_id}/claim-next")
-async def claim_next(board_id: str, req: ActorRequest, p: PlatformDep) -> dict[str, Any]:
-    card = await p.board(board_id).claim_next(req.actor, set(req.capabilities))
+async def claim_next(
+    board_id: str, req: ActorRequest, p: PlatformDep, who: PrincipalDep
+) -> dict[str, Any]:
+    card = await p.board(board_id).claim_next(actor_of(who, req.actor), set(req.capabilities))
     return {"card": card}
 
 

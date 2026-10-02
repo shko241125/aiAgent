@@ -21,6 +21,7 @@ from aiops.analytics.events import (
 from aiops.analytics.logs import DrainParser
 from aiops.analytics.prediction import RiskForecast, forecast_threshold_breach
 from aiops.analytics.situation import SignalSet, SituationAssessment, assess
+from aiops.api.auth import Role, requires
 from aiops.domain.models import OpsEvent
 
 router = APIRouter(prefix="/api/v1/analytics", tags=["analytics"])
@@ -61,16 +62,19 @@ class ForecastRequest(BaseModel):
 
 
 @router.post("/anomalies", response_model=list[Anomaly])
+@requires(Role.VIEWER)  # 계산만 하는 POST — 조회 권한
 async def detect_anomalies(req: AnomalyRequest) -> list[Anomaly]:
     return _DETECTORS[req.method]().detect(req.values)
 
 
 @router.post("/situation", response_model=SituationAssessment)
+@requires(Role.VIEWER)  # 계산만 하는 POST — 조회 권한
 async def situation(signals: SignalSet) -> SituationAssessment:
     return assess(signals)
 
 
 @router.post("/events", response_model=EventAnalysisResponse)
+@requires(Role.VIEWER)  # 계산만 하는 POST — 조회 권한
 async def analyze_events(req: EventAnalysisRequest) -> EventAnalysisResponse:
     window = timedelta(minutes=req.window_minutes)
     events = deduplicate([e.model_copy(deep=True) for e in req.events], window=window)
@@ -84,6 +88,7 @@ async def analyze_events(req: EventAnalysisRequest) -> EventAnalysisResponse:
 
 
 @router.post("/log-templates")
+@requires(Role.VIEWER)  # 계산만 하는 POST — 조회 권한
 async def log_templates(req: LogTemplateRequest) -> list[dict]:
     """로그 줄 → Drain 템플릿 (M2-04)."""
     parser = DrainParser()
@@ -94,5 +99,6 @@ async def log_templates(req: LogTemplateRequest) -> list[dict]:
 
 
 @router.post("/forecast", response_model=RiskForecast)
+@requires(Role.VIEWER)  # 계산만 하는 POST — 조회 권한
 async def forecast(req: ForecastRequest) -> RiskForecast:
     return forecast_threshold_breach(req.values, req.threshold, horizon_steps=req.horizon_steps)
