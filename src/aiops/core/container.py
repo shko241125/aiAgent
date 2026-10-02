@@ -108,7 +108,11 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
     tools = ToolRegistry(ApprovalPolicy(auto_approve=settings.auto_approve_actions))
     tools.register(*build_ops_tools(source, rag), *build_kanban_tools())
 
-    common = dict(max_steps=settings.agent_max_steps, memory_window=settings.memory_window)
+    common = dict(
+        max_steps=settings.agent_max_steps,
+        memory_window=settings.memory_window,
+        context_tokens=settings.agent_context_tokens or None,
+    )
     agent_map = settings.agent_provider_map
 
     def llm_for(agent: str) -> LLMProvider:  # 에이전트별 모델 (M1-03)

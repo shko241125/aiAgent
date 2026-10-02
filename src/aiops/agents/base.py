@@ -16,7 +16,7 @@ from typing import Any
 from pydantic import BaseModel, Field, ValidationError
 
 from aiops.agents.context import AgentContext
-from aiops.agents.memory.base import ConversationMemory
+from aiops.agents.memory.base import ConversationMemory, llm_summarizer
 from aiops.agents.tools.base import ToolRegistry, ToolResult, ToolRuntime
 from aiops.llm.base import ChatMessage, LLMProvider
 from aiops.llm.usage import current_agent
@@ -84,6 +84,7 @@ class LLMAgent(BaseAgent):
         max_steps: int = 8,
         memory_window: int = 20,
         temperature: float = 0.0,
+        context_tokens: int | None = None,
     ) -> None:
         self.llm = llm
         self.tools = tools
@@ -91,6 +92,7 @@ class LLMAgent(BaseAgent):
         self.max_steps = max_steps
         self.memory_window = memory_window
         self.temperature = temperature
+        self.context_tokens = context_tokens  # 대화 컨텍스트 토큰 예산 (M4-05), None = 무제한
 
     # ---- 확장 훅 -------------------------------------------------------------
     async def build_input(self, task: AgentTask, ctx: AgentContext) -> dict[str, Any]:
@@ -159,7 +161,11 @@ class LLMAgent(BaseAgent):
             from aiops.kanban.tools import KANBAN_TOOL_NAMES
 
             tool_names += KANBAN_TOOL_NAMES
-        memory = ConversationMemory(window=self.memory_window)
+        memory = ConversationMemory(
+            window=self.memory_window,
+            max_tokens=self.context_tokens,
+            summarizer=llm_summarizer(self.llm) if self.context_tokens else None,
+        )
         memory.add(ChatMessage.system(prompt.system), ChatMessage.user(user_prompt))
         available = [n for n in tool_names if n in self.tools.names()]
         specs = self.tools.specs(available) if available else None
@@ -169,6 +175,10 @@ class LLMAgent(BaseAgent):
         retries_left = self.output_retries
         for step in range(1, self.max_steps + 1):
             result.steps = step
+            compactions = memory.compactions
+            await memory.compact()  # 예산을 넘는 오래된 구간 → 요약 (M4-05)
+            if memory.compactions > compactions:
+                ctx.log(self.name, "context_compacted", summary_chars=len(memory.summary))
             resp = await self.llm.chat(memory.messages(), tools=specs, temperature=self.temperature)
             ctx.log(self.name, "llm_call", step=step, tool_calls=len(resp.tool_calls), **resp.usage)
             memory.add(ChatMessage.assistant(resp.content, resp.tool_calls))

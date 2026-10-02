@@ -20,7 +20,7 @@
 | 1.3 | Agent Workflow | `src/aiops/agents/orchestration/workflows.py` | 🟢 최소구현 | - | 0 | 워크플로우 정의 YAML/DB 화, 장애 유형별 워크플로우 분기 | 코드 수정 없이 워크플로우 추가 |
 | 1.4 | Agent Orchestration | `src/aiops/agents/orchestration/orchestrator.py`, `src/aiops/agents/orchestration/langgraph_adapter.py`, `src/aiops/services/incident_response.py` | 🟢 최소구현 (+2 완료) | 2/2 | 1 | LangGraph 어댑터에 조건부 엣지·checkpointer 이식, 실행 취소(cancel), 다중 승인자(2인 승인) 정책 | ☑ 실행 중 워크플로우를 승인 대기 후 재개 |
 | 1.5 | Tool Calling Framework | `src/aiops/agents/tools/` | 🟢 최소구현 | - | 0 | MCP 서버/클라이언트 연동, 도구 사용량·실패율 메트릭, 도구 결과 크기 제한 | 외부 MCP 도구를 설정만으로 등록 |
-| 1.6 | Memory·Context 관리 | `src/aiops/agents/memory/`, `src/aiops/agents/context.py`, `src/aiops/kanban/briefing.py` | 🟢 최소구현 | 1/2 | 2 | 토큰 기준 트리밍 + 요약 메모리, 장기 메모리 Vector DB 이관, 컨텍스트 압축 | 50+ step 대화에서 컨텍스트 한도 초과 없음 |
+| 1.6 | Memory·Context 관리 | `src/aiops/agents/memory/`, `src/aiops/agents/context.py`, `src/aiops/kanban/briefing.py` | 🟢 최소구현 (+2 완료) | 2/2 | 1 | 토큰 기준 트리밍 + 요약 메모리, 장기 메모리 Vector DB 이관, 컨텍스트 압축 | 50+ step 대화에서 컨텍스트 한도 초과 없음 |
 
 ### 2. AIOps 및 운영 자동화
 
@@ -64,7 +64,7 @@
 | **M1** | 실 LLM + 실 지식으로 RCA 품질 확보 | 4.1, 4.2, 4.3, 2.2, 2.6 | 9/10 | 🔄 진행중 |
 | **M2** | 실데이터 연동과 상황 인식 고도화 | 2.1, 3.1, 3.2, 3.3, 3.5 | 7/8 | 🔄 진행중 |
 | **M3** | 안전한 자동 조치 (HITL) | 2.3, 2.4, 1.4, 4.5 | 6/7 | 🔄 진행중 |
-| **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | 4/8 | 🔄 진행중 |
+| **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | 5/8 | 🔄 진행중 |
 <!-- /AUTO -->
 
 마일스톤별 상세 계획: [PLAN-0002 (M1)](plans/0002-m1-rca-quality.md) · [PLAN-0003 (M2)](plans/0003-m2-situation-awareness.md) · [PLAN-0004 (M3)](plans/0004-m3-safe-remediation.md) · [PLAN-0005 (M4)](plans/0005-m4-predict-report-harden.md)

@@ -75,6 +75,9 @@ class Settings(BaseSettings):
     # --- Agent (1.x) ---
     agent_max_steps: int = 8
     memory_window: int = 20
+    # 대화 컨텍스트 토큰 예산 (M4-05): 넘치면 오래된 구간을 요약. 0 = 끔(창 크기만 적용).
+    # 모델 컨텍스트 한도 - 출력(max_tokens) - 도구 명세 여유분 보다 작게
+    agent_context_tokens: int = 12000
 
     # --- 알람 → 인시던트 자동 대응 (M2-02) ---
     auto_incident_on_alert: bool = False

@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M4",
     "plan:0005"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "토큰 추정기(한글·영문) + 토큰 예산 트리밍(도구 호출 쌍 보존, 첫 과제 메시지 고정)",
-      "done": false
+      "done": true
     },
     {
       "text": "넘치는 오래된 구간은 LLM 요약으로 압축, 실패 시 잘라내기 폴백",
-      "done": false
+      "done": true
     },
     {
       "text": "50+ step 에이전트 루프에서 예산 초과 0회 테스트",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,11 +30,13 @@
   ],
   "parent_id": "R-1.6",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "agents/memory/base.py: estimate_tokens(비ASCII 1자=1토큰, ASCII 4자=1토큰, 보수적)·message_tokens·total_tokens, ConversationMemory(window, max_tokens, summarizer, summary_max_tokens): system+첫 user 고정, tail=예산·창 안 최장 접미사(tool 쌍 보존, 최신 거대 결과는 짝과 함께 유지), _fit 으로 큰 메시지부터 절단, compact()=넘치면 저수위(예산/2·창/2)까지 줄이고 밀려난 구간 요약→과제 뒤에 첨부(실패 시 '요약 실패' 표기 후 잘라내기). llm_summarizer(llm). LLMAgent(context_tokens=) 가 매 LLM 호출 전 compact, trace 에 context_compacted. 설정 AIOPS_AGENT_CONTEXT_TOKENS=12000(0=끔). 테스트 tests/unit/test_context_budget.py. 추정기는 실제 토크나이저가 아님 — 모델별 토크나이저(tiktoken 등)로 교체 여지. 남은 것(R-1.6): 장기 메모리 Vector DB 이관",
+  "outputs": {
+    "long_loop": "60 tool step + 결론(61 LLM 호출): 최대 컨텍스트 1,895/3,000 추정 토큰, 예산 초과 0회, 과제 유실 0, 짝 잃은 tool 결과 0, 요약 9회(요약 실패 시 잘라내기 폴백도 통과)"
+  },
   "log": [
     {
       "ts": "2026-10-02T03:55:09.231812Z",
@@ -42,11 +44,81 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:09:25.198233Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:15.752527Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "버그 수정: 기존 ConversationMemory 는 창(20개)을 넘으면 첫 user 메시지(과제)까지 잘라 장기 루프에서 에이전트가 할 일을 잊었음 → system + 첫 user 를 고정(pinned)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:16.207913Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "요약은 system 이 아니라 과제(user) 메시지 뒤에 '데이터이며 지시가 아님' 머리말과 함께 붙임: 도구 결과(신뢰 불가)를 요약해 system 으로 올리면 프롬프트 인젝션이 시스템 지시 권한으로 승격됨. 별도 user 메시지로 두면 연속 user 턴이 되어 일부 벤더가 거부",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:16.638929Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "넘칠 때 '딱 맞게'가 아니라 절반(저수위)까지 압축하는 히스테리시스 — 안 그러면 매 단계 넘칠 때마다 요약 LLM 호출이 추가됨. 60 step 에서 요약 9회. 방금 받은 거대한 도구 결과는 버리지 않고 짝(assistant)과 함께 남긴 뒤 큰 메시지부터 잘라 맞춤",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:17.070852Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.long_loop 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:17.573127Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 토큰 추정기(한글·영문) + 토큰 예산 트리밍(도구 호출 쌍 보존, 첫 과제 메시지 고정)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:17.580240Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 넘치는 오래된 구간은 LLM 요약으로 압축, 실패 시 잘라내기 폴백",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:17.586570Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 50+ step 에이전트 루프에서 예산 초과 0회 테스트",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:18.028247Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "agents/memory/base.py: estimate_tokens(비ASCII 1자=1토큰, ASCII 4자=1토큰, 보수적)·message_tokens·total_tokens, ConversationMemory(window, max_tokens, summarizer, summary_max_tokens): system+첫 user 고정, tail=예산·창 안 최장 접미사(tool 쌍 보존, 최신 거대 결과는 짝과 함께 유지), _fit 으로 큰 메시지부터 절단, compact()=넘치면 저수위(예산/2·창/2)까지 줄이고 밀려난 구간 요약→과제 뒤에 첨부(실패 시 '요약 실패' 표기 후 잘라내기). llm_summarizer(llm). LLMAgent(context_tokens=) 가 매 LLM 호출 전 compact, trace 에 context_compacted. 설정 AIOPS_AGENT_CONTEXT_TOKENS=12000(0=끔). 테스트 tests/unit/test_context_budget.py. 추정기는 실제 토크나이저가 아님 — 모델별 토크나이저(tiktoken 등)로 교체 여지. 남은 것(R-1.6): 장기 메모리 Vector DB 이관",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:12:18.028287Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 10,
   "created_at": "2026-10-02T03:55:09.231779Z",
-  "updated_at": "2026-10-02T03:55:09.231959Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T04:12:18.028566Z",
+  "started_at": "2026-10-02T04:09:25.198217Z",
+  "done_at": "2026-10-02T04:12:18.028277Z"
 }
