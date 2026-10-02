@@ -81,7 +81,8 @@ class Step(BaseModel):
     kind: Literal["action", "approval"] = "action"
     # approval 단계: 승인 요청 내용(무엇을 왜 하려는지)을 만드는 함수
     describe: Callable[[WorkflowRun], Awaitable[dict[str, Any]]] | None = None
-    depends_on: list[str] = Field(default_factory=list)
+    depends_on: list[str] = Field(default_factory=list)  # 선행이 실패·건너뜀이면 같이 건너뜀
+    after: list[str] = Field(default_factory=list)  # 순서만 따름 — 선행 결과와 무관하게 실행
     retries: int = 0
     timeout_s: float | None = None
     condition: Callable[[WorkflowRun], bool] | None = None  # False 면 SKIPPED
@@ -96,11 +97,12 @@ class Workflow(BaseModel):
     def layers(self) -> list[list[Step]]:
         """Kahn 알고리즘으로 위상 정렬 → 동시에 실행 가능한 단계 묶음(layer) 목록."""
         by_id = {s.id: s for s in self.steps}
-        for s in self.steps:
-            for d in s.depends_on:
+        deps = {s.id: list(dict.fromkeys(s.depends_on + s.after)) for s in self.steps}
+        for sid, ds in deps.items():
+            for d in ds:
                 if d not in by_id:
-                    raise ValueError(f"step '{s.id}' depends on unknown step '{d}'")
-        indeg = {s.id: len(s.depends_on) for s in self.steps}
+                    raise ValueError(f"step '{sid}' depends on unknown step '{d}'")
+        indeg = {sid: len(ds) for sid, ds in deps.items()}
         layers: list[list[Step]] = []
         ready = [sid for sid, n in indeg.items() if n == 0]
         seen = 0
@@ -110,7 +112,7 @@ class Workflow(BaseModel):
             nxt = []
             for sid in ready:
                 for s in self.steps:
-                    if sid in s.depends_on:
+                    if sid in deps[s.id]:
                         indeg[s.id] -= 1
                         if indeg[s.id] == 0:
                             nxt.append(s.id)
@@ -206,6 +208,8 @@ class WorkflowEngine:
         self.store = store
         self.approvals = approvals
         self.factories: dict[str, WorkflowFactory] = {}  # 재개 시 정의 재구성
+        # 워크플로우가 끝났을 때(성공·실패) 후처리 — 처음 실행이든 재개든 같은 지점에서 호출
+        self.on_complete: dict[str, Callable[[WorkflowRun], Awaitable[None]]] = {}
         self._locks: dict[str, asyncio.Lock] = {}
 
     def register(self, name: str, factory: WorkflowFactory) -> None:
@@ -282,7 +286,9 @@ class WorkflowEngine:
             failed = any(r.status == StepStatus.FAILED for r in run.steps.values())
             run.status = RunStatus.FAILED if failed else RunStatus.SUCCEEDED
             await self._checkpoint(run)
-            return run
+        if hook := self.on_complete.get(run.workflow):
+            await hook(run)
+        return run
 
     async def run(
         self, workflow: Workflow, state: dict[str, Any] | None = None, run_id: str | None = None

@@ -217,3 +217,31 @@ class KubernetesExecutor(Executor):
         template = copy.deepcopy(target["spec"]["template"])
         template["metadata"].get("labels", {}).pop("pod-template-hash", None)  # RS 전용 라벨 제거
         return template, rev(target)
+
+
+class DryRunOnlyExecutor(Executor):
+    """실제 변경을 절대 하지 않는 실행기 — 실 인프라 연결 전 '계획·검증만' 운영할 때."""
+
+    async def execute(self, action: RemediationAction, dry_run: bool = False) -> ActionResult:
+        return ActionResult(
+            action_id=action.id,
+            ok=dry_run,
+            dry_run=dry_run,
+            detail="(dry-run 전용 모드) 계획만 검증"
+            if dry_run
+            else "dry-run 전용 모드 — 실제 실행 차단 (AIOPS_REMEDIATION_EXECUTOR)",
+        )
+
+
+def build_executor(settings, source) -> Executor:
+    import logging
+
+    if settings.remediation_executor == "kubernetes":
+        return KubernetesExecutor(
+            settings.k8s_api_url, settings.k8s_token, verify=settings.k8s_ca_cert or True
+        )
+    if settings.remediation_executor == "simulated":
+        if isinstance(source, SimulatedOpsSource):
+            return SimulatedExecutor(source)
+        logging.getLogger(__name__).warning("실 데이터 소스에 simulated 실행기 불가 → dry_run")
+    return DryRunOnlyExecutor()

@@ -53,7 +53,18 @@ def test_incident_response_workflow(client, llm):
     assert res.status_code == 200, res.text
     body = res.json()
     assert body["workflow_status"] == "succeeded"
-    assert all(s["status"] == "succeeded" for s in body["steps"].values())
+    status = {k: s["status"] for k, s in body["steps"].items()}
+    # 장애 데이터가 없는 기본 시뮬레이터 → 자동 조치 후보가 없어 승인·실행은 건너뛰고(v2),
+    # 기록·보고는 조치와 무관하게 실행된다 (after: 순서만 의존)
+    assert status == {
+        "detect": "succeeded",
+        "rca": "succeeded",
+        "plan": "succeeded",
+        "approve": "skipped",
+        "execute": "skipped",
+        "incident": "succeeded",
+        "report": "succeeded",
+    }
 
     inc = client.get(f"/api/v1/incidents/{body['incident_id']}").json()
     assert inc["root_cause"] == "커넥션 누수"

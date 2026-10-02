@@ -84,6 +84,20 @@ class Settings(BaseSettings):
     slack_signing_secret: str | None = None  # 상호작용 콜백 서명 검증
     slack_escalation_mention: str = "<!here>"
 
+    # --- 조치 실행 (M3-02/06) ---
+    # simulated(시뮬레이터 장애 해소) | kubernetes | dry_run(검증만, 실제 변경 금지)
+    remediation_executor: Literal["simulated", "kubernetes", "dry_run"] = "simulated"
+    remediation_namespace: str = "default"
+    remediation_allowed_namespaces: str = "default"  # 쉼표 구분
+    remediation_denied_services: str = "*-db,*database*"  # 쉼표 구분 glob
+    remediation_max_actions_per_hour: int = 3
+    remediation_cooldown_s: int = 300
+    remediation_verify_attempts: int = 3
+    remediation_verify_interval_s: float = 60.0
+    k8s_api_url: str = "https://kubernetes.default.svc"
+    k8s_token: str | None = None
+    k8s_ca_cert: str | None = None  # 경로. 없으면 시스템 CA
+
     # --- 운영 자동화 안전장치 (2.3) ---
     auto_approve_actions: bool = False
 
@@ -102,6 +116,20 @@ class Settings(BaseSettings):
     def prometheus_label_map(self) -> dict[str, str]:
         pairs = (p.split("=", 1) for p in self.prometheus_labels.split(",") if "=" in p)
         return {k.strip(): v.strip() for k, v in pairs}
+
+    @property
+    def guardrail_policy(self):
+        from aiops.remediation.guardrails import GuardrailPolicy
+
+        def split(v: str) -> list[str]:
+            return [x.strip() for x in v.split(",") if x.strip()]
+
+        return GuardrailPolicy(
+            allowed_namespaces=split(self.remediation_allowed_namespaces),
+            denied_services=split(self.remediation_denied_services),
+            max_actions_per_hour=self.remediation_max_actions_per_hour,
+            cooldown_s=self.remediation_cooldown_s,
+        )
 
     @property
     def fallback_providers(self) -> list[str]:

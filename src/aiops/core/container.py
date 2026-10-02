@@ -37,6 +37,10 @@ from aiops.prompts.registry import PromptRegistry
 from aiops.rag.hybrid import HybridRetriever
 from aiops.rag.knowledge import KnowledgeRepository
 from aiops.rag.service import RAGService, build_embedder, build_reranker, build_vector_store
+from aiops.remediation.executors import build_executor
+from aiops.remediation.guardrails import Guardrails
+from aiops.remediation.service import RemediationService
+from aiops.services import incident_response
 from aiops.services.approvals import ApprovalService
 from aiops.services.incidents import IncidentService
 from aiops.services.notify import LogNotifier, Notifier, SlackWebhookNotifier
@@ -63,6 +67,7 @@ class Platform:
     incidents: IncidentService
     approvals: ApprovalService
     notifier: Notifier
+    remediation: RemediationService
 
     async def resume_workflow(self, run_id: str) -> None:
         """승인 결정 뒤 워크플로우 재개 (팩토리가 등록된 워크플로우만)."""
@@ -163,6 +168,10 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
         incidents=incident_service,
         approvals=approvals,
         notifier=notifier,
+        remediation=RemediationService(
+            build_executor(settings, source), Guardrails(settings.guardrail_policy)
+        ),
     )
     approvals.on_decided = lambda a: platform.resume_workflow(a.run_id)
+    incident_response.register(platform)  # 재시작 후 재개용 팩토리·완료 훅 (M3-06)
     return platform

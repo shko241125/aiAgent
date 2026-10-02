@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M3",
     "plan:0004"
@@ -14,19 +14,19 @@
   "acceptance": [
     {
       "text": "탐지→RCA→계획→승인→실행→검증→기록 워크플로우",
-      "done": false
+      "done": true
     },
     {
       "text": "승인 대기 중 재시작 후 재개 E2E 테스트",
-      "done": false
+      "done": true
     },
     {
       "text": "승인 대기 카드 BLOCKED·결정 시 해제",
-      "done": false
+      "done": true
     },
     {
       "text": "장애가 실제로 복구되는 시뮬레이터 E2E",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -34,10 +34,10 @@
   ],
   "parent_id": "R-1.4",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "services/incident_response.py v2(WORKFLOW=incident_response_v2: detect→rca→plan→approve→execute(+verify)→incident(after execute)→report, rehydrate/rebuild 팩토리, complete 완료 훅, register), engine.after·on_complete, Platform.remediation(build_executor: simulated|kubernetes|dry_run, Guardrails(settings.guardrail_policy)), 설정 AIOPS_REMEDIATION_*·K8S_*. E2E tests/api/test_incident_v2.py(승인 복구·재시작 재개·거부·오진 미복구). 데모 scripts/demo_incident.py 갱신. v1 build_incident_response 는 라이브러리용으로 남김",
   "outputs": {},
   "log": [
     {
@@ -46,11 +46,74 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:38:32.917530Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:43:35.260757Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "엔진에 after(순서만 의존) 추가: incident 기록은 execute 뒤에 돌되, 조치가 건너뛰어져도(계획 없음·거부) 함께 건너뛰지 않는다. 카드 선행관계는 필수 의존만 반영(after 까지 넣으면 건너뛴 카드를 기다리며 claim 막힘 — 작성 중 발견)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:43:35.662510Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "재개 시 기억 복원: 끝난 에이전트 단계 출력 → Blackboard. E2E 로 재시작 후 incident 에이전트 프롬프트에 RCA·조치 결과가 들어감을 검증. 조치 단계는 결정적 코드(플레이북·dry-run·remediate) — LLM RemediationAgent 는 v2 경로에서 쓰지 않음",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:43:36.121294Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 탐지→RCA→계획→승인→실행→검증→기록 워크플로우",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:43:36.126635Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 승인 대기 중 재시작 후 재개 E2E 테스트",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:43:36.132919Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 승인 대기 카드 BLOCKED·결정 시 해제",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:43:36.139288Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 장애가 실제로 복구되는 시뮬레이터 E2E",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:43:36.535552Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "services/incident_response.py v2(WORKFLOW=incident_response_v2: detect→rca→plan→approve→execute(+verify)→incident(after execute)→report, rehydrate/rebuild 팩토리, complete 완료 훅, register), engine.after·on_complete, Platform.remediation(build_executor: simulated|kubernetes|dry_run, Guardrails(settings.guardrail_policy)), 설정 AIOPS_REMEDIATION_*·K8S_*. E2E tests/api/test_incident_v2.py(승인 복구·재시작 재개·거부·오진 미복구). 데모 scripts/demo_incident.py 갱신. v1 build_incident_response 는 라이브러리용으로 남김",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:43:36.535593Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 9,
   "created_at": "2026-10-02T00:23:31.688412Z",
-  "updated_at": "2026-10-02T00:23:31.688591Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T00:43:36.535889Z",
+  "started_at": "2026-10-02T00:38:32.917515Z",
+  "done_at": "2026-10-02T00:43:36.535582Z"
 }

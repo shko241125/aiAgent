@@ -3,7 +3,7 @@
 > ⚠️ 자동 생성 파일 — 직접 수정하지 마세요. 원본: `tracking/cards/*.json`
 > 갱신: `make docs` (편집 시 Claude Code 훅·pre-commit 이 자동 실행)
 
-**📥 backlog 0 · 🟦 ready 2 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 2 · ✅ done 26**
+**📥 backlog 0 · 🟦 ready 1 · 🔄 in_progress 0 · 👀 review 0 · ⛔ blocked 2 · ✅ done 27**
 
 ## ⛔ blocked (2)
 
@@ -12,14 +12,13 @@
 | M1-10 | 실 LLM 품질 측정 (Claude/OpenAI/구축형 Gemma·Qwen) | p2 | claude-code | R-4.1 | 실 LLM API 키(AIOPS_ANTHROPIC/OPENAI/GEMINI_API_KEY) 또는 구축형 모델 서버(vLLM/Ollama: Gemma·Qwen) 필요 |
 | M2-08 | 실 Prometheus·Loki·Alertmanager 연동 검증 | p2 | claude-code | R-2.1 | 실 Prometheus·Loki·Alertmanager(또는 Docker 데몬) 필요 |
 
-## 🟦 ready (2)
+## 🟦 ready (1)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
-| M3-06 | 인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동 | p1 | - | R-1.4 |  |
 | M3-07 | 실 Kubernetes 클러스터 조치 검증 | p2 | - | R-2.3 |  |
 
-## ✅ done (26)
+## ✅ done (27)
 
 | 카드 | 제목 | 우선 | 담당 | 상위 | 인계 메모 / 막힌 사유 |
 |---|---|---|---|---|---|
@@ -49,3 +48,4 @@
 | M3-03 | 조치 플레이북 + 효과 검증 + 되돌림·에스컬레이션 | p1 | claude-code | R-2.3 | remediation/playbook.py(change→rollback, 시그니처별 매핑, cpu→scale×2, 위험·불가 원인→manual), verify.py(verify_recovery: ongoing 이상… |
 | M3-04 | 인시던트 상태 머신 + 타임라인 | p1 | claude-code | R-2.4 | services/incidents.py(TRANSITIONS, IncidentService.transition/record/timeline/mttr_minutes, TimelineEvent), db Incident… |
 | M3-05 | 승인 요청 저장소·API + Slack 승인 채널 + 만료·에스컬레이션 | p1 | claude-code | R-2.3 | db ApprovalRow(결정적 id=apr-<run>-<step> 로 멱등), services/approvals.py(ApprovalService=엔진 ApprovalGate+decide/find/sweep/a… |
+| M3-06 | 인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동 | p1 | claude-code | R-1.4 | services/incident_response.py v2(WORKFLOW=incident_response_v2: detect→rca→plan→approve→execute(+verify)→incident(after… |

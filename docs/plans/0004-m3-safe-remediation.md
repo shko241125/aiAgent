@@ -35,10 +35,10 @@ M1·M2 는 "무엇이 왜 고장 났는가"를 답하게 했다. M3 은 **고치
 | M3-03 | 조치 플레이북 + 효과 검증 + 되돌림·에스컬레이션 | ✅ done | claude-code | remediation/playbook.py(change→rollback, 시그니처별 매핑, cpu→scale×2, 위험·불가 원인→manual), verify.py(verify_recovery: ongoing 이상… |
 | M3-04 | 인시던트 상태 머신 + 타임라인 | ✅ done | claude-code | services/incidents.py(TRANSITIONS, IncidentService.transition/record/timeline/mttr_minutes, TimelineEvent), db Incident… |
 | M3-05 | 승인 요청 저장소·API + Slack 승인 채널 + 만료·에스컬레이션 | ✅ done | claude-code | db ApprovalRow(결정적 id=apr-<run>-<step> 로 멱등), services/approvals.py(ApprovalService=엔진 ApprovalGate+decide/find/sweep/a… |
-| M3-06 | 인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동 | 🟦 ready | - |  |
+| M3-06 | 인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동 | ✅ done | claude-code | services/incident_response.py v2(WORKFLOW=incident_response_v2: detect→rca→plan→approve→execute(+verify)→incident(after… |
 | M3-07 | 실 Kubernetes 클러스터 조치 검증 | 🟦 ready | - |  |
 
-진행: 5/7
+진행: 6/7
 <!-- /AUTO -->
 
 ## 4. 완료 판정

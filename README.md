@@ -12,7 +12,7 @@ Multi-Agent AI가 운영 데이터를 실시간 분석하고, ML 기반 상황 �
 ```bash
 make install          # uv 로 .venv 생성 + 개발 의존성 설치
 make test             # 단위/API 테스트
-make demo             # 서버 없이 인시던트 대응 파이프라인 1회 실행
+make demo             # 서버 없이 장애→승인→조치→복구 흐름 1회 실행
 make run              # http://localhost:8000/docs (Swagger UI)
 make board            # 칸반 보드 브리핑 (진행 중·막힘·다음 후보)
 make check            # lint + test + 문서↔보드 동기화 검증 (커밋 전 필수)
@@ -65,7 +65,9 @@ docs/                아키텍처 · 로드맵(생성) · 보드(생성) · 계�
 | GET | `/health`, `/ready` | 상태 확인 |
 | GET | `/api/v1/agents` | 등록된 에이전트 목록 |
 | POST | `/api/v1/agents/{name}/run` | 단일 에이전트 실행 |
-| POST | `/api/v1/orchestrations/incident-response` | 알람 → 탐지 → RCA → 조치 → 인시던트 → 보고서 워크플로우 |
+| POST | `/api/v1/orchestrations/incident-response` | 탐지 → RCA → 조치 계획 → **사람 승인 대기** → 실행 → 효과 검증 → 기록 (재시작 후 재개 가능) |
+| GET/POST | `/api/v1/approvals` · `/{id}/approve` · `/{id}/reject` · `/slack/actions` | 조치 승인(HITL) — 웹·Slack 버튼, 미응답 에스컬레이션·만료 시 자동 거부 |
+| GET/POST | `/api/v1/incidents/{id}/timeline` · `/transition` | 인시던트 타임라인(MTTR)·상태 전이 |
 | POST | `/api/v1/orchestrations/supervised` | Supervisor LLM 이 동적으로 에이전트 선택 |
 | POST | `/api/v1/orchestrations/kanban` | Pull 방식 — 에이전트가 보드의 READY 카드를 당겨 처리 (중단 후 재개 가능) |
 | GET/POST | `/api/v1/boards/{board_id}/...` | 칸반 보드 조회·카드 생성/이동/메모·브리핑·claim-next·지표 |
