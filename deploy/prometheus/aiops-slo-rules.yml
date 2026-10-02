@@ -1,0 +1,146 @@
+# 자동 생성 — 직접 고치지 말 것. 원본: src/aiops/observability/slo.py
+groups:
+- name: slo-api-availability
+  rules:
+  - record: slo:api_availability:error_ratio_rate5m
+    expr: 1 - (sum(rate(aiops_http_requests_total{code!~"5.."}[5m]))) / (sum(rate(aiops_http_requests_total[5m])))
+  - record: slo:api_availability:error_ratio_rate30m
+    expr: 1 - (sum(rate(aiops_http_requests_total{code!~"5.."}[30m]))) / (sum(rate(aiops_http_requests_total[30m])))
+  - record: slo:api_availability:error_ratio_rate1h
+    expr: 1 - (sum(rate(aiops_http_requests_total{code!~"5.."}[1h]))) / (sum(rate(aiops_http_requests_total[1h])))
+  - record: slo:api_availability:error_ratio_rate2h
+    expr: 1 - (sum(rate(aiops_http_requests_total{code!~"5.."}[2h]))) / (sum(rate(aiops_http_requests_total[2h])))
+  - record: slo:api_availability:error_ratio_rate6h
+    expr: 1 - (sum(rate(aiops_http_requests_total{code!~"5.."}[6h]))) / (sum(rate(aiops_http_requests_total[6h])))
+  - record: slo:api_availability:error_ratio_rate1d
+    expr: 1 - (sum(rate(aiops_http_requests_total{code!~"5.."}[1d]))) / (sum(rate(aiops_http_requests_total[1d])))
+  - record: slo:api_availability:error_ratio_rate3d
+    expr: 1 - (sum(rate(aiops_http_requests_total{code!~"5.."}[3d]))) / (sum(rate(aiops_http_requests_total[3d])))
+  - alert: SLOBurn-api-availability-1h
+    expr: slo:api_availability:error_ratio_rate1h > 0.072 and slo:api_availability:error_ratio_rate5m > 0.072
+    labels:
+      severity: page
+      slo: api-availability
+    annotations:
+      summary: api-availability 오류 예산 소모 속도 14.4x (1h/5m)
+      description: API 요청의 99.5% 는 5xx 가 아니다
+  - alert: SLOBurn-api-availability-6h
+    expr: slo:api_availability:error_ratio_rate6h > 0.03 and slo:api_availability:error_ratio_rate30m > 0.03
+    labels:
+      severity: page
+      slo: api-availability
+    annotations:
+      summary: api-availability 오류 예산 소모 속도 6.0x (6h/30m)
+      description: API 요청의 99.5% 는 5xx 가 아니다
+  - alert: SLOBurn-api-availability-1d
+    expr: slo:api_availability:error_ratio_rate1d > 0.015 and slo:api_availability:error_ratio_rate2h > 0.015
+    labels:
+      severity: ticket
+      slo: api-availability
+    annotations:
+      summary: api-availability 오류 예산 소모 속도 3.0x (1d/2h)
+      description: API 요청의 99.5% 는 5xx 가 아니다
+  - alert: SLOBurn-api-availability-3d
+    expr: slo:api_availability:error_ratio_rate3d > 0.005 and slo:api_availability:error_ratio_rate6h > 0.005
+    labels:
+      severity: ticket
+      slo: api-availability
+    annotations:
+      summary: api-availability 오류 예산 소모 속도 1.0x (3d/6h)
+      description: API 요청의 99.5% 는 5xx 가 아니다
+- name: slo-api-latency
+  rules:
+  - record: slo:api_latency:error_ratio_rate5m
+    expr: 1 - (sum(rate(aiops_http_request_duration_seconds_bucket{class="interactive",le="0.5"}[5m]))) / (sum(rate(aiops_http_request_duration_seconds_count{class="interactive"}[5m])))
+  - record: slo:api_latency:error_ratio_rate30m
+    expr: 1 - (sum(rate(aiops_http_request_duration_seconds_bucket{class="interactive",le="0.5"}[30m]))) / (sum(rate(aiops_http_request_duration_seconds_count{class="interactive"}[30m])))
+  - record: slo:api_latency:error_ratio_rate1h
+    expr: 1 - (sum(rate(aiops_http_request_duration_seconds_bucket{class="interactive",le="0.5"}[1h]))) / (sum(rate(aiops_http_request_duration_seconds_count{class="interactive"}[1h])))
+  - record: slo:api_latency:error_ratio_rate2h
+    expr: 1 - (sum(rate(aiops_http_request_duration_seconds_bucket{class="interactive",le="0.5"}[2h]))) / (sum(rate(aiops_http_request_duration_seconds_count{class="interactive"}[2h])))
+  - record: slo:api_latency:error_ratio_rate6h
+    expr: 1 - (sum(rate(aiops_http_request_duration_seconds_bucket{class="interactive",le="0.5"}[6h]))) / (sum(rate(aiops_http_request_duration_seconds_count{class="interactive"}[6h])))
+  - record: slo:api_latency:error_ratio_rate1d
+    expr: 1 - (sum(rate(aiops_http_request_duration_seconds_bucket{class="interactive",le="0.5"}[1d]))) / (sum(rate(aiops_http_request_duration_seconds_count{class="interactive"}[1d])))
+  - record: slo:api_latency:error_ratio_rate3d
+    expr: 1 - (sum(rate(aiops_http_request_duration_seconds_bucket{class="interactive",le="0.5"}[3d]))) / (sum(rate(aiops_http_request_duration_seconds_count{class="interactive"}[3d])))
+  - alert: SLOBurn-api-latency-1h
+    expr: slo:api_latency:error_ratio_rate1h > 0.72 and slo:api_latency:error_ratio_rate5m > 0.72
+    labels:
+      severity: page
+      slo: api-latency
+    annotations:
+      summary: api-latency 오류 예산 소모 속도 14.4x (1h/5m)
+      description: 대화형 API 요청의 95% 는 0.5s 안에 응답한다 (p95 목표)
+  - alert: SLOBurn-api-latency-6h
+    expr: slo:api_latency:error_ratio_rate6h > 0.3 and slo:api_latency:error_ratio_rate30m > 0.3
+    labels:
+      severity: page
+      slo: api-latency
+    annotations:
+      summary: api-latency 오류 예산 소모 속도 6.0x (6h/30m)
+      description: 대화형 API 요청의 95% 는 0.5s 안에 응답한다 (p95 목표)
+  - alert: SLOBurn-api-latency-1d
+    expr: slo:api_latency:error_ratio_rate1d > 0.15 and slo:api_latency:error_ratio_rate2h > 0.15
+    labels:
+      severity: ticket
+      slo: api-latency
+    annotations:
+      summary: api-latency 오류 예산 소모 속도 3.0x (1d/2h)
+      description: 대화형 API 요청의 95% 는 0.5s 안에 응답한다 (p95 목표)
+  - alert: SLOBurn-api-latency-3d
+    expr: slo:api_latency:error_ratio_rate3d > 0.05 and slo:api_latency:error_ratio_rate6h > 0.05
+    labels:
+      severity: ticket
+      slo: api-latency
+    annotations:
+      summary: api-latency 오류 예산 소모 속도 1.0x (3d/6h)
+      description: 대화형 API 요청의 95% 는 0.5s 안에 응답한다 (p95 목표)
+- name: slo-llm-availability
+  rules:
+  - record: slo:llm_availability:error_ratio_rate5m
+    expr: 1 - (sum(rate(aiops_llm_requests_total{outcome="ok"}[5m]))) / (sum(rate(aiops_llm_requests_total[5m])))
+  - record: slo:llm_availability:error_ratio_rate30m
+    expr: 1 - (sum(rate(aiops_llm_requests_total{outcome="ok"}[30m]))) / (sum(rate(aiops_llm_requests_total[30m])))
+  - record: slo:llm_availability:error_ratio_rate1h
+    expr: 1 - (sum(rate(aiops_llm_requests_total{outcome="ok"}[1h]))) / (sum(rate(aiops_llm_requests_total[1h])))
+  - record: slo:llm_availability:error_ratio_rate2h
+    expr: 1 - (sum(rate(aiops_llm_requests_total{outcome="ok"}[2h]))) / (sum(rate(aiops_llm_requests_total[2h])))
+  - record: slo:llm_availability:error_ratio_rate6h
+    expr: 1 - (sum(rate(aiops_llm_requests_total{outcome="ok"}[6h]))) / (sum(rate(aiops_llm_requests_total[6h])))
+  - record: slo:llm_availability:error_ratio_rate1d
+    expr: 1 - (sum(rate(aiops_llm_requests_total{outcome="ok"}[1d]))) / (sum(rate(aiops_llm_requests_total[1d])))
+  - record: slo:llm_availability:error_ratio_rate3d
+    expr: 1 - (sum(rate(aiops_llm_requests_total{outcome="ok"}[3d]))) / (sum(rate(aiops_llm_requests_total[3d])))
+  - alert: SLOBurn-llm-availability-1h
+    expr: slo:llm_availability:error_ratio_rate1h > 0.144 and slo:llm_availability:error_ratio_rate5m > 0.144
+    labels:
+      severity: page
+      slo: llm-availability
+    annotations:
+      summary: llm-availability 오류 예산 소모 속도 14.4x (1h/5m)
+      description: LLM 호출의 99% 는 성공한다 (fallback 이전 시도 단위)
+  - alert: SLOBurn-llm-availability-6h
+    expr: slo:llm_availability:error_ratio_rate6h > 0.06 and slo:llm_availability:error_ratio_rate30m > 0.06
+    labels:
+      severity: page
+      slo: llm-availability
+    annotations:
+      summary: llm-availability 오류 예산 소모 속도 6.0x (6h/30m)
+      description: LLM 호출의 99% 는 성공한다 (fallback 이전 시도 단위)
+  - alert: SLOBurn-llm-availability-1d
+    expr: slo:llm_availability:error_ratio_rate1d > 0.03 and slo:llm_availability:error_ratio_rate2h > 0.03
+    labels:
+      severity: ticket
+      slo: llm-availability
+    annotations:
+      summary: llm-availability 오류 예산 소모 속도 3.0x (1d/2h)
+      description: LLM 호출의 99% 는 성공한다 (fallback 이전 시도 단위)
+  - alert: SLOBurn-llm-availability-3d
+    expr: slo:llm_availability:error_ratio_rate3d > 0.01 and slo:llm_availability:error_ratio_rate6h > 0.01
+    labels:
+      severity: ticket
+      slo: llm-availability
+    annotations:
+      summary: llm-availability 오류 예산 소모 속도 1.0x (3d/6h)
+      description: LLM 호출의 99% 는 성공한다 (fallback 이전 시도 단위)

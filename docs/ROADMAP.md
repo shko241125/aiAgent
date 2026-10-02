@@ -52,7 +52,7 @@
 | 4.3 | Prompt Engineering / KB | `src/aiops/prompts/`, `data/knowledge/` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | few-shot 예시 관리 체계, 실모델 eval 결과의 프롬프트 버전별 추적, 지식 수집 파이프라인 | ☑ 프롬프트 변경 시 회귀 eval CI |
 | 4.4 | FastAPI Backend | `src/aiops/api/`, `src/aiops/db/`, `src/aiops/api/auth.py`, `src/aiops/db/migrate.py` | 🟢 최소구현 (+2 완료) | 2/2 | 2 | 인증/인가(API Key·OIDC), Alembic 마이그레이션, 비동기 작업 큐 | 운영 배포 가능한 API |
 | 4.5 | Workflow Engine | `src/aiops/workflow/engine.py`, `src/aiops/workflow/store.py` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 분산 실행(다중 프로세스 재개 경쟁: DB 락/리스), 스케줄 트리거, 단계 타임아웃 정책, 워크플로우 정의 버전 관리 | ☑ 프로세스 재시작 후 워크플로우 재개 |
-| 4.6 | 성능 최적화·안정성 | `src/aiops/core/resilience.py`, `src/aiops/api/middleware.py` | 🧩 골격 | 0/3 | 3 | /metrics(Prometheus), OpenTelemetry 트레이싱, LLM 응답 캐시, 부하 테스트 | p95 지연·에러율 SLO 정의 및 대시보드 |
+| 4.6 | 성능 최적화·안정성 | `src/aiops/core/resilience.py`, `src/aiops/api/middleware.py`, `src/aiops/observability/`, `deploy/`, `scripts/gen_observability.py` | 🧩 골격 | 1/3 | 3 | /metrics(Prometheus), OpenTelemetry 트레이싱, LLM 응답 캐시, 부하 테스트 | p95 지연·에러율 SLO 정의 및 대시보드 |
 <!-- /AUTO -->
 
 ## 마일스톤
@@ -64,7 +64,7 @@
 | **M1** | 실 LLM + 실 지식으로 RCA 품질 확보 | 4.1, 4.2, 4.3, 2.2, 2.6 | 9/10 | 🔄 진행중 |
 | **M2** | 실데이터 연동과 상황 인식 고도화 | 2.1, 3.1, 3.2, 3.3, 3.5 | 7/8 | 🔄 진행중 |
 | **M3** | 안전한 자동 조치 (HITL) | 2.3, 2.4, 1.4, 4.5 | 6/7 | 🔄 진행중 |
-| **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | 2/8 | 🔄 진행중 |
+| **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | 3/8 | 🔄 진행중 |
 <!-- /AUTO -->
 
 마일스톤별 상세 계획: [PLAN-0002 (M1)](plans/0002-m1-rca-quality.md) · [PLAN-0003 (M2)](plans/0003-m2-situation-awareness.md) · [PLAN-0004 (M3)](plans/0004-m3-safe-remediation.md) · [PLAN-0005 (M4)](plans/0005-m4-predict-report-harden.md)

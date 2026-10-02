@@ -33,6 +33,7 @@ from aiops.kanban.stores import BoardStore, SqlBoardStore
 from aiops.kanban.tools import build_kanban_tools
 from aiops.llm.base import LLMProvider
 from aiops.llm.router import LLMRouter, build_llm_router
+from aiops.observability.metrics import observe_step
 from aiops.prompts.registry import PromptRegistry
 from aiops.rag.hybrid import HybridRetriever
 from aiops.rag.knowledge import KnowledgeRepository
@@ -148,7 +149,9 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
         record=incident_service.record,
     )
     # 체크포인트·승인 대기·재개가 가능한 엔진 (M3-01/05)
-    wf_engine = WorkflowEngine(store=SqlRunStore(sessionmaker), approvals=approvals)
+    wf_engine = WorkflowEngine(
+        store=SqlRunStore(sessionmaker), approvals=approvals, on_step_update=observe_step
+    )
 
     platform = Platform(
         settings=settings,

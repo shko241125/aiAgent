@@ -14,6 +14,7 @@ from aiops.core.resilience import CircuitBreaker, retry_async
 from aiops.llm.base import ChatMessage, LLMError, LLMProvider, LLMResponse, ToolSpec
 from aiops.llm.providers.fake import FakeLLMProvider
 from aiops.llm.usage import UsageRecord, UsageTracker, current_agent
+from aiops.observability.metrics import observe_llm
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class LLMRouter(LLMProvider):
         self.providers = providers
         self.default = default
         self.fallbacks = [f for f in (fallbacks or []) if f in providers and f != default]
-        self._breakers = {name: CircuitBreaker() for name in providers}
+        self.breakers = {name: CircuitBreaker() for name in providers}
         self.usage = usage or UsageTracker()
 
     def get(self, name: str | None = None) -> LLMProvider:
@@ -78,7 +79,7 @@ class LLMRouter(LLMProvider):
             started = time.perf_counter()
             model = getattr(p, "model", name)
             try:
-                resp = await self._breakers[name].call(
+                resp = await self.breakers[name].call(
                     lambda _call=_call: retry_async(_call, attempts=2)
                 )
             except Exception as exc:  # noqa: BLE001
@@ -99,6 +100,7 @@ class LLMRouter(LLMProvider):
         ok: bool,
         usage: dict[str, int] | None = None,
     ) -> None:
+        observe_llm(provider, current_agent.get(), ok, time.perf_counter() - started, usage or {})
         self.usage.record(
             UsageRecord(
                 provider=provider,

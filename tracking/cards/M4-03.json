@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M4",
     "plan:0005"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "/metrics: HTTP 지연 히스토그램(라우트 템플릿)·에러·LLM 호출·워크플로우 단계·승인",
-      "done": false
+      "done": true
     },
     {
       "text": "SLO(p95 지연·가용성) 코드 정의 → Prometheus 규칙(멀티 윈도우 burn rate)·Grafana 대시보드 생성, 생성물 drift 테스트",
-      "done": false
+      "done": true
     },
     {
       "text": "/ready 가 DB 등 의존성을 실제 점검(실패 시 503)",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,11 +30,13 @@
   ],
   "parent_id": "R-4.6",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "observability/metrics.py(전용 REGISTRY, HTTP 요청·지연(라우트 템플릿·class=interactive|llm), LLM 호출·지연·토큰, 워크플로우 단계, 승인 결정·소요, 조치 결과(type·mode·outcome), observe_llm/observe_step), slo.py(SLOS 3종, BURN_ALERTS, prometheus_rules·grafana_dashboard), scripts/gen_observability.py(--check) → deploy/prometheus/aiops-slo-rules.yml·deploy/grafana/aiops-slo-dashboard.json(+provisioning, compose observability 프로필에 prometheus 설정·grafana 추가). 계측: middleware(라우트 템플릿, /metrics 제외), LLMRouter._record, engine on_step_update, ApprovalService.decide, RemediationService.execute(ActionResult.blocked 추가). /metrics(PUBLIC), /ready DB select 1(실패 503)·LLM 서킷 degraded. LLMRouter._breakers→breakers 공개. 실 Prometheus·Grafana 적재 검증은 M4-08. 남은 것: OTel 트레이싱, Qdrant 헬스체크(TODO(4.6))",
+  "outputs": {
+    "slos": "api-availability 99.5% · api-latency 95%<0.5s(대화형) · llm-availability 99%; 알람 4단(14.4x 1h/5m, 6x 6h/30m page · 3x 1d/2h, 1x 3d/6h ticket)"
+  },
   "log": [
     {
       "ts": "2026-10-02T03:55:08.442770Z",
@@ -42,11 +44,74 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:01:42.693234Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:50.553757Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "지연 SLO 는 histogram_quantile(p95) 가 아니라 '임계치 버킷 이하 비율(95% < 0.5s)' 로 정의: 비율이어야 오류 예산·번 레이트 계산이 가능하고 인스턴스 간 합산도 정확함. 그래서 임계치가 버킷 경계인지 assert 로 강제. p95 곡선은 대시보드 표시용",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:50.982787Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "LLM·에이전트 경로(/orchestrations, /agents/{name}/run, /rag/answer)는 class=llm 으로 분리해 대화형 지연 SLO 에서 제외 — 수십 초 걸리는 정상 요청이 대화형 예산을 태우지 않게. /ready 는 DB 실패만 503, LLM 서킷 열림은 degraded(200): fallback 으로 동작은 계속되므로 트래픽을 끊지 않음",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:51.404712Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.slos 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:51.835182Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ /metrics: HTTP 지연 히스토그램(라우트 템플릿)·에러·LLM 호출·워크플로우 단계·승인",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:51.841603Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ SLO(p95 지연·가용성) 코드 정의 → Prometheus 규칙(멀티 윈도우 burn rate)·Grafana 대시보드 생성, 생성물 drift 테스트",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:51.848477Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ /ready 가 DB 등 의존성을 실제 점검(실패 시 503)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:52.675169Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "observability/metrics.py(전용 REGISTRY, HTTP 요청·지연(라우트 템플릿·class=interactive|llm), LLM 호출·지연·토큰, 워크플로우 단계, 승인 결정·소요, 조치 결과(type·mode·outcome), observe_llm/observe_step), slo.py(SLOS 3종, BURN_ALERTS, prometheus_rules·grafana_dashboard), scripts/gen_observability.py(--check) → deploy/prometheus/aiops-slo-rules.yml·deploy/grafana/aiops-slo-dashboard.json(+provisioning, compose observability 프로필에 prometheus 설정·grafana 추가). 계측: middleware(라우트 템플릿, /metrics 제외), LLMRouter._record, engine on_step_update, ApprovalService.decide, RemediationService.execute(ActionResult.blocked 추가). /metrics(PUBLIC), /ready DB select 1(실패 503)·LLM 서킷 degraded. LLMRouter._breakers→breakers 공개. 실 Prometheus·Grafana 적재 검증은 M4-08. 남은 것: OTel 트레이싱, Qdrant 헬스체크(TODO(4.6))",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:52.675211Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 9,
   "created_at": "2026-10-02T03:55:08.442734Z",
-  "updated_at": "2026-10-02T03:55:08.442995Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T04:04:52.675458Z",
+  "started_at": "2026-10-02T04:01:42.693217Z",
+  "done_at": "2026-10-02T04:04:52.675199Z"
 }

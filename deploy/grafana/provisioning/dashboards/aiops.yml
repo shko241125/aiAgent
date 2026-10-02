@@ -1,0 +1,6 @@
+apiVersion: 1
+providers:
+  - name: aiops
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards  # aiops-slo-dashboard.json 이 마운트되는 곳

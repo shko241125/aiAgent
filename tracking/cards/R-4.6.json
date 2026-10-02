@@ -11,7 +11,10 @@
   ],
   "refs": [
     "src/aiops/core/resilience.py",
-    "src/aiops/api/middleware.py"
+    "src/aiops/api/middleware.py",
+    "src/aiops/observability/",
+    "deploy/",
+    "scripts/gen_observability.py"
   ],
   "acceptance": [
     {
@@ -34,11 +37,18 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:04:52.251648Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 2,
   "created_at": "2026-09-30T10:30:02.873159Z",
-  "updated_at": "2026-09-30T10:30:02.873268Z",
+  "updated_at": "2026-10-02T04:04:52.251816Z",
   "started_at": null,
   "done_at": null
 }

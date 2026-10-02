@@ -45,6 +45,17 @@ services:
     image: prom/prometheus:latest
     profiles: ["observability"]
     ports: ["9090:9090"]
+    volumes:  # API 스크레이프 + SLO burn-rate 규칙 (M4-03)
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/prometheus/aiops-slo-rules.yml:/etc/prometheus/aiops-slo-rules.yml:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    profiles: ["observability"]
+    ports: ["3000:3000"]
+    volumes:  # SLO 대시보드 자동 적재
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/aiops-slo-dashboard.json:/var/lib/grafana/dashboards/aiops-slo-dashboard.json:ro
 
   loki:
     image: grafana/loki:latest

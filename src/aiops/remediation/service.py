@@ -3,6 +3,7 @@
 import logging
 import math
 
+from aiops.observability.metrics import REMEDIATION_ACTIONS
 from aiops.remediation.actions import ActionResult, ActionType, RemediationAction
 from aiops.remediation.executors import Executor
 from aiops.remediation.guardrails import Guardrails, GuardrailViolation
@@ -15,7 +16,14 @@ class RemediationService:
         self.executor = executor
         self.guardrails = guardrails or Guardrails()
 
-    async def execute(
+    async def execute(self, action: RemediationAction, **kw) -> ActionResult:
+        result = await self._execute(action, **kw)
+        outcome = "ok" if result.ok else ("blocked" if result.blocked else "failed")
+        mode = "dry_run" if kw.get("dry_run") else "real"
+        REMEDIATION_ACTIONS.labels(str(action.type), mode, outcome).inc()
+        return result
+
+    async def _execute(
         self,
         action: RemediationAction,
         *,
@@ -38,7 +46,11 @@ class RemediationService:
         except GuardrailViolation as exc:
             logger.warning("guardrail blocked %s: %s", action.describe(), exc)
             return ActionResult(
-                action_id=action.id, ok=False, dry_run=dry_run, detail=f"가드레일 차단: {exc}"
+                action_id=action.id,
+                ok=False,
+                dry_run=dry_run,
+                detail=f"가드레일 차단: {exc}",
+                blocked=True,
             )
         if not dry_run and approved_by is None and action.risk != "none":
             return ActionResult(
@@ -46,6 +58,7 @@ class RemediationService:
                 ok=False,
                 dry_run=False,
                 detail="승인자 없이 상태 변경 조치는 실행할 수 없음",
+                blocked=True,
             )
         try:
             result = await self.executor.execute(action, dry_run=dry_run)

@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from aiops.db.models import ApprovalRow
 from aiops.domain.models import utcnow
+from aiops.observability.metrics import APPROVAL_DECISIONS, APPROVAL_LATENCY
 from aiops.services.notify import LogNotifier, Notifier
 from aiops.workflow.engine import ApprovalDecision, ApprovalGate, WorkflowRun
 
@@ -137,6 +138,8 @@ class ApprovalService(ApprovalGate):
             row.decided_at, row.decided_by, row.reason = self.clock(), actor, reason
             await s.commit()
             approval = _to_model(row)
+        APPROVAL_DECISIONS.labels(approval.status).inc()
+        APPROVAL_LATENCY.observe((approval.decided_at - approval.requested_at).total_seconds())
         await self._timeline(
             approval, "approval", actor, f"{approval.status}" + (f": {reason}" if reason else "")
         )

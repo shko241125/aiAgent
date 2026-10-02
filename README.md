@@ -66,7 +66,7 @@ docs/                아키텍처 · 로드맵(생성) · 보드(생성) · 계�
 
 | Method | Path | 설명 |
 |---|---|---|
-| GET | `/health`, `/ready` | 상태 확인 |
+| GET | `/health`, `/ready`, `/metrics` | 상태 확인 (`/ready` 는 DB 실점검, 실패 시 503) · Prometheus 메트릭 |
 | GET | `/api/v1/agents` | 등록된 에이전트 목록 |
 | POST | `/api/v1/agents/{name}/run` | 단일 에이전트 실행 |
 | POST | `/api/v1/orchestrations/incident-response` | 탐지 → RCA → 조치 계획 → **사람 승인 대기** → 실행 → 효과 검증 → 기록 (재시작 후 재개 가능) |
@@ -82,6 +82,13 @@ docs/                아키텍처 · 로드맵(생성) · 보드(생성) · 계�
 | POST | `/api/v1/events/alertmanager` · `/api/v1/events/changes` | 알람·배포/설정 변경 웹훅 수집 (멱등), 옵션으로 인시던트 자동 대응 |
 | GET | `/api/v1/llm/usage?group_by=agent` | LLM 토큰·지연·비용 집계 (provider/model/agent 별) |
 | GET/DELETE | `/api/v1/rag/documents` | 지식 문서 목록·삭제 (인제스트는 증분: 같은 내용 skip, 변경 시 교체) |
+
+## 관측성·SLO (M4-03)
+
+SLO 는 `src/aiops/observability/slo.py` 한 곳에 정의한다 — 가용성 99.5%(5xx 제외), 대화형 API p95 < 0.5s,
+LLM 호출 성공 99%. `make observability` 가 멀티 윈도우 burn-rate 알람 규칙(`deploy/prometheus/aiops-slo-rules.yml`)과
+Grafana 대시보드(`deploy/grafana/aiops-slo-dashboard.json`)를 생성하며, 생성물이 정의와 다르면 테스트가 실패한다.
+`docker compose --profile observability up -d` 로 Prometheus·Grafana 에 자동 적재된다.
 
 ## 개발 규칙
 

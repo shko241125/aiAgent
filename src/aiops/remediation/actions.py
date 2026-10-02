@@ -47,5 +47,6 @@ class ActionResult(BaseModel):
     ok: bool
     dry_run: bool
     detail: str = ""
+    blocked: bool = False  # 실행 전 거부(가드레일·승인자 없음) — 실행 실패와 구분
     revert: RemediationAction | None = None  # 이 조치를 되돌리는 조치 (불가능하면 None)
     executed_at: datetime = Field(default_factory=utcnow)

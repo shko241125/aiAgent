@@ -1,4 +1,4 @@
-.PHONY: install dev test lint format run demo docker-up docker-down docs docs-check board hooks check eval
+.PHONY: install dev test lint format run demo docker-up docker-down docs docs-check board hooks check eval observability
 
 install:
 	uv venv .venv -p 3.11 && uv pip install -p .venv -e ".[dev]"
@@ -42,6 +42,10 @@ hooks:
 	git config core.hooksPath .githooks
 
 check: lint test docs docs-check  # 로컬은 동기화 후 검증 (CI 는 동기화 없이 엄격 비교)
+
+# SLO 정의 → Prometheus 규칙·Grafana 대시보드 재생성 (M4-03). 최신 여부는 테스트가 검사
+observability:
+	.venv/bin/python scripts/gen_observability.py
 
 # ---- 평가 (M1) ----
 eval:
