@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p2",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M4",
     "plan:0005"
@@ -14,11 +14,11 @@
   "acceptance": [
     {
       "text": "결정적 요청(temperature 0)만 캐시, TTL·용량 제한, 적중률 메트릭",
-      "done": false
+      "done": true
     },
     {
       "text": "부하 테스트 스크립트: p50/p95/p99·에러율·RPS 측정 → SLO 판정, outputs 기록",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -28,11 +28,15 @@
   "depends_on": [
     "M4-03"
   ],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "llm/cache.py(ResponseCache: TTL·LRU·deep copy, cache_key=provider+messages+tools+params SHA-256), LLMRouter(cache=, temperature 0 만, single-flight _inflight, _call_chain 분리, 적중은 usage 미집계), 메트릭 aiops_llm_cache_requests_total{hit|miss|coalesced}, 설정 AIOPS_LLM_CACHE_TTL_S(0=끔)/MAX_ENTRIES. scripts/loadtest.py(혼합 부하·동시성, --llm-latency-ms·--cache·--url·--api-key·--out, SLO 판정 exit code). 프로세스 내 기준선은 outputs 참조 — 실 배포 측정은 M4-08. 캐시 기본 꺼짐: scripted Fake 를 쓰는 테스트가 같은 입력의 다른 응답을 기대하므로, 운영에서 켤 것",
+  "outputs": {
+    "loadtest_c20": "306 RPS, interactive p50 80ms / p95 127ms / p99 175ms, error 0",
+    "loadtest_c50": "293 RPS(포화), interactive p95 450ms / p99 577ms, error 0 — SLO 0.5s 근접",
+    "llm_cache": "LLM 지연 300ms·질문 5종·동시 20: answer p50 314→21ms, LLM 호출 99→5회, p95 는 미스가 지배(334→309ms)"
+  },
   "log": [
     {
       "ts": "2026-10-02T03:55:08.846010Z",
@@ -40,11 +44,81 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:05:32.316912Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:38.126917Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "캐시만으론 동시 미스(스탬피드)가 남음: 5개 질문·동시 20 에서 hit 0.87(LLM 11회). single-flight(같은 키 진행 중이면 그 Future 를 함께 기다림) 추가 → LLM 호출 99→5. 선행 호출 실패 시 대기자는 각자 재호출(실패 전파 대신)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:38.540040Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "측정(프로세스 내, SQLite, fake LLM): 동시 20 → 306 RPS, 대화형 p95 127ms·p99 175ms, 에러 0. 동시 50 → 293 RPS(포화), p95 450ms(SLO 0.5s 근접). 처리량이 같은데 동시성만 늘면 대기열이 길어져 지연이 는다(리틀의 법칙) → 프로세스당 ~동시 40 이 한계, 그 이상은 워커/인스턴스 수평 확장. DB 경로(incidents·approvals·ready) p95 130~165ms 가 계산 경로(~40ms)의 3~4배 — 병목은 SQLite I/O",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:38.952693Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.loadtest_c20 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:39.388184Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.loadtest_c50 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:39.808380Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.llm_cache 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:40.230054Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 결정적 요청(temperature 0)만 캐시, TTL·용량 제한, 적중률 메트릭",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:40.237776Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 부하 테스트 스크립트: p50/p95/p99·에러율·RPS 측정 → SLO 판정, outputs 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:40.715507Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "llm/cache.py(ResponseCache: TTL·LRU·deep copy, cache_key=provider+messages+tools+params SHA-256), LLMRouter(cache=, temperature 0 만, single-flight _inflight, _call_chain 분리, 적중은 usage 미집계), 메트릭 aiops_llm_cache_requests_total{hit|miss|coalesced}, 설정 AIOPS_LLM_CACHE_TTL_S(0=끔)/MAX_ENTRIES. scripts/loadtest.py(혼합 부하·동시성, --llm-latency-ms·--cache·--url·--api-key·--out, SLO 판정 exit code). 프로세스 내 기준선은 outputs 참조 — 실 배포 측정은 M4-08. 캐시 기본 꺼짐: scripted Fake 를 쓰는 테스트가 같은 입력의 다른 응답을 기대하므로, 운영에서 켤 것",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:08:40.715551Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 10,
   "created_at": "2026-10-02T03:55:08.845975Z",
-  "updated_at": "2026-10-02T03:55:08.846154Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T04:08:40.715842Z",
+  "started_at": "2026-10-02T04:05:32.316897Z",
+  "done_at": "2026-10-02T04:08:40.715540Z"
 }

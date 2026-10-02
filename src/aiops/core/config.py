@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     llm_timeout_s: float = 60.0
     # 에이전트별 프로바이더: "rca=anthropic,detection=local" (미지정 에이전트는 기본값)
     agent_llm_providers: str = ""
+    # 응답 캐시 (M4-04): temperature 0 요청만, 0 = 끔
+    llm_cache_ttl_s: float = 0
+    llm_cache_max_entries: int = 1000
     # 비용 추정용 단가(JSON): {"<model>": [USD/1M 입력토큰, USD/1M 출력토큰]} — 계약 단가로 설정
     llm_prices: str = "{}"
 

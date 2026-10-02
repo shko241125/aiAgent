@@ -37,13 +37,13 @@ M1~M3 으로 "알람 → 원인 → 승인된 조치 → 복구" 가 돈다. M4 
 | M4-01 | API 인증·인가 (API Key + 역할) — 승인자는 인증 주체로 | ✅ done | claude-code | api/auth.py: Role(viewer/operator/approver/admin), Principal, ApiKeyAuthenticator(SHA-256 해시·compare_digest), build_aut… |
 | M4-02 | Alembic 마이그레이션 + 모델↔마이그레이션 드리프트 검사 | ✅ done | claude-code | pyproject 에 alembic 추가. alembic.ini(script_location=src/aiops/db/migrations, URL 은 AIOPS_DATABASE_URL), migrations/env.… |
 | M4-03 | /metrics·SLO 정의·burn-rate 알람 규칙·대시보드 생성 | ✅ done | claude-code | observability/metrics.py(전용 REGISTRY, HTTP 요청·지연(라우트 템플릿·class=interactive\|llm), LLM 호출·지연·토큰, 워크플로우 단계, 승인 결정·소요, 조치 … |
-| M4-04 | LLM 응답 캐시 + 부하 테스트(p95·에러율 측정) | 🟦 ready | - |  |
+| M4-04 | LLM 응답 캐시 + 부하 테스트(p95·에러율 측정) | ✅ done | claude-code | llm/cache.py(ResponseCache: TTL·LRU·deep copy, cache_key=provider+messages+tools+params SHA-256), LLMRouter(cache=, tem… |
 | M4-05 | 토큰 예산 컨텍스트 관리 + 요약 메모리 | 🟦 ready | - |  |
 | M4-06 | 장애 확률 예측 모델 + 용량 예측 + 선제 알람 | 🟦 ready | - |  |
 | M4-07 | 운영 보고서: 코드 집계 + LLM 서술 + 주간 자동 발송 | 🟦 ready | - |  |
 | M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | 🟦 ready | - |  |
 
-진행: 3/8
+진행: 4/8
 <!-- /AUTO -->
 
 ## 4. 완료 판정

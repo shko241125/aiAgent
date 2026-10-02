@@ -62,6 +62,9 @@ LLM_LATENCY = Histogram(
 LLM_TOKENS = Counter(
     "aiops_llm_tokens_total", "LLM 토큰", ["provider", "direction"], registry=REGISTRY
 )
+LLM_CACHE = Counter(
+    "aiops_llm_cache_requests_total", "LLM 응답 캐시 조회", ["result"], registry=REGISTRY
+)
 WORKFLOW_STEPS = Counter(
     "aiops_workflow_steps_total",
     "워크플로우 단계 종료 수",

@@ -5,6 +5,7 @@
 - 프로바이더마다 서킷 브레이커로 장애 격리
 """
 
+import asyncio
 import logging
 import time
 from typing import Any
@@ -12,9 +13,10 @@ from typing import Any
 from aiops.core.config import Settings
 from aiops.core.resilience import CircuitBreaker, retry_async
 from aiops.llm.base import ChatMessage, LLMError, LLMProvider, LLMResponse, ToolSpec
+from aiops.llm.cache import ResponseCache, cache_key
 from aiops.llm.providers.fake import FakeLLMProvider
 from aiops.llm.usage import UsageRecord, UsageTracker, current_agent
-from aiops.observability.metrics import observe_llm
+from aiops.observability.metrics import LLM_CACHE, observe_llm
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +30,7 @@ class LLMRouter(LLMProvider):
         default: str,
         fallbacks: list[str] | None = None,
         usage: UsageTracker | None = None,
+        cache: ResponseCache | None = None,
     ) -> None:
         if default not in providers:
             raise ValueError(f"default provider '{default}' is not configured")
@@ -36,6 +39,8 @@ class LLMRouter(LLMProvider):
         self.fallbacks = [f for f in (fallbacks or []) if f in providers and f != default]
         self.breakers = {name: CircuitBreaker() for name in providers}
         self.usage = usage or UsageTracker()
+        self.cache = cache  # M4-04: temperature 0 요청만
+        self._inflight: dict[str, asyncio.Future] = {}
 
     def get(self, name: str | None = None) -> LLMProvider:
         return self.providers[name or self.default]
@@ -61,6 +66,46 @@ class LLMRouter(LLMProvider):
         max_tokens: int = 2048,
         response_format: dict[str, Any] | None = None,
         provider: str | None = None,
+    ) -> LLMResponse:
+        kw = dict(tools=tools, temperature=temperature, max_tokens=max_tokens)
+        kw["response_format"] = response_format
+        if self.cache is None or temperature != 0:
+            return await self._call_chain(messages, provider, **kw)
+        params = {"max_tokens": max_tokens, "response_format": response_format}
+        key = cache_key(provider or self.default, messages, tools, params)
+        if (hit := self.cache.get(key)) is not None:
+            return hit  # 토큰·비용 0 — 사용량 집계에 넣지 않는다
+        if (inflight := self._inflight.get(key)) is not None:
+            # single-flight: 같은 키를 이미 호출 중이면 그 결과를 함께 쓴다 (캐시 스탬피드 방지)
+            try:
+                resp = await asyncio.shield(inflight)
+                LLM_CACHE.labels("coalesced").inc()
+                return resp.model_copy(deep=True)
+            except Exception:  # noqa: BLE001 - 선행 호출 실패 → 직접 호출
+                pass
+        fut: asyncio.Future = asyncio.get_running_loop().create_future()
+        fut.add_done_callback(lambda f: f.cancelled() or f.exception())  # 미회수 경고 방지
+        self._inflight[key] = fut
+        try:
+            resp = await self._call_chain(messages, provider, **kw)
+        except BaseException as exc:
+            fut.set_exception(exc if isinstance(exc, Exception) else LLMError("선행 호출 취소"))
+            raise
+        finally:
+            self._inflight.pop(key, None)
+        self.cache.put(key, resp)
+        fut.set_result(resp)
+        return resp
+
+    async def _call_chain(
+        self,
+        messages: list[ChatMessage],
+        provider: str | None,
+        *,
+        tools: list[ToolSpec] | None,
+        temperature: float,
+        max_tokens: int,
+        response_format: dict[str, Any] | None,
     ) -> LLMResponse:
         chain = [provider or self.default, *self.fallbacks]
         last_exc: Exception | None = None
@@ -179,4 +224,9 @@ def build_llm_router(settings: Settings) -> LLMRouter:
         default=default,
         fallbacks=settings.fallback_providers,
         usage=UsageTracker(settings.price_table),
+        cache=(
+            ResponseCache(settings.llm_cache_ttl_s, settings.llm_cache_max_entries)
+            if settings.llm_cache_ttl_s > 0
+            else None
+        ),
     )
