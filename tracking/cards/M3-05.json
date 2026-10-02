@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M3",
     "plan:0004"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "승인 요청 저장·승인/거부 API → 워크플로우 재개",
-      "done": false
+      "done": true
     },
     {
       "text": "Slack 알림(버튼) + 상호작용 콜백 서명 검증",
-      "done": false
+      "done": true
     },
     {
       "text": "미응답 에스컬레이션·만료 시 자동 거부",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,10 +30,10 @@
   ],
   "parent_id": "R-2.3",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "db ApprovalRow(결정적 id=apr-<run>-<step> 로 멱등), services/approvals.py(ApprovalService=엔진 ApprovalGate+decide/find/sweep/after_decision, 타임라인 기록), services/notify.py(LogNotifier·SlackWebhookNotifier(Block Kit 버튼)·verify_slack_signature), API /api/v1/approvals(목록·조회·approve·reject·slack/actions·sweep), lifespan 주기 스윕, 컨테이너가 SqlRunStore+ApprovalService 엔진을 Orchestrator 에 주입, on_decided=platform.resume_workflow. 인시던트 v2 팩토리 등록은 M3-06",
   "outputs": {},
   "log": [
     {
@@ -42,11 +42,67 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:34:33.391775Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:38:28.468901Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "안전 기본값: 미응답 승인은 15분 에스컬레이션 → 60분 만료 시 자동 거부(system:timeout). 결정 후 재개는 백그라운드(Slack 3초 응답 제한). Slack 콜백은 HMAC 서명 + 5분 타임스탬프(재생 공격) + compare_digest(타이밍 공격) 검증",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:38:28.878595Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "버그: ApprovalService 에 list 메서드를 정의하자 클래스 본문 아래쪽 타입힌트 list[str] 가 메서드를 가리켜 import 실패 → find 로 개명. 승인 API 는 아직 인증 없음(actor 자기신고) — TODO(4.4)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:38:29.278384Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 승인 요청 저장·승인/거부 API → 워크플로우 재개",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:38:29.283465Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ Slack 알림(버튼) + 상호작용 콜백 서명 검증",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:38:29.288372Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 미응답 에스컬레이션·만료 시 자동 거부",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:38:29.688995Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "db ApprovalRow(결정적 id=apr-<run>-<step> 로 멱등), services/approvals.py(ApprovalService=엔진 ApprovalGate+decide/find/sweep/after_decision, 타임라인 기록), services/notify.py(LogNotifier·SlackWebhookNotifier(Block Kit 버튼)·verify_slack_signature), API /api/v1/approvals(목록·조회·approve·reject·slack/actions·sweep), lifespan 주기 스윕, 컨테이너가 SqlRunStore+ApprovalService 엔진을 Orchestrator 에 주입, on_decided=platform.resume_workflow. 인시던트 v2 팩토리 등록은 M3-06",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:38:29.689033Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 8,
   "created_at": "2026-10-02T00:23:31.298164Z",
-  "updated_at": "2026-10-02T00:23:31.298343Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T00:38:29.689289Z",
+  "started_at": "2026-10-02T00:34:33.391762Z",
+  "done_at": "2026-10-02T00:38:29.689023Z"
 }

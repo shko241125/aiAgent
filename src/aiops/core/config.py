@@ -76,6 +76,14 @@ class Settings(BaseSettings):
     auto_incident_min_severity: Literal["info", "warning", "major", "critical"] = "major"
     auto_incident_dedup_minutes: int = 30  # 같은 서비스 미해결 인시던트가 있으면 새로 만들지 않음
 
+    # --- 사람 승인 (M3-05) ---
+    approval_escalate_after_min: int = 15  # 미응답 시 에스컬레이션
+    approval_timeout_min: int = 60  # 만료 시 자동 거부 (안전한 기본값)
+    approval_sweep_interval_s: int = 60  # 0 = 주기 스윕 끔 (외부 cron 으로 POST /approvals/sweep)
+    slack_webhook_url: str | None = None
+    slack_signing_secret: str | None = None  # 상호작용 콜백 서명 검증
+    slack_escalation_mention: str = "<!here>"
+
     # --- 운영 자동화 안전장치 (2.3) ---
     auto_approve_actions: bool = False
 

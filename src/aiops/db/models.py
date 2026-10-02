@@ -128,3 +128,22 @@ class IncidentEventRow(Base):
     actor: Mapped[str] = mapped_column(String(64))
     message: Mapped[str] = mapped_column(Text, default="")
     data: Mapped[dict[str, Any]] = mapped_column(default=dict)
+
+
+class ApprovalRow(Base):
+    """사람 승인 요청 (M3-05) — 워크플로우 승인 단계 1개당 1건 (id 결정적 → 중복 요청 방지)."""
+
+    __tablename__ = "approvals"
+
+    id: Mapped[str] = mapped_column(String(160), primary_key=True)
+    run_id: Mapped[str] = mapped_column(String(64), index=True)
+    step_id: Mapped[str] = mapped_column(String(64))
+    incident_id: Mapped[str | None] = mapped_column(String(32), index=True, nullable=True)
+    status: Mapped[str] = mapped_column(String(16), index=True)  # pending|approved|rejected|expired
+    details: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    escalated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    decided_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    reason: Mapped[str] = mapped_column(Text, default="")

@@ -3,7 +3,9 @@
 API·CLI·테스트가 같은 Platform 객체를 공유 → 구현체 교체(Fake LLM, Qdrant 등)가 쉬워진다.
 """
 
+import logging
 from dataclasses import dataclass
+from datetime import timedelta
 
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
@@ -35,7 +37,11 @@ from aiops.prompts.registry import PromptRegistry
 from aiops.rag.hybrid import HybridRetriever
 from aiops.rag.knowledge import KnowledgeRepository
 from aiops.rag.service import RAGService, build_embedder, build_reranker, build_vector_store
+from aiops.services.approvals import ApprovalService
 from aiops.services.incidents import IncidentService
+from aiops.services.notify import LogNotifier, Notifier, SlackWebhookNotifier
+from aiops.workflow.engine import WorkflowEngine
+from aiops.workflow.store import SqlRunStore
 
 
 @dataclass
@@ -54,7 +60,16 @@ class Platform:
     board_store: BoardStore
     knowledge: KnowledgeRepository
     events: SqlEventStore
-    incidents: "IncidentService"
+    incidents: IncidentService
+    approvals: ApprovalService
+    notifier: Notifier
+
+    async def resume_workflow(self, run_id: str) -> None:
+        """승인 결정 뒤 워크플로우 재개 (팩토리가 등록된 워크플로우만)."""
+        try:
+            await self.orchestrator.engine.resume(run_id)
+        except KeyError as exc:
+            logging.getLogger(__name__).warning("재개 불가 %s: %s", run_id, exc)
 
     def board(self, board_id: str) -> KanbanBoard:
         """보드 = 작업 공간 단위 (인시던트 1건, 목표 1개 등). 저장소는 DB 로 영속."""
@@ -114,13 +129,29 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
     knowledge = KnowledgeRepository(sessionmaker)
     await rag.ingest(await knowledge.all())  # 운영 중 축적된 지식 재적재 (M1-09)
 
-    return Platform(
+    incident_service = IncidentService(sessionmaker)
+    notifier: Notifier = (
+        SlackWebhookNotifier(settings.slack_webhook_url, settings.slack_escalation_mention)
+        if settings.slack_webhook_url
+        else LogNotifier()
+    )
+    approvals = ApprovalService(
+        sessionmaker,
+        notifier,
+        escalate_after=timedelta(minutes=settings.approval_escalate_after_min),
+        timeout=timedelta(minutes=settings.approval_timeout_min),
+        record=incident_service.record,
+    )
+    # 체크포인트·승인 대기·재개가 가능한 엔진 (M3-01/05)
+    wf_engine = WorkflowEngine(store=SqlRunStore(sessionmaker), approvals=approvals)
+
+    platform = Platform(
         settings=settings,
         llm=llm,
         prompts=prompts,
         tools=tools,
         agents=agents,
-        orchestrator=Orchestrator(agents, llm, prompts),
+        orchestrator=Orchestrator(agents, llm, prompts, engine=wf_engine),
         rag=rag,
         memory=InMemoryMemoryStore(),
         source=source,
@@ -129,5 +160,9 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
         board_store=SqlBoardStore(sessionmaker),
         knowledge=knowledge,
         events=events,
-        incidents=IncidentService(sessionmaker),
+        incidents=incident_service,
+        approvals=approvals,
+        notifier=notifier,
     )
+    approvals.on_decided = lambda a: platform.resume_workflow(a.run_id)
+    return platform

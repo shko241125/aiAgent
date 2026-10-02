@@ -199,3 +199,46 @@ def test_resolve_returns_fresh_status_and_blocks_reresolve_after_close(client):
     )
     again = client.post(f"/api/v1/incidents/{inc['id']}/resolve", json={"resolution": "x"})
     assert again.status_code == 409
+
+
+def test_slack_button_callback_decides_approval(settings, llm):
+    import hashlib
+    import hmac
+    import json as _json
+    import time
+    from urllib.parse import urlencode
+
+    from aiops.workflow.engine import WorkflowRun
+
+    s = settings.model_copy(update={"slack_signing_secret": "sig", "approval_sweep_interval_s": 0})
+    with TestClient(create_app(s, llm=llm)) as c:
+        platform = c.app.state.platform
+        run = WorkflowRun(workflow="none", state={})
+        c.portal.call(platform.approvals.request, run, "approve", {"summary": "재시작"})
+        aid = f"apr-{run.id}-approve"
+        payload = {
+            "type": "block_actions",
+            "user": {"username": "kim"},
+            "actions": [{"action_id": "approve", "value": aid}],
+        }
+        body = urlencode({"payload": _json.dumps(payload)}).encode()
+        ts = str(int(time.time()))
+        sig = "v0=" + hmac.new(b"sig", f"v0:{ts}:".encode() + body, hashlib.sha256).hexdigest()
+        headers = {
+            "X-Slack-Request-Timestamp": ts,
+            "X-Slack-Signature": sig,
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
+        assert (
+            c.post(
+                "/api/v1/approvals/slack/actions",
+                content=body,
+                headers={**headers, "X-Slack-Signature": "v0=bad"},
+            ).status_code
+            == 401
+        )
+        res = c.post("/api/v1/approvals/slack/actions", content=body, headers=headers)
+        assert res.status_code == 200 and res.json()["text"] == "approved by slack:kim"
+        assert c.get(f"/api/v1/approvals/{aid}").json()["decided_by"] == "slack:kim"
+        again = c.post(f"/api/v1/approvals/{aid}/reject", json={"actor": "lee"})
+        assert again.status_code == 409
