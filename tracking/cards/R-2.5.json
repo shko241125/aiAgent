@@ -10,7 +10,10 @@
     "maturity:skeleton"
   ],
   "refs": [
-    "src/aiops/prompts/templates/report.md"
+    "src/aiops/prompts/templates/report.md",
+    "src/aiops/services/reports.py",
+    "src/aiops/core/scheduler.py",
+    "src/aiops/prompts/templates/ops_report.md"
   ],
   "acceptance": [
     {
@@ -33,11 +36,18 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:27:54.146430Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 2,
   "created_at": "2026-09-30T10:30:02.865930Z",
-  "updated_at": "2026-09-30T10:30:02.866019Z",
+  "updated_at": "2026-10-02T04:27:54.146587Z",
   "started_at": null,
   "done_at": null
 }

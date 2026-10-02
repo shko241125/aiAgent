@@ -40,10 +40,10 @@ M1~M3 으로 "알람 → 원인 → 승인된 조치 → 복구" 가 돈다. M4 
 | M4-04 | LLM 응답 캐시 + 부하 테스트(p95·에러율 측정) | ✅ done | claude-code | llm/cache.py(ResponseCache: TTL·LRU·deep copy, cache_key=provider+messages+tools+params SHA-256), LLMRouter(cache=, tem… |
 | M4-05 | 토큰 예산 컨텍스트 관리 + 요약 메모리 | ✅ done | claude-code | agents/memory/base.py: estimate_tokens(비ASCII 1자=1토큰, ASCII 4자=1토큰, 보수적)·message_tokens·total_tokens, ConversationMemor… |
 | M4-06 | 장애 확률 예측 모델 + 용량 예측 + 선제 알람 | ✅ done | claude-code | analytics/prediction.py: PRED_FEATURES 11종(강건 통계, 임계치 정규화) failure_features, predict_failure(FailurePrediction: 확률·eta·… |
-| M4-07 | 운영 보고서: 코드 집계 + LLM 서술 + 주간 자동 발송 | 🟦 ready | - |  |
+| M4-07 | 운영 보고서: 코드 집계 + LLM 서술 + 주간 자동 발송 | ✅ done | claude-code | services/reports.py(collect_facts: 인시던트·이전 기간·MTTR·자동 복구·조치·승인·예측 선행, render_markdown·render_chart_svg·sparkline, unver… |
 | M4-08 | 실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버) | 🟦 ready | - |  |
 
-진행: 6/8
+진행: 7/8
 <!-- /AUTO -->
 
 ## 4. 완료 판정

@@ -3,8 +3,6 @@
 실행: uvicorn aiops.main:app --reload
 """
 
-import asyncio
-import logging
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
@@ -21,12 +19,36 @@ from aiops.api.routers import (
     health,
     incidents,
     rag,
+    reports,
 )
 from aiops.api.routers import llm as llm_api
 from aiops.core.config import Settings, get_settings
-from aiops.core.container import build_platform
+from aiops.core.container import Platform, build_platform
 from aiops.core.logging import setup_logging
+from aiops.core.scheduler import Scheduler
 from aiops.llm.base import LLMProvider
+
+
+def build_scheduler(p: Platform) -> Scheduler:
+    """주기 작업 (M4-07): 승인 스윕(M3-05) · 예측 스캔(M4-06) · 주간 보고서(M4-07)."""
+    s, sch = p.settings, Scheduler()
+    if s.approval_sweep_interval_s > 0:
+        sch.every("approval_sweep", s.approval_sweep_interval_s, lambda now: p.approvals.sweep())
+    if s.prediction_scan_interval_s > 0 and p.predictor is not None:
+        services = s.prediction_service_list
+        sch.every(
+            "prediction_scan", s.prediction_scan_interval_s, lambda now: p.predictor.scan(services)
+        )
+    if s.report_weekly and p.reports is not None:
+        sch.weekly(
+            "weekly_report",
+            p.reports.run_weekly,
+            weekday=s.report_weekday,
+            hour=s.report_hour,
+            tz=s.report_timezone,
+            catch_up=True,  # 꺼져 있던 동안 놓친 주 보충 — 결정적 id 라 중복 발송 없음
+        )
+    return sch
 
 
 def create_app(settings: Settings | None = None, llm: LLMProvider | None = None) -> FastAPI:
@@ -37,21 +59,11 @@ def create_app(settings: Settings | None = None, llm: LLMProvider | None = None)
     async def lifespan(app: FastAPI):
         platform = await build_platform(settings, llm=llm)
         app.state.platform = platform
-        sweeper = None
-        if settings.approval_sweep_interval_s > 0:  # 승인 에스컬레이션·만료 주기 처리 (M3-05)
-
-            async def sweep_loop():
-                while True:
-                    await asyncio.sleep(settings.approval_sweep_interval_s)
-                    try:
-                        await platform.approvals.sweep()
-                    except Exception:  # noqa: BLE001 - 스윕 실패가 서버를 죽이면 안 된다
-                        logging.getLogger(__name__).exception("approval sweep failed")
-
-            sweeper = asyncio.create_task(sweep_loop())
+        scheduler = build_scheduler(platform)
+        app.state.scheduler = scheduler
+        scheduler.start()
         yield
-        if sweeper:
-            sweeper.cancel()
+        await scheduler.stop()
         await platform.aclose()
 
     authenticator = build_authenticator(settings)  # prod 무인증 설정이면 여기서 기동 거부 (M4-01)
@@ -72,6 +84,7 @@ def create_app(settings: Settings | None = None, llm: LLMProvider | None = None)
         incidents.router,
         events.router,
         approvals.router,
+        reports.router,
         llm_api.router,
     ):
         app.include_router(r)

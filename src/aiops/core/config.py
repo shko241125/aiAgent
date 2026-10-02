@@ -79,6 +79,12 @@ class Settings(BaseSettings):
     prediction_alarm_threshold: float = 0.6  # scripts/eval_prediction.py 검증 세트 기준 θ
     prediction_scan_interval_s: int = 0  # 0 = 주기 스캔 끔 (POST /analytics/predict/scan)
 
+    # --- 운영 보고서 (M4-07 / 2.5) ---
+    report_weekly: bool = True  # 주간 보고서 자동 생성·발송 (알림 채널: Slack 또는 로그)
+    report_weekday: int = 0  # 월=0
+    report_hour: int = 9
+    report_timezone: str = "Asia/Seoul"  # 주 경계·발송 시각·일별 집계 기준
+
     # --- Agent (1.x) ---
     agent_max_steps: int = 8
     memory_window: int = 20

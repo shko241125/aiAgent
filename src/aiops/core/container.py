@@ -46,6 +46,7 @@ from aiops.services.approvals import ApprovalService
 from aiops.services.incidents import IncidentService
 from aiops.services.notify import LogNotifier, Notifier, SlackWebhookNotifier
 from aiops.services.prediction import PredictiveMonitor
+from aiops.services.reports import ReportService
 from aiops.workflow.engine import WorkflowEngine
 from aiops.workflow.store import SqlRunStore
 
@@ -71,6 +72,7 @@ class Platform:
     notifier: Notifier
     remediation: RemediationService
     predictor: PredictiveMonitor | None = None  # 모델 파일이 없으면 None (M4-06)
+    reports: ReportService | None = None  # M4-07
 
     async def resume_workflow(self, run_id: str) -> None:
         """승인 결정 뒤 워크플로우 재개 (팩토리가 등록된 워크플로우만)."""
@@ -189,6 +191,7 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
             alarm_threshold=settings.prediction_alarm_threshold,
             events=events,
         )
+    platform.reports = ReportService(platform)
     approvals.on_decided = lambda a: platform.resume_workflow(a.run_id)
     incident_response.register(platform)  # 재시작 후 재개용 팩토리·완료 훅 (M3-06)
     return platform

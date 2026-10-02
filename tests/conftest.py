@@ -12,6 +12,7 @@ def settings(tmp_path) -> Settings:
         database_url=f"sqlite+aiosqlite:///{tmp_path}/test.db",
         llm_default_provider="fake",
         knowledge_dir="data/knowledge",
+        report_weekly=False,  # 기동 시 보고서 보충(catch-up)이 scripted LLM 응답을 가져가지 않게
     )
 
 

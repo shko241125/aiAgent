@@ -150,3 +150,19 @@ class ApprovalRow(Base):
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     decided_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
     reason: Mapped[str] = mapped_column(Text, default="")
+
+
+class ReportRow(Base):
+    """운영 보고서 (M4-07 / 2.5). id 결정적(weekly-<ISO주>) → 재시작해도 중복 생성·발송 없음."""
+
+    __tablename__ = "reports"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    kind: Mapped[str] = mapped_column(String(16), index=True)  # weekly | adhoc
+    period_start: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    period_end: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    markdown: Mapped[str] = mapped_column(Text)
+    facts: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    chart_svg: Mapped[str] = mapped_column(Text, default="")
