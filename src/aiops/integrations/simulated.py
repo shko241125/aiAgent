@@ -36,6 +36,8 @@ class Fault(BaseModel):
     # 이 장애를 실제로 해소하는 조치 종류 (M3-02).
     # 잘못된 조치는 효과가 없다 → 효과 검증이 의미를 가진다
     fixed_by: list[str] = Field(default_factory=list)
+    # step: 시작부터 magnitude 배 / ramp: 1배 → 현재 magnitude 배로 서서히 악화 (M4-06)
+    shape: str = "step"
 
 
 class ChangeEvent(BaseModel):
@@ -98,7 +100,11 @@ class SimulatedOpsSource(OpsSource):
                 f_start = end - timedelta(minutes=f.onset_min_ago)
                 f_end = f_start + timedelta(minutes=f.duration_min) if f.duration_min else end
                 if f_start <= ts <= f_end:
-                    value *= f.magnitude
+                    if f.shape == "ramp":
+                        frac = (ts - f_start) / timedelta(minutes=max(f.onset_min_ago, 1e-9))
+                        value *= 1 + (f.magnitude - 1) * min(1.0, frac)
+                    else:
+                        value *= f.magnitude
             points.append(MetricPoint(timestamp=ts, value=value))
         return MetricSeries(service=service, metric=metric, points=points)
 

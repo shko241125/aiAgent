@@ -40,7 +40,7 @@
 | 3.1 | 이상 탐지 | `src/aiops/analytics/anomaly/` | 🟢 최소구현 (+1 완료) | 1/1 | 2 | 실 라벨 데이터 재평가, 장기 창 감시에 계절성 탐지기 적용(다중 주기: 일·주), 다변량 탐지 | ☑ 라벨된 데이터셋에서 Precision/Recall 리포트 |
 | 3.2 | ML 기반 Situation Awareness | `src/aiops/analytics/situation.py`, `src/aiops/analytics/situation_model.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 실 알람 이력으로 재학습·오탐률 비교(합성에선 규칙·학습 모두 FPR 0), 모델 버전 관리·드리프트 감시 | 규칙 대비 ML 버전 오탐률 감소 |
 | 3.3 | 이벤트 분석·패턴 탐지 | `src/aiops/analytics/events.py`, `src/aiops/analytics/logs.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 실 로그 Drain 정확도 측정, 로그 템플릿 이상 빈도 탐지(신규 템플릿 출현), 순차 패턴 마이닝 | ☑ 알람 압축률(원본 대비 클러스터 수) 측정 |
-| 3.4 | 장애 예측·위험도 분석 | `src/aiops/analytics/prediction.py` | 🟢 최소구현 | 0/1 | 1 | 장애 확률 분류 모델, 용량 예측, 예측 기반 선제 알람 | N분 전 예측 적중률 측정 |
+| 3.4 | 장애 예측·위험도 분석 | `src/aiops/analytics/prediction.py`, `src/aiops/services/prediction.py`, `src/aiops/evals/prediction.py` | 🟢 최소구현 (+1 완료) | 1/1 | 1 | 장애 확률 분류 모델, 용량 예측, 예측 기반 선제 알람 | N분 전 예측 적중률 측정 |
 | 3.5 | Agent 의사결정용 데이터 분석 | `src/aiops/analytics/insights.py`, `src/aiops/analytics/factsheet.py`, `src/aiops/analytics/changepoint.py` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 실 토크나이저로 절감률 재측정, fact sheet 다중 서비스 비교 뷰, 변화점-변경이력 자동 연결 | ☑ fact sheet 로 LLM 입력 토큰 절감률 측정 |
 
 ### 4. AI 서비스 Backend
@@ -64,7 +64,7 @@
 | **M1** | 실 LLM + 실 지식으로 RCA 품질 확보 | 4.1, 4.2, 4.3, 2.2, 2.6 | 9/10 | 🔄 진행중 |
 | **M2** | 실데이터 연동과 상황 인식 고도화 | 2.1, 3.1, 3.2, 3.3, 3.5 | 7/8 | 🔄 진행중 |
 | **M3** | 안전한 자동 조치 (HITL) | 2.3, 2.4, 1.4, 4.5 | 6/7 | 🔄 진행중 |
-| **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | 5/8 | 🔄 진행중 |
+| **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | 6/8 | 🔄 진행중 |
 <!-- /AUTO -->
 
 마일스톤별 상세 계획: [PLAN-0002 (M1)](plans/0002-m1-rca-quality.md) · [PLAN-0003 (M2)](plans/0003-m2-situation-awareness.md) · [PLAN-0004 (M3)](plans/0004-m3-safe-remediation.md) · [PLAN-0005 (M4)](plans/0005-m4-predict-report-harden.md)

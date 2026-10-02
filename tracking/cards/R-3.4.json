@@ -10,7 +10,9 @@
     "maturity:minimal"
   ],
   "refs": [
-    "src/aiops/analytics/prediction.py"
+    "src/aiops/analytics/prediction.py",
+    "src/aiops/services/prediction.py",
+    "src/aiops/evals/prediction.py"
   ],
   "acceptance": [
     {
@@ -33,11 +35,18 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:37.751005Z",
+      "actor": "claude-code",
+      "kind": "edit",
+      "message": "edited: refs",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 2,
   "created_at": "2026-09-30T10:30:02.868845Z",
-  "updated_at": "2026-09-30T10:30:02.868956Z",
+  "updated_at": "2026-10-02T04:22:37.751159Z",
   "started_at": null,
   "done_at": null
 }

@@ -28,5 +28,6 @@ jobs:
           .venv/bin/python scripts/eval_retrieval.py
           .venv/bin/python scripts/eval_anomaly.py
           .venv/bin/python scripts/eval_situation.py
+          .venv/bin/python scripts/eval_prediction.py
       - name: Docs ↔ Kanban board in sync
         run: .venv/bin/python -m aiops.kanban.cli docs check

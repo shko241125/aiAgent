@@ -76,6 +76,7 @@ docs/                아키텍처 · 로드맵(생성) · 보드(생성) · 계�
 | POST | `/api/v1/orchestrations/kanban` | Pull 방식 — 에이전트가 보드의 READY 카드를 당겨 처리 (중단 후 재개 가능) |
 | GET/POST | `/api/v1/boards/{board_id}/...` | 칸반 보드 조회·카드 생성/이동/메모·브리핑·claim-next·지표 |
 | POST | `/api/v1/analytics/{anomalies,situation,events,forecast}` | 이상탐지 · 상황인식 · 이벤트 분석 · 예측 |
+| POST/GET | `/api/v1/analytics/predict` · `/predict/{service}` · `/predict/scan` · `/capacity` | 15분 내 장애 확률(근거·외삽 기준선 병기) · 선제 알람 이벤트 · 피크 기준 용량 소진 예측 |
 | POST | `/api/v1/rag/{ingest,search,answer}` | 지식 인제스트 · 하이브리드 검색 · 근거 기반 답변 |
 | GET/POST | `/api/v1/incidents` | 인시던트 관리 |
 | POST | `/api/v1/incidents/{id}/resolve` | 인시던트 종료 + 포스트모템 지식 자동 축적 (RAG·DB) |

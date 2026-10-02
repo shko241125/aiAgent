@@ -72,6 +72,13 @@ class Settings(BaseSettings):
     # 합성 평가 기준 0.05 에서 정상 알람 60% 생략·놓친 장애 0 (scripts/eval_situation.py)
     detection_triage_threshold: float = 0.0
 
+    # --- 장애 예측 (M4-06 / 3.4) ---
+    failure_model_path: Path = Path("data/models/failure_lr.json")
+    prediction_targets: str = "memory_usage=90,cpu_usage=90,latency_p95_ms=1000,error_rate=5"
+    prediction_services: str = "api-gateway,order-service,payment-service,user-service"
+    prediction_alarm_threshold: float = 0.6  # scripts/eval_prediction.py 검증 세트 기준 θ
+    prediction_scan_interval_s: int = 0  # 0 = 주기 스캔 끔 (POST /analytics/predict/scan)
+
     # --- Agent (1.x) ---
     agent_max_steps: int = 8
     memory_window: int = 20
@@ -146,6 +153,15 @@ class Settings(BaseSettings):
             max_actions_per_hour=self.remediation_max_actions_per_hour,
             cooldown_s=self.remediation_cooldown_s,
         )
+
+    @property
+    def prediction_target_map(self) -> dict[str, float]:
+        pairs = (p.split("=", 1) for p in self.prediction_targets.split(",") if "=" in p)
+        return {k.strip(): float(v) for k, v in pairs}
+
+    @property
+    def prediction_service_list(self) -> list[str]:
+        return [s.strip() for s in self.prediction_services.split(",") if s.strip()]
 
     @property
     def schema_mode(self) -> str:

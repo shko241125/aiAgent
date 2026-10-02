@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M4",
     "plan:0005"
@@ -14,15 +14,15 @@
   "acceptance": [
     {
       "text": "'N분 내 장애 확률' 로지스틱 모델(추세·변동성·임계치 근접 특징) 학습·저장",
-      "done": false
+      "done": true
     },
     {
       "text": "평가: N분 전 적중률·리드타임·오경보율, 선형 외삽 기준선 대비",
-      "done": false
+      "done": true
     },
     {
       "text": "용량 예측(추세+계절성) + 예측 기반 선제 알람 이벤트·API",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -30,11 +30,14 @@
   ],
   "parent_id": "R-3.4",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
-  "outputs": {},
+  "handoff": "analytics/prediction.py: PRED_FEATURES 11종(강건 통계, 임계치 정규화) failure_features, predict_failure(FailurePrediction: 확률·eta·근거·외삽 기준선), forecast_capacity(백피팅 추세+계절, 상단 90% 구간, 추세만 비교). evals/prediction.py(합성 장애 3종·정상 5종, 지속 5분=장애, 사건 단위 적중·리드타임·오경보, θ 검증 선택), scripts/eval_prediction.py(--save → data/models/failure_lr.json, CI·make eval 포함). services/prediction.py PredictiveMonitor(predict·scan, prediction.failure_risk 이벤트, dedup 30분). Platform.predictor, API /analytics/predict·predict/{service}·predict/scan·capacity. 시뮬레이터 Fault.shape=ramp. 설정 AIOPS_FAILURE_MODEL_PATH·PREDICTION_*. 주기 스캔(prediction_scan_interval_s)은 M4-07 스케줄러에서 연결할 것. 합성 데이터 = 회귀 기준선, 실 인시던트 라벨 재학습은 TODO(3.4)",
+  "outputs": {
+    "eval": "평가 240 시계열(장애 3종·정상 5종), 15분 내 장애 예측, 5분 이상 전 적중: 학습 0.744 / 리드타임 중앙값 12분 / 오경보 0.107 vs 선형 외삽 0.667 / 16분 / 0.220. 종류별 — exp(가속) 학습 0.23·외삽 0, plateau(포화) 오경보 0.03 vs 0.40, plateau_linear 0.47 vs 0.60(구분 불가 대조군)",
+    "capacity": "일일 주기(48 step)+추세 0.02/step, 용량 80: 피크 기준 소진 491 step vs 추세만 1214 step (2.5배 이른 경고)"
+  },
   "log": [
     {
       "ts": "2026-10-02T03:55:09.641556Z",
@@ -42,11 +45,95 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:13:14.023375Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:34.905879Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "평가 단위를 시점별 정확도가 아니라 '시계열(사건)' 로: 운영자 체감은 '장애 N분 전에 울렸나·괜히 울렸나'. 적중창 [f-45, f-5]분 — 5분 미만은 대응 불가, 45분 초과는 행동으로 안 이어짐. θ 는 검증 세트에서 오경보 ≤ 0.1 조건으로 고르고 평가 세트는 마지막 1회만",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:35.321258Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "1차 특징(평균·최댓값·최소제곱 기울기)은 스파이크에 속아 오경보(spike 47%) → 중앙값·80백분위·Theil–Sen 기울기로 교체해 spike 오경보 3%. 외삽 기준선의 판정(reach>=1)을 특징으로 넣어 선형 모델에 비선형 경계를 줌",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:35.736806Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "한계를 드러내는 대조군 plateau_linear(일정 기울기로 오르다 뚝 멈춤)를 일부러 포함: 멈추기 전 과거 값이 누수와 동일 → 어떤 예측기도 구분 불가(학습 47%·외삽 60% 오경보). 줄이려면 과거 값 밖의 맥락(배포 이벤트·다변량)이 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:36.136285Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "버그: forecast_capacity 가 계절 데이터에 직선을 바로 맞춰 추세가 0.02→0.003 으로 왜곡(사인파와 x 의 상관). 계절 성분↔추세 백피팅으로 수정, 테스트로 고정",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:36.542486Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.eval 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:36.944350Z",
+      "actor": "claude-code",
+      "kind": "output",
+      "message": "outputs.capacity 기록",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:37.340649Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 'N분 내 장애 확률' 로지스틱 모델(추세·변동성·임계치 근접 특징) 학습·저장",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:37.346672Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 평가: N분 전 적중률·리드타임·오경보율, 선형 외삽 기준선 대비",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:37.352586Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 용량 예측(추세+계절성) + 예측 기반 선제 알람 이벤트·API",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:38.177592Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "analytics/prediction.py: PRED_FEATURES 11종(강건 통계, 임계치 정규화) failure_features, predict_failure(FailurePrediction: 확률·eta·근거·외삽 기준선), forecast_capacity(백피팅 추세+계절, 상단 90% 구간, 추세만 비교). evals/prediction.py(합성 장애 3종·정상 5종, 지속 5분=장애, 사건 단위 적중·리드타임·오경보, θ 검증 선택), scripts/eval_prediction.py(--save → data/models/failure_lr.json, CI·make eval 포함). services/prediction.py PredictiveMonitor(predict·scan, prediction.failure_risk 이벤트, dedup 30분). Platform.predictor, API /analytics/predict·predict/{service}·predict/scan·capacity. 시뮬레이터 Fault.shape=ramp. 설정 AIOPS_FAILURE_MODEL_PATH·PREDICTION_*. 주기 스캔(prediction_scan_interval_s)은 M4-07 스케줄러에서 연결할 것. 합성 데이터 = 회귀 기준선, 실 인시던트 라벨 재학습은 TODO(3.4)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T04:22:38.177633Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 12,
   "created_at": "2026-10-02T03:55:09.641515Z",
-  "updated_at": "2026-10-02T03:55:09.641856Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T04:22:38.177939Z",
+  "started_at": "2026-10-02T04:13:14.023358Z",
+  "done_at": "2026-10-02T04:22:38.177622Z"
 }
