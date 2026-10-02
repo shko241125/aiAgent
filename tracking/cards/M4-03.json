@@ -1,0 +1,52 @@
+{
+  "id": "M4-03",
+  "board_id": "dev",
+  "title": "/metrics·SLO 정의·burn-rate 알람 규칙·대시보드 생성",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M4",
+    "plan:0005"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "/metrics: HTTP 지연 히스토그램(라우트 템플릿)·에러·LLM 호출·워크플로우 단계·승인",
+      "done": false
+    },
+    {
+      "text": "SLO(p95 지연·가용성) 코드 정의 → Prometheus 규칙(멀티 윈도우 burn rate)·Grafana 대시보드 생성, 생성물 drift 테스트",
+      "done": false
+    },
+    {
+      "text": "/ready 가 DB 등 의존성을 실제 점검(실패 시 503)",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "observability"
+  ],
+  "parent_id": "R-4.6",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T03:55:08.442770Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T03:55:08.442734Z",
+  "updated_at": "2026-10-02T03:55:08.442995Z",
+  "started_at": null,
+  "done_at": null
+}

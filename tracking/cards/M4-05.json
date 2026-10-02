@@ -1,0 +1,52 @@
+{
+  "id": "M4-05",
+  "board_id": "dev",
+  "title": "토큰 예산 컨텍스트 관리 + 요약 메모리",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M4",
+    "plan:0005"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "토큰 추정기(한글·영문) + 토큰 예산 트리밍(도구 호출 쌍 보존, 첫 과제 메시지 고정)",
+      "done": false
+    },
+    {
+      "text": "넘치는 오래된 구간은 LLM 요약으로 압축, 실패 시 잘라내기 폴백",
+      "done": false
+    },
+    {
+      "text": "50+ step 에이전트 루프에서 예산 초과 0회 테스트",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "agents"
+  ],
+  "parent_id": "R-1.6",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T03:55:09.231812Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T03:55:09.231779Z",
+  "updated_at": "2026-10-02T03:55:09.231959Z",
+  "started_at": null,
+  "done_at": null
+}

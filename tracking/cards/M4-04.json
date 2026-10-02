@@ -1,0 +1,50 @@
+{
+  "id": "M4-04",
+  "board_id": "dev",
+  "title": "LLM 응답 캐시 + 부하 테스트(p95·에러율 측정)",
+  "description": "",
+  "type": "task",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "milestone:M4",
+    "plan:0005"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "결정적 요청(temperature 0)만 캐시, TTL·용량 제한, 적중률 메트릭",
+      "done": false
+    },
+    {
+      "text": "부하 테스트 스크립트: p50/p95/p99·에러율·RPS 측정 → SLO 판정, outputs 기록",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "performance"
+  ],
+  "parent_id": "R-4.6",
+  "depends_on": [
+    "M4-03"
+  ],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T03:55:08.846010Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T03:55:08.845975Z",
+  "updated_at": "2026-10-02T03:55:08.846154Z",
+  "started_at": null,
+  "done_at": null
+}

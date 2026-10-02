@@ -1,0 +1,52 @@
+{
+  "id": "M4-07",
+  "board_id": "dev",
+  "title": "운영 보고서: 코드 집계 + LLM 서술 + 주간 자동 발송",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M4",
+    "plan:0005"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "기간 지표를 코드가 집계(인시던트·MTTR·조치 결과·승인 통계·예측 알람)",
+      "done": false
+    },
+    {
+      "text": "LLM 은 fact sheet 로 서술만, 실패 시 템플릿 보고서 + 차트(SVG)",
+      "done": false
+    },
+    {
+      "text": "주간 스케줄러: 생성·저장·알림 발송, 결정적 id 로 중복 발송 없음(가짜 시계 테스트)",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "reporting"
+  ],
+  "parent_id": "R-2.5",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T03:55:10.066520Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T03:55:10.066484Z",
+  "updated_at": "2026-10-02T03:55:10.066722Z",
+  "started_at": null,
+  "done_at": null
+}

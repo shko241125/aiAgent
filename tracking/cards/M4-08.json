@@ -1,0 +1,51 @@
+{
+  "id": "M4-08",
+  "board_id": "dev",
+  "title": "실 환경 부하·관측 검증 (Prometheus·Grafana·배포 서버)",
+  "description": "",
+  "type": "task",
+  "priority": "p2",
+  "column": "ready",
+  "labels": [
+    "milestone:M4",
+    "plan:0005"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "배포된 서버에 부하 테스트 → p95·에러율 SLO 판정",
+      "done": false
+    },
+    {
+      "text": "생성된 규칙·대시보드를 실 Prometheus·Grafana 에 적재해 burn-rate 알람 발화 확인",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "observability"
+  ],
+  "parent_id": "R-4.6",
+  "depends_on": [
+    "M4-03",
+    "M4-04"
+  ],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T03:55:10.473537Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T03:55:10.473502Z",
+  "updated_at": "2026-10-02T03:55:10.473683Z",
+  "started_at": null,
+  "done_at": null
+}

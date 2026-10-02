@@ -1,0 +1,52 @@
+{
+  "id": "M4-01",
+  "board_id": "dev",
+  "title": "API 인증·인가 (API Key + 역할) — 승인자는 인증 주체로",
+  "description": "",
+  "type": "task",
+  "priority": "p0",
+  "column": "ready",
+  "labels": [
+    "milestone:M4",
+    "plan:0005"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "API Key 해시 저장·역할(viewer/operator/approver/admin) 검사, 미인증 401·권한 부족 403",
+      "done": false
+    },
+    {
+      "text": "승인·해결 등 actor 를 인증 주체로 강제(자기 신고 금지), Slack 은 서명 + 승인자 허용 목록",
+      "done": false
+    },
+    {
+      "text": "prod 에서 인증 꺼짐/키 없음이면 기동 거부",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "security"
+  ],
+  "parent_id": "R-4.4",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T03:55:07.501777Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T03:55:07.501246Z",
+  "updated_at": "2026-10-02T03:55:07.502045Z",
+  "started_at": null,
+  "done_at": null
+}
