@@ -100,3 +100,17 @@ class OpsEventRow(Base):
     severity: Mapped[str] = mapped_column(String(16))
     message: Mapped[str] = mapped_column(Text, default="")
     attributes: Mapped[dict[str, Any]] = mapped_column(default=dict)
+
+
+class WorkflowRunRow(Base):
+    """워크플로우 실행 체크포인트 (M3-01) — 승인 대기·재시작 후 재개의 기반."""
+
+    __tablename__ = "workflow_runs"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    workflow: Mapped[str] = mapped_column(String(64), index=True)
+    status: Mapped[str] = mapped_column(String(16), index=True)
+    data: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )

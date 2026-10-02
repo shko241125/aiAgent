@@ -5,7 +5,7 @@
   "description": "",
   "type": "task",
   "priority": "p1",
-  "column": "ready",
+  "column": "done",
   "labels": [
     "milestone:M3",
     "plan:0004"
@@ -14,19 +14,19 @@
   "acceptance": [
     {
       "text": "실행 상태 DB 체크포인트(단계별)",
-      "done": false
+      "done": true
     },
     {
       "text": "승인 단계에서 WAITING 으로 일시정지",
-      "done": false
+      "done": true
     },
     {
       "text": "재시작 후 재개: 끝난 단계는 건너뛰고 이어서 실행",
-      "done": false
+      "done": true
     },
     {
       "text": "워크플로우 레지스트리로 정의 재구성",
-      "done": false
+      "done": true
     }
   ],
   "capabilities": [
@@ -34,10 +34,10 @@
   ],
   "parent_id": "R-4.5",
   "depends_on": [],
-  "assignee": null,
+  "assignee": "claude-code",
   "lease_expires_at": null,
   "blocked_reason": null,
-  "handoff": "",
+  "handoff": "workflow/engine.py: StepStatus/RunStatus.WAITING, Step(kind=approval, describe), RunStore(InMemory)·ApprovalGate(InMemory)·ApprovalDecision, engine.run/resume/register(팩토리), 레이어 단위 체크포인트, 동시 재개 프로세스 내 lock. workflow/store.py SqlRunStore + db WorkflowRunRow. 플랫폼 연결(SQL 승인 관문·API)은 M3-05/06",
   "outputs": {},
   "log": [
     {
@@ -46,11 +46,74 @@
       "kind": "create",
       "message": "created in ready",
       "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:23:33.778539Z",
+      "actor": "claude-code",
+      "kind": "claim",
+      "message": "claimed",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:17.964491Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "단계 출력을 항상 JSON 으로 정규화(to_jsonable) — 새 run 과 DB 재개 run 이 같은 데이터를 보게. 소비자(_is_incident, run_workflow)도 dict 기준으로 수정. RUNNING 중 죽은 단계는 재실행(at-least-once) → 단계 멱등성 필요",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:18.366278Z",
+      "actor": "claude-code",
+      "kind": "decision",
+      "message": "버그: 재개 시 run 전체에서 WAITING 을 찾아 첫 레이어 직후 멈춤(뒤 레이어에 이전 대기 상태 잔존) → 현재 레이어만 검사. 테스트로 발견",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:18.768218Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 실행 상태 DB 체크포인트(단계별)",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:18.773047Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 승인 단계에서 WAITING 으로 일시정지",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:18.777602Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 재시작 후 재개: 끝난 단계는 건너뛰고 이어서 실행",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:18.782341Z",
+      "actor": "claude-code",
+      "kind": "note",
+      "message": "DoD ✔ 워크플로우 레지스트리로 정의 재구성",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:19.190215Z",
+      "actor": "claude-code",
+      "kind": "handoff",
+      "message": "workflow/engine.py: StepStatus/RunStatus.WAITING, Step(kind=approval, describe), RunStore(InMemory)·ApprovalGate(InMemory)·ApprovalDecision, engine.run/resume/register(팩토리), 레이어 단위 체크포인트, 동시 재개 프로세스 내 lock. workflow/store.py SqlRunStore + db WorkflowRunRow. 플랫폼 연결(SQL 승인 관문·API)은 M3-05/06",
+      "data": {}
+    },
+    {
+      "ts": "2026-10-02T00:26:19.190254Z",
+      "actor": "claude-code",
+      "kind": "move",
+      "message": "in_progress → done",
+      "data": {}
     }
   ],
-  "version": 1,
+  "version": 9,
   "created_at": "2026-10-02T00:23:29.746446Z",
-  "updated_at": "2026-10-02T00:23:29.746618Z",
-  "started_at": null,
-  "done_at": null
+  "updated_at": "2026-10-02T00:26:19.190490Z",
+  "started_at": "2026-10-02T00:23:33.778526Z",
+  "done_at": "2026-10-02T00:26:19.190243Z"
 }

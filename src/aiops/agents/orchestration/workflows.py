@@ -24,9 +24,9 @@ INCIDENT_STEPS = [
 
 
 def _is_incident(run: WorkflowRun) -> bool:
-    det = run.steps["detect"].output
+    det = run.steps["detect"].output or {}  # 단계 출력은 JSON(dict)으로 정규화돼 있다
     # LLM 이 명시적으로 is_incident=false 라고 판단한 경우에만 중단 (불확실하면 계속 진행)
-    return not (det is not None and det.data.get("is_incident") is False)
+    return (det.get("data") or {}).get("is_incident") is not False
 
 
 async def build_incident_response(

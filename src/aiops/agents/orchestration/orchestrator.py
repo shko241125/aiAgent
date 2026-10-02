@@ -149,7 +149,11 @@ class Orchestrator:
         self, workflow: Workflow, ctx: AgentContext, state: dict | None = None
     ) -> OrchestrationResult:
         run = await self.engine.run(workflow, state)
-        results = [r.output for r in run.steps.values() if isinstance(r.output, AgentResult)]
+        results = [
+            AgentResult.model_validate(r.output)
+            for r in run.steps.values()
+            if isinstance(r.output, dict) and "agent" in r.output
+        ]
         return OrchestrationResult(
             run_id=ctx.run_id, results=results, blackboard=ctx.blackboard.data, workflow_run=run
         )
