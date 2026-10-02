@@ -29,7 +29,7 @@
 | 2.1 | 장애 탐지·분석 Agent | `src/aiops/agents/specialists/aiops.py`, `src/aiops/integrations/`, `src/aiops/services/incident_response.py` | ⛔ 막힘 | 3/4 | 1 | 실 Prometheus/Loki 연결 검증(M2-08), 실 알람 이력 라벨로 장애 판정 재평가, K8s 이벤트 수집 | 실데이터 알람 → 장애 여부 판정 정확도 측정 |
 | 2.2 | RCA Agent | `src/aiops/agents/specialists/aiops.py` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 실 장애 이력으로 랭킹 재검증(합성 시나리오 과적합 해소), 다중 에이전트 교차 검증(1.2), 트레이스 기반 신호 추가 | 과거 장애 셋에서 Top-3 원인 적중률 측정 |
 | 2.3 | 운영 자동화 Agent | `src/aiops/agents/tools/builtin/ops.py` | 🧩 골격 | 2/4 | 3 | K8s/Ansible 실제 실행기, 승인 요청 채널(Slack) + 콜백, 조치 후 효과 검증 루프 | dry-run → 승인 → 실행 → 지표 회복 확인 자동화 |
-| 2.4 | Incident Management Agent | `src/aiops/api/routers/incidents.py` | 🧩 골격 | 0/1 | 1 | ITSM(Jira/ServiceNow) 연동, 상태 머신, 온콜 에스컬레이션, 타임라인 자동 기록 | 인시던트 생성~종료 전 과정 자동 기록 |
+| 2.4 | Incident Management Agent | `src/aiops/api/routers/incidents.py` | 🧩 골격 (+1 완료) | 1/1 | 1 | ITSM(Jira/ServiceNow) 연동, 상태 머신, 온콜 에스컬레이션, 타임라인 자동 기록 | 인시던트 생성~종료 전 과정 자동 기록 |
 | 2.5 | 운영 보고서 Agent | `src/aiops/prompts/templates/report.md` | 🧩 골격 | - | 0 | 일간/주간 리포트 스케줄러, 차트 첨부, 보고서 템플릿 다양화 | 주간 운영 리포트 자동 발송 |
 | 2.6 | 운영 지식 기반 Agent | `src/aiops/prompts/templates/knowledge.md` | 🟢 최소구현 (+1 완료) | 1/1 | 0 | 인용률 실측(M1-10), 답변 피드백 수집, 축적 지식 품질 관리(중복·노후 문서) | 운영자 Q&A 근거 인용률 > 90% |
 
@@ -63,7 +63,7 @@
 | **M0** | 골격 — 전 영역 인터페이스 + Fake LLM 으로 E2E 동작 | 전체 | - | ✅ 완료 |
 | **M1** | 실 LLM + 실 지식으로 RCA 품질 확보 | 4.1, 4.2, 4.3, 2.2, 2.6 | 9/10 | 🔄 진행중 |
 | **M2** | 실데이터 연동과 상황 인식 고도화 | 2.1, 3.1, 3.2, 3.3, 3.5 | 7/8 | 🔄 진행중 |
-| **M3** | 안전한 자동 조치 (HITL) | 2.3, 2.4, 1.4, 4.5 | 3/7 | 🔄 진행중 |
+| **M3** | 안전한 자동 조치 (HITL) | 2.3, 2.4, 1.4, 4.5 | 4/7 | 🔄 진행중 |
 | **M4** | 예측·보고·운영 안정화 | 3.4, 2.5, 4.4, 4.6, 1.6 | - | ⬜ 대기 |
 <!-- /AUTO -->
 

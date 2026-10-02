@@ -35,6 +35,7 @@ from aiops.prompts.registry import PromptRegistry
 from aiops.rag.hybrid import HybridRetriever
 from aiops.rag.knowledge import KnowledgeRepository
 from aiops.rag.service import RAGService, build_embedder, build_reranker, build_vector_store
+from aiops.services.incidents import IncidentService
 
 
 @dataclass
@@ -53,6 +54,7 @@ class Platform:
     board_store: BoardStore
     knowledge: KnowledgeRepository
     events: SqlEventStore
+    incidents: "IncidentService"
 
     def board(self, board_id: str) -> KanbanBoard:
         """보드 = 작업 공간 단위 (인시던트 1건, 목표 1개 등). 저장소는 DB 로 영속."""
@@ -127,4 +129,5 @@ async def build_platform(settings: Settings, llm: LLMProvider | None = None) -> 
         board_store=SqlBoardStore(sessionmaker),
         knowledge=knowledge,
         events=events,
+        incidents=IncidentService(sessionmaker),
     )

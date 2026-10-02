@@ -33,12 +33,12 @@ M1·M2 는 "무엇이 왜 고장 났는가"를 답하게 했다. M3 은 **고치
 | M3-01 | 워크플로우 상태 영속화·재개 + 승인 대기(HITL) 단계 | ✅ done | claude-code | workflow/engine.py: StepStatus/RunStatus.WAITING, Step(kind=approval, describe), RunStore(InMemory)·ApprovalGate(InMemo… |
 | M3-02 | 조치 실행기(시뮬레이터·Kubernetes) + 가드레일 | ✅ done | claude-code | remediation/actions.py(ActionType restart·scale·rollback·manual, risk), guardrails.py(GuardrailPolicy·Guardrails, glob … |
 | M3-03 | 조치 플레이북 + 효과 검증 + 되돌림·에스컬레이션 | ✅ done | claude-code | remediation/playbook.py(change→rollback, 시그니처별 매핑, cpu→scale×2, 위험·불가 원인→manual), verify.py(verify_recovery: ongoing 이상… |
-| M3-04 | 인시던트 상태 머신 + 타임라인 | 🟦 ready | - |  |
+| M3-04 | 인시던트 상태 머신 + 타임라인 | ✅ done | claude-code | services/incidents.py(TRANSITIONS, IncidentService.transition/record/timeline/mttr_minutes, TimelineEvent), db Incident… |
 | M3-05 | 승인 요청 저장소·API + Slack 승인 채널 + 만료·에스컬레이션 | 🟦 ready | - |  |
 | M3-06 | 인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동 | 🟦 ready | - |  |
 | M3-07 | 실 Kubernetes 클러스터 조치 검증 | 🟦 ready | - |  |
 
-진행: 3/7
+진행: 4/7
 <!-- /AUTO -->
 
 ## 4. 완료 판정

@@ -114,3 +114,17 @@ class WorkflowRunRow(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, onupdate=utcnow
     )
+
+
+class IncidentEventRow(Base):
+    """인시던트 타임라인 (M3-04) — 탐지·RCA·승인·조치·검증·상태 변화가 시간순으로 남는다."""
+
+    __tablename__ = "incident_events"
+
+    id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    incident_id: Mapped[str] = mapped_column(String(32), index=True)
+    ts: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    kind: Mapped[str] = mapped_column(String(32))
+    actor: Mapped[str] = mapped_column(String(64))
+    message: Mapped[str] = mapped_column(Text, default="")
+    data: Mapped[dict[str, Any]] = mapped_column(default=dict)

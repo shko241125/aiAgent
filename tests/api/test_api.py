@@ -165,3 +165,37 @@ def test_log_templates_endpoint(client):
     body = client.post("/api/v1/analytics/log-templates", json={"lines": lines}).json()
     assert len(body) == 1 and body[0]["count"] == 29
     assert body[0]["template"] == "Connection to <*> timed out after <*>"
+
+
+def test_incident_response_records_timeline(client, llm):
+    llm.push(
+        LLMResponse(content='{"is_incident": true, "severity": "major", "summary": "지연"}'),
+        LLMResponse(content='{"root_cause": "풀 고갈", "confidence": 0.7}'),
+    )
+    body = client.post(
+        "/api/v1/orchestrations/incident-response",
+        json={"alert": {"service": "order-service", "title": "latency", "severity": "major"}},
+    ).json()
+    tl = client.get(f"/api/v1/incidents/{body['incident_id']}/timeline").json()
+    kinds = [e["kind"] for e in tl["events"]]
+    assert kinds[0] == "alert" and "detection" in kinds and "rca" in kinds
+    assert tl["events"][-1]["message"].startswith("open → investigating")
+
+    bad = client.post(f"/api/v1/incidents/{body['incident_id']}/transition", json={"to": "closed"})
+    assert bad.status_code == 409 and "허용" in bad.json()["detail"]
+
+
+def test_resolve_returns_fresh_status_and_blocks_reresolve_after_close(client):
+    inc = client.post(
+        "/api/v1/incidents", json={"title": "t", "service": "s", "severity": "major"}
+    ).json()
+    res = client.post(
+        f"/api/v1/incidents/{inc['id']}/resolve", json={"resolution": "재시작"}
+    ).json()  # 필드 갱신 없는 경로
+    assert res["incident"]["status"] == "resolved"
+    assert (
+        client.post(f"/api/v1/incidents/{inc['id']}/transition", json={"to": "closed"}).status_code
+        == 200
+    )
+    again = client.post(f"/api/v1/incidents/{inc['id']}/resolve", json={"resolution": "x"})
+    assert again.status_code == 409

@@ -51,6 +51,14 @@ async def respond_to_alert(
                 alert_ids=[alert.id],
             )
         )
+        await p.incidents.record(
+            incident.id,
+            "alert",
+            "alertmanager",
+            alert.title,
+            severity=str(alert.severity),
+            service=alert.service,
+        )
         ctx = AgentContext(
             incident_id=incident.id,
             long_term=p.memory,
@@ -70,11 +78,27 @@ async def respond_to_alert(
 
         run = result.workflow_run
         rca = ctx.blackboard.read("rca.data") or {}
+        det = ctx.blackboard.read("detection.data") or {}
         await incidents.update(
             incident.id,
-            status=IncidentStatus.INVESTIGATING.value,
             summary=(ctx.blackboard.read("incident.output") or "")[:4000],
             root_cause=rca.get("root_cause"),
+        )
+        if det:
+            await p.incidents.record(
+                incident.id, "detection", "detection", det.get("summary", ""), **det
+            )
+        if rca:
+            await p.incidents.record(
+                incident.id,
+                "rca",
+                "rca",
+                rca.get("root_cause", ""),
+                confidence=rca.get("confidence"),
+                service=rca.get("service"),
+            )
+        await p.incidents.transition(
+            incident.id, IncidentStatus.INVESTIGATING, "orchestrator", f"워크플로우 {run.status}"
         )
         await AgentRunRepository(session).save(
             ctx,
