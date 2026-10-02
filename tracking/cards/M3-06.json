@@ -1,0 +1,56 @@
+{
+  "id": "M3-06",
+  "board_id": "dev",
+  "title": "인시던트 대응 워크플로우 v2 (계획→승인→실행→검증) E2E + 칸반 연동",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M3",
+    "plan:0004"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "탐지→RCA→계획→승인→실행→검증→기록 워크플로우",
+      "done": false
+    },
+    {
+      "text": "승인 대기 중 재시작 후 재개 E2E 테스트",
+      "done": false
+    },
+    {
+      "text": "승인 대기 카드 BLOCKED·결정 시 해제",
+      "done": false
+    },
+    {
+      "text": "장애가 실제로 복구되는 시뮬레이터 E2E",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "workflow"
+  ],
+  "parent_id": "R-1.4",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T00:23:31.688442Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T00:23:31.688412Z",
+  "updated_at": "2026-10-02T00:23:31.688591Z",
+  "started_at": null,
+  "done_at": null
+}

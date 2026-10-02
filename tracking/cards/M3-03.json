@@ -1,0 +1,56 @@
+{
+  "id": "M3-03",
+  "board_id": "dev",
+  "title": "조치 플레이북 + 효과 검증 + 되돌림·에스컬레이션",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M3",
+    "plan:0004"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "RCA 후보→조치 플레이북",
+      "done": false
+    },
+    {
+      "text": "조치 후 지표 회복 검증(진행 중 이상 소멸)",
+      "done": false
+    },
+    {
+      "text": "미복구 시 되돌림·에스컬레이션",
+      "done": false
+    },
+    {
+      "text": "시나리오별 조치 적중률·복구율 측정",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "remediation"
+  ],
+  "parent_id": "R-2.3",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T00:23:30.508433Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T00:23:30.508404Z",
+  "updated_at": "2026-10-02T00:23:30.508562Z",
+  "started_at": null,
+  "done_at": null
+}

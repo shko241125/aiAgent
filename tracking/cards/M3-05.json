@@ -1,0 +1,52 @@
+{
+  "id": "M3-05",
+  "board_id": "dev",
+  "title": "승인 요청 저장소·API + Slack 승인 채널 + 만료·에스컬레이션",
+  "description": "",
+  "type": "task",
+  "priority": "p1",
+  "column": "ready",
+  "labels": [
+    "milestone:M3",
+    "plan:0004"
+  ],
+  "refs": [],
+  "acceptance": [
+    {
+      "text": "승인 요청 저장·승인/거부 API → 워크플로우 재개",
+      "done": false
+    },
+    {
+      "text": "Slack 알림(버튼) + 상호작용 콜백 서명 검증",
+      "done": false
+    },
+    {
+      "text": "미응답 에스컬레이션·만료 시 자동 거부",
+      "done": false
+    }
+  ],
+  "capabilities": [
+    "approval"
+  ],
+  "parent_id": "R-2.3",
+  "depends_on": [],
+  "assignee": null,
+  "lease_expires_at": null,
+  "blocked_reason": null,
+  "handoff": "",
+  "outputs": {},
+  "log": [
+    {
+      "ts": "2026-10-02T00:23:31.298197Z",
+      "actor": "claude-code",
+      "kind": "create",
+      "message": "created in ready",
+      "data": {}
+    }
+  ],
+  "version": 1,
+  "created_at": "2026-10-02T00:23:31.298164Z",
+  "updated_at": "2026-10-02T00:23:31.298343Z",
+  "started_at": null,
+  "done_at": null
+}
